@@ -1,0 +1,54 @@
+{
+  "name": "dcm-organize",
+  "version": "0.0.1",
+  "description": "Organize and de-identify DICOM header data ",
+  "type": "module",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "rules": {
+      "import/no-extraneous-dependencies": 2
+    }
+  },
+  "scripts": {
+    "clean": "bebbi-scripts clean",
+    "build": "bebbi-scripts build",
+    "watch": "bebbi-scripts build --watch",
+    "test": "bebbi-scripts test",
+    "format": "bebbi-scripts format",
+    "lint": "bebbi-scripts lint",
+    "validate": "bebbi-scripts validate",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "bebbi-scripts": "^0.6.0",
+    "husky": "^8.0.3"
+  },
+  "license": "MIT",
+  "packageManager": "yarn@4.5.3"
+}

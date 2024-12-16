@@ -1,0 +1,6 @@
+{
+  "extends": "bebbi-scripts/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true
+  }
+}
