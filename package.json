@@ -50,5 +50,8 @@
     "husky": "^8.0.3"
   },
   "license": "MIT",
-  "packageManager": "yarn@4.5.3"
+  "packageManager": "yarn@4.5.3",
+  "dependencies": {
+    "dcmjs": "^0.36.0"
+  }
 }

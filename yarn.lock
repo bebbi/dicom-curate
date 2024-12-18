@@ -1478,6 +1478,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime-corejs3@npm:^7.22.5":
+  version: 7.26.0
+  resolution: "@babel/runtime-corejs3@npm:7.26.0"
+  dependencies:
+    core-js-pure: "npm:^3.30.2"
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 10c0/921fa27c004cf2b92f0d49efc2006cfc1a72d2a35c7374da8ec88d8b63543963e6ef29d4820e068a7892a7d553dc2bac7208aef8fef30642bc843b63255b650b
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.8.4":
   version: 7.26.0
   resolution: "@babel/runtime@npm:7.26.0"
@@ -2760,6 +2770,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"adm-zip@npm:^0.5.10":
+  version: 0.5.16
+  resolution: "adm-zip@npm:0.5.16"
+  checksum: 10c0/6f10119d4570c7ba76dcf428abb8d3f69e63f92e51f700a542b43d4c0130373dd2ddfc8f85059f12d4a843703a90c3970cfd17876844b4f3f48bf042bfa6b49f
+  languageName: node
+  linkType: hard
+
 "agent-base@npm:6":
   version: 6.0.2
   resolution: "agent-base@npm:6.0.2"
@@ -3768,6 +3785,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js-pure@npm:^3.30.2":
+  version: 3.39.0
+  resolution: "core-js-pure@npm:3.39.0"
+  checksum: 10c0/5d954e467703ea1e860eb070bd72cf9dc5bfddd7037c09d750f0eba3ffc4066db741a595af86dc833a709929e161a909e48da3cbdd2d9bee7795cb516dc9f7d4
+  languageName: node
+  linkType: hard
+
 "cosmiconfig@npm:^7.0.0":
   version: 7.1.0
   resolution: "cosmiconfig@npm:7.1.0"
@@ -3914,9 +3938,25 @@ __metadata:
   resolution: "dcm-organize@workspace:."
   dependencies:
     bebbi-scripts: "npm:^0.6.0"
+    dcmjs: "npm:^0.36.0"
     husky: "npm:^8.0.3"
   languageName: unknown
   linkType: soft
+
+"dcmjs@npm:^0.36.0":
+  version: 0.36.0
+  resolution: "dcmjs@npm:0.36.0"
+  dependencies:
+    "@babel/runtime-corejs3": "npm:^7.22.5"
+    adm-zip: "npm:^0.5.10"
+    gl-matrix: "npm:^3.1.0"
+    lodash.clonedeep: "npm:^4.5.0"
+    loglevel: "npm:^1.8.1"
+    ndarray: "npm:^1.0.19"
+    pako: "npm:^2.0.4"
+  checksum: 10c0/c8993b1af81a10da85ac79c27ada1fa06f6f97a4c1694b06a1adf4608d64bb0c14e051b4f72798e3e9c80da3d0c2628e9b732252b9d3569425a6ea7fd9586fe0
+  languageName: node
+  linkType: hard
 
 "debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:~4.4.0":
   version: 4.4.0
@@ -5188,6 +5228,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gl-matrix@npm:^3.1.0":
+  version: 3.4.3
+  resolution: "gl-matrix@npm:3.4.3"
+  checksum: 10c0/c8ee6e2ce2d089b4ba4ae13ec9d4cb99bf2abe5f68f0cb08d94bbd8bafbec13aacc7230b86539ce5ca01b79226ea8c3194f971f5ca0c81838bc5e4e619dc398e
+  languageName: node
+  linkType: hard
+
 "glob-parent@npm:^5.1.2, glob-parent@npm:~5.1.2":
   version: 5.1.2
   resolution: "glob-parent@npm:5.1.2"
@@ -5561,6 +5608,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iota-array@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "iota-array@npm:1.0.0"
+  checksum: 10c0/a6bfc7d5bf0338ade227b302eda52cea3db44cc6dd5803154147cdcee28e9cb65ca76c5859ab2bfe21d91ecc945c57a0dd446bbc657581bbdf92cda9c24def56
+  languageName: node
+  linkType: hard
+
 "ip-address@npm:^9.0.5":
   version: 9.0.5
   resolution: "ip-address@npm:9.0.5"
@@ -5647,6 +5701,13 @@ __metadata:
     call-bound: "npm:^1.0.2"
     has-tostringtag: "npm:^1.0.2"
   checksum: 10c0/2ef601d255a39fdbde79cfe6be80c27b47430ed6712407f29b17d002e20f64c1e3d6692f1d842ba16bf1e9d8ddf1c4f13cac3ed7d9a4a21290f44879ebb4e8f5
+  languageName: node
+  linkType: hard
+
+"is-buffer@npm:^1.0.2":
+  version: 1.1.6
+  resolution: "is-buffer@npm:1.1.6"
+  checksum: 10c0/ae18aa0b6e113d6c490ad1db5e8df9bdb57758382b313f5a22c9c61084875c6396d50bbf49315f5b1926d142d74dfb8d31b40d993a383e0a158b15fea7a82234
   languageName: node
   linkType: hard
 
@@ -6954,6 +7015,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"loglevel@npm:^1.8.1":
+  version: 1.9.2
+  resolution: "loglevel@npm:1.9.2"
+  checksum: 10c0/1e317fa4648fe0b4a4cffef6de037340592cee8547b07d4ce97a487abe9153e704b98451100c799b032c72bb89c9366d71c9fb8192ada8703269263ae77acdc7
+  languageName: node
+  linkType: hard
+
 "longest-streak@npm:^2.0.0":
   version: 2.0.4
   resolution: "longest-streak@npm:2.0.4"
@@ -7435,6 +7503,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ndarray@npm:^1.0.19":
+  version: 1.0.19
+  resolution: "ndarray@npm:1.0.19"
+  dependencies:
+    iota-array: "npm:^1.0.0"
+    is-buffer: "npm:^1.0.2"
+  checksum: 10c0/e5929a845dae326052ff024f4f624b5f81e0be750224495baa0c7a02afd4e1117198452465c052f0bd111358b05c15655a797ec959dbbbe042c6ae573de09046
+  languageName: node
+  linkType: hard
+
 "negotiator@npm:^1.0.0":
   version: 1.0.0
   resolution: "negotiator@npm:1.0.0"
@@ -7729,6 +7807,13 @@ __metadata:
   version: 1.0.1
   resolution: "package-json-from-dist@npm:1.0.1"
   checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
+  languageName: node
+  linkType: hard
+
+"pako@npm:^2.0.4":
+  version: 2.1.0
+  resolution: "pako@npm:2.1.0"
+  checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
   languageName: node
   linkType: hard
 
