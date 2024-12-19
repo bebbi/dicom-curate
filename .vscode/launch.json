@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dcm-organize test",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "cwd": "${workspaceFolder}",
+      "env": { "NODE_OPTIONS": "--inspect" },
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["run", "test"],
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    }
+  ]
+}
