@@ -3288,9 +3288,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bebbi-scripts@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "bebbi-scripts@npm:0.6.0"
+"bebbi-scripts@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "bebbi-scripts@npm:0.6.1"
   dependencies:
     "@swc/jest": "npm:^0.2.37"
     "@types/eslint": "npm:^8.56.2"
@@ -3317,6 +3317,7 @@ __metadata:
     prettier: "npm:^3.2.5"
     read-pkg-up: "npm:7.0.1"
     rimraf: "npm:^5.0.5"
+    ts-jest: "npm:^29.2.5"
     ts-loader: "npm:^9.5.1"
     tsconfig.js: "npm:^3.0.0"
     typescript: "npm:^5.4.5"
@@ -3326,7 +3327,7 @@ __metadata:
     yargs-parser: "npm:^21.1.1"
   bin:
     bebbi-scripts: dist/cjs/bin.js
-  checksum: 10c0/fc7df54d02322a60c72924a54e3d5be9829bfc47b1a4bb3b98074ed8c0cd0971f601387a1db08980d18937013c6094f26363df715182e289726f2e161c5df604
+  checksum: 10c0/0fd7d0e93318dbdcce229a177367ed8e91cd1947a73e077d8d22b45086f847cc8ffd52979390a767cbbc25194d20b80784a2df4995d313e89522c447c5fea546
   languageName: node
   linkType: hard
 
@@ -3946,10 +3947,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dcm-organize@workspace:."
   dependencies:
-    bebbi-scripts: "npm:^0.6.0"
+    bebbi-scripts: "npm:^0.6.1"
     dcmjs: "npm:^0.36.0"
     husky: "npm:^8.0.3"
-    ts-jest: "npm:^29.2.5"
   languageName: unknown
   linkType: soft
 

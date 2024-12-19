@@ -1,4 +1,4 @@
-import { dcmjs } from "dcmjs";
+import * as dcmjs from "dcmjs";
 
 describe('Check dcmjs', () => {
   test('exists', () => {
