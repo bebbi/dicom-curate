@@ -29,6 +29,36 @@ async function scanDirectory(dir) {
   return files;
 }
 
+async function createNestedDirectories(topLevelDirectoryHandle, path) {
+  const pathSegments = path.split('/').filter(segment => segment !== '');
+
+  let currentDirectoryHandle = topLevelDirectoryHandle;
+
+  for (const segment of pathSegments) {
+    console.log(`trying to create ${segment}`);
+    try {
+      // Attempt to get the directory handle without creating it
+      const entry = await currentDirectoryHandle.getDirectoryHandle(segment, { create: false });
+      currentDirectoryHandle = entry;
+      console.log(`${segment} exists`);
+    } catch (error) {
+      // If the error is specifically about the directory not existing, create it
+      if (error.name === 'NotFoundError') {
+        const entry = await currentDirectoryHandle.getDirectoryHandle(segment, { create: true });
+        currentDirectoryHandle = entry;
+        console.log(`${segment} created`);
+      } else {
+        // Handle other potential errors (e.g., name conflicts)
+        console.error(`Error creating directory ${segment}:`, error);
+        return false; // Indicate failure
+      }
+    }
+  }
+
+  // Return the last directory handle
+  return currentDirectoryHandle;
+}
+
 function applyMappings(dicomData, mappingOptions) {
 
     const mapResults = {
@@ -146,9 +176,13 @@ async function apply(organizeOptions) {
         // do the actually header mapping
         const mapResults = applyMappings(naturalData, mappingOptions);
 
+        const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
+        const fileName = mapResults.filePath.split("/").slice(-2,-1);
+        const subDirctoryHandle = createNestedDirectories(organizeOptions.outputDirectory, dirPath);
+
         dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(mapResults.dicomData);
         const modifiedArrayBuffer = dicomData.write();
-        const fileHandle = await organizeOptions.outputDirectory.getFileHandle(mapResults.filePath, { create: true });
+        const fileHandle = await subDirctoryHandle(fileName, { create: true });
         const writable = await fileHandle.createWritable();
         await writable.write(modifiedArrayBuffer);
         await writable.close();
@@ -157,4 +191,4 @@ async function apply(organizeOptions) {
 }
 
 
-export { getLog, apply };
+export { getLog, apply, createNestedDirectories };
