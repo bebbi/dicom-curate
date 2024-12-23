@@ -1,12 +1,11 @@
 import * as dcmjs from "dcmjs"
 
-
-const a: string = `hello wide world`;
-
 function getLog() {
     return dcmjs.log.currentLevel;
 }
 
+// TODO: this should be a stream so that large directory
+// trees are not scanned all at once at the beginning
 async function scanDirectory(dir) {
   const files = [];
 
@@ -30,11 +29,74 @@ async function scanDirectory(dir) {
   return files;
 }
 
+async function applyMappings(dicomData, mappingOptions) {
+
+    const mapResults = {
+        dicomData: dicomData,
+        filePath: "",
+    };
+
+    console.log(dicomData, mappingOptions);
+    console.log(mapResults);
+
+    const parser = {
+        getFilePathComp: (component) => {
+            const pathComponents = mappingOptions.folderMappings.split("/");
+            const componentIndex = pathComponents.indexOf(component);
+            const filePathComponents = mappingOptions.fileEntry.path.split("/");
+            return(filePathComponents[componentIndex]);
+        },
+        getMapping: (value, fromColumn, toColumn) => {
+            console.log(value, fromColumn, toColumn);
+            const rowIndex = mappingOptions.fieldMappings.rowIndexByFieldValue[fromColumn][value];
+            const columnIndex = mappingOptions.fieldMappings.headers.indexOf(toColumn);
+            return mappingOptions.fieldMappings.rowValues[rowIndex][columnIndex];
+        },
+        getDicom: (tagName) => {
+            return(dicomData[tagName]);
+        },
+        addDays: (dicomDateString, offsetDays) => {
+            const year = Number(dicomDateString.slice(0,4));
+            const monthIndex = Number(dicomDateString.slice(4,6)) - 1;
+            const day = Number(dicomDateString.slice(6,8));
+            const date = new Date(year, monthIndex, day);
+            const time = date.getTime();
+            const millisecondsPerDay = 1000 * 60 * 60 * 24;
+            time += offsetDays * millisecondsPerDay;
+            date.setTime(time);
+            const yearString = date.getFullYear();
+            const monthString = (date.getMonth()+1).toString().padStart(2,'0');
+            const dayString = date.getDay().toString().padStart(2,'0');
+            return yearString + monthString + dayString;
+        },
+    }
+
+    let dicom = {};
+    let filePath = [];
+    eval(mappingOptions.mappingFunctions);
+    console.log(dicom);
+    console.log(filePath);
+
+    for (let key in dicom) {
+        mapResults.dicomData[key] = dicom[key]();
+    }
+
+    mapResults.filePath = filePath.join("/");
+
+    return mapResults;
+}
+
 async function apply(organizeOptions) {
-    console.log(organizeOptions);
+
+    const mappingOptions = {};
 
     //
-    // first, get the field mappings from the csv file
+    // first, get the folder mappings
+    //
+    mappingOptions.folderMappings = organizeOptions.filePathPattern;
+
+    //
+    // then, get the field mappings from the csv file
     //
     // assumes all fields are not repeated across rows
     const csvFile = await organizeOptions.fieldMapping.getFile();
@@ -49,44 +111,40 @@ async function apply(organizeOptions) {
     headers.forEach((header) => {
         fieldMappings.rowIndexByFieldValue[header] = {};
     });
-
     rows.slice(1).forEach( (row, rowIndex) => {
         fieldMappings.rowValues[rowIndex] = row.split(",");
-        fieldMappings.rowValues[rowIndex].forEach( (fieldValue, columnIndex) {
+        fieldMappings.rowValues[rowIndex].forEach( (fieldValue, columnIndex) => {
             fieldMappings.rowIndexByFieldValue[headers[columnIndex]][fieldValue] = rowIndex;
         });
     });
-
-    console.log("fieldMappings");
-    console.log(fieldMappings);
+    mappingOptions.fieldMappings = fieldMappings;
 
     //
-    // second, get the mapping functions
+    // then, get the mapping functions
     //
     const functionsFile = await organizeOptions.mappingFunctions.getFile();
-    const functionsText = await functionsFile.text();
-
-    console.log(functionsText);
+    mappingOptions.mappingFunctions = await functionsFile.text();
 
     //
-    // Then, scan through the files from the input directory and save them to the output
+    // finally, scan through the files from the input directory and save them to the output
     //
     dcmjs.log.level = dcmjs.log.levels.ERROR;
     const fileEntryList = await scanDirectory(organizeOptions.inputDirectory);
-    fileEntryList.forEach(async (fileEntry, index) => {
+    fileEntryList.slice(0,1).forEach(async (fileEntry, index) => {
+
+        mappingOptions.fileEntry = fileEntry;
+
         const file = await fileEntry.fileHandle.getFile();
         const fileArrayBuffer = await file.arrayBuffer();
-
         const dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer);
         const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
-        naturalData["PatientAge"] = "021Y";
-        dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData);
-        const modifiedArrayBuffer = dicomData.write();
 
-        const fileName = `file-${index}.dcm`;
-        console.log(organizeOptions.outputDirectory);
-        console.log(fileName);
-        const fileHandle = await organizeOptions.outputDirectory.getFileHandle(fileName, { create: true });
+        // do the actually header mapping
+        const mapResults = applyMappings(naturalData, mappingOptions);
+
+        dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(mapResults.dicomData);
+        const modifiedArrayBuffer = dicomData.write();
+        const fileHandle = await organizeOptions.outputDirectory.getFileHandle(mapResults.filePath, { create: true });
         const writable = await fileHandle.createWritable();
         await writable.write(modifiedArrayBuffer);
         await writable.close();
@@ -96,5 +154,3 @@ async function apply(organizeOptions) {
 
 
 export { getLog, apply };
-
-export default a
