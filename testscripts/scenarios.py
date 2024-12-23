@@ -52,13 +52,13 @@ def create_scenario(args):
       "ACRIN-NSCLC-FDG-PET-003",
     ]
     for patientID in patientIDs:
-      idcClient.download_from_selection(patientId=patientID, downloadDir=downloadDir)
+      idcClient.download_from_selection(patientId=patientID, downloadDir=downloadDir, use_s5cmd_sync=True)
 
     with open(os.path.join(scenarioDir, "mapping.csv"), "w") as f:
-      f.write("""CURR_ID,NEW_ID
-ACRIN-NSCLC-FDG-PET-001,patient_1
-ACRIN-NSCLC-FDG-PET-002,patient_2
-ACRIN-NSCLC-FDG-PET-003,patient_3
+      f.write("""CURR_ID,NEW_ID,DATE_OFFSET
+ACRIN-NSCLC-FDG-PET-001,patient_1,20
+ACRIN-NSCLC-FDG-PET-002,patient_2,-15
+ACRIN-NSCLC-FDG-PET-003,patient_3,3
 """)
 
     with open(os.path.join(scenarioDir, "mappingConfig.js"), "w") as f:
