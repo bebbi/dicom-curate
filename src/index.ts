@@ -29,7 +29,7 @@ async function scanDirectory(dir) {
   return files;
 }
 
-async function applyMappings(dicomData, mappingOptions) {
+function applyMappings(dicomData, mappingOptions) {
 
     const mapResults = {
         dicomData: dicomData,
@@ -47,7 +47,6 @@ async function applyMappings(dicomData, mappingOptions) {
             return(filePathComponents[componentIndex]);
         },
         getMapping: (value, fromColumn, toColumn) => {
-            console.log(value, fromColumn, toColumn);
             const rowIndex = mappingOptions.fieldMappings.rowIndexByFieldValue[fromColumn][value];
             const columnIndex = mappingOptions.fieldMappings.headers.indexOf(toColumn);
             return mappingOptions.fieldMappings.rowValues[rowIndex][columnIndex];
@@ -60,7 +59,7 @@ async function applyMappings(dicomData, mappingOptions) {
             const monthIndex = Number(dicomDateString.slice(4,6)) - 1;
             const day = Number(dicomDateString.slice(6,8));
             const date = new Date(year, monthIndex, day);
-            const time = date.getTime();
+            let time = date.getTime();
             const millisecondsPerDay = 1000 * 60 * 60 * 24;
             time += offsetDays * millisecondsPerDay;
             date.setTime(time);
@@ -77,8 +76,13 @@ async function applyMappings(dicomData, mappingOptions) {
     console.log(dicom);
     console.log(filePath);
 
+    // collect the key mappings before assigning them into dicomData
+    const keyMappings = {};
     for (let key in dicom) {
-        mapResults.dicomData[key] = dicom[key]();
+        keyMappings[key] = dicom[key]();
+    }
+    for (let key in keyMappings) {
+        mapResults.dicomData[key] = keyMappings[key];
     }
 
     mapResults.filePath = filePath.join("/");
