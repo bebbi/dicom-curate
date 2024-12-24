@@ -35,21 +35,17 @@ async function createNestedDirectories(topLevelDirectoryHandle, path) {
   let currentDirectoryHandle = topLevelDirectoryHandle;
 
   for (const segment of pathSegments) {
-    console.log(`trying to create ${segment}`);
     try {
       // Attempt to get the directory handle without creating it
       const entry = await currentDirectoryHandle.getDirectoryHandle(segment, { create: false });
       currentDirectoryHandle = entry;
-      console.log(`${segment} exists`);
     } catch (error) {
       // If the error is specifically about the directory not existing, create it
       if (error.name === 'NotFoundError') {
         const entry = await currentDirectoryHandle.getDirectoryHandle(segment, { create: true });
         currentDirectoryHandle = entry;
-        console.log(`${segment} created`);
       } else {
         // Handle other potential errors (e.g., name conflicts)
-        console.error(`Error creating directory ${segment}:`, error);
         return false; // Indicate failure
       }
     }
@@ -65,9 +61,6 @@ function applyMappings(dicomData, mappingOptions) {
         dicomData: dicomData,
         filePath: "",
     };
-
-    console.log(dicomData, mappingOptions);
-    console.log(mapResults);
 
     const parser = {
         getFilePathComp: (component) => {
@@ -95,7 +88,7 @@ function applyMappings(dicomData, mappingOptions) {
             date.setTime(time);
             const yearString = date.getFullYear();
             const monthString = (date.getMonth()+1).toString().padStart(2,'0');
-            const dayString = date.getDay().toString().padStart(2,'0');
+            const dayString = date.getDate().toString().padStart(2,'0');
             return yearString + monthString + dayString;
         },
     }
@@ -103,8 +96,6 @@ function applyMappings(dicomData, mappingOptions) {
     let dicom = {};
     let filePath = [];
     eval(mappingOptions.mappingFunctions);
-    console.log(dicom);
-    console.log(filePath);
 
     // collect the key mappings before assigning them into dicomData
     const keyMappings = {};
@@ -164,7 +155,7 @@ async function apply(organizeOptions) {
     //
     dcmjs.log.level = dcmjs.log.levels.ERROR;
     const fileEntryList = await scanDirectory(organizeOptions.inputDirectory);
-    fileEntryList.slice(0,1).forEach(async (fileEntry, index) => {
+    for (let fileEntry of fileEntryList) {
 
         mappingOptions.fileEntry = fileEntry;
 
@@ -175,18 +166,22 @@ async function apply(organizeOptions) {
 
         // do the actually header mapping
         const mapResults = applyMappings(naturalData, mappingOptions);
-
         const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
-        const fileName = mapResults.filePath.split("/").slice(-2,-1);
-        const subDirctoryHandle = createNestedDirectories(organizeOptions.outputDirectory, dirPath);
+        const fileName = mapResults.filePath.split("/").slice(-1);
 
         dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(mapResults.dicomData);
         const modifiedArrayBuffer = dicomData.write();
-        const fileHandle = await subDirctoryHandle(fileName, { create: true });
-        const writable = await fileHandle.createWritable();
-        await writable.write(modifiedArrayBuffer);
-        await writable.close();
-    });
+
+        const subDirctoryHandle = await createNestedDirectories(organizeOptions.outputDirectory, dirPath);
+        if (subDirctoryHandle == false) {
+            console.error(`Cannot create directory for ${dirPath}`);
+        } else {
+            const fileHandle = await subDirctoryHandle.getFileHandle(fileName, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(modifiedArrayBuffer);
+            await writable.close();
+        }
+    }
 
 }
 
