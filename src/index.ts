@@ -58,8 +58,10 @@ async function createNestedDirectories(topLevelDirectoryHandle, path) {
 function applyMappings(dicomData, mappingOptions) {
 
     const mapResults = {
+        sourceInstanceUID: dicomData.SOPInstanceUID,
         dicomData: dicomData,
         filePath: "",
+        tagMappings: {},
     };
 
     const parser = {
@@ -97,23 +99,51 @@ function applyMappings(dicomData, mappingOptions) {
     let filePath = [];
     eval(mappingOptions.mappingFunctions);
 
-    // collect the key mappings before assigning them into dicomData
-    const keyMappings = {};
-    for (let key in dicom) {
-        keyMappings[key] = dicom[key]();
+    // collect the tag mappings before assigning them into dicomData
+    for (let tag in dicom) {
+        mapResults.tagMappings[tag] = dicom[tag]();
     }
-    for (let key in keyMappings) {
-        mapResults.dicomData[key] = keyMappings[key];
+    for (let tag in mapResults.tagMappings) {
+        mapResults.dicomData[tag] = mapResults.tagMappings[tag];
     }
 
+    // use filePath populated by mappingFunctions
     mapResults.filePath = filePath.join("/");
+
+    // apply previously collected uid mappings or create new ones
+    //for tag in mapResults.dicomData
+    const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
+    const noMapUIDRegExp = /SyntaxUID|ClassUID/; // TODO: RecordUID, SchemeUID, ContextUID, ResourceUID, TemplateUID?
+    const mapAnywayRegExp = /ManufacturerDeviceClassUID/;
+    for (let tag in mapResults.dicomData) {
+        const mapTag = !noMapUIDRegExp.test(tag) || mapAnywayRegExp.test(tag);
+        if (tag in nameMap && mapTag) {
+            let vr = nameMap[tag].vr;
+            if (vr == "UI") {
+                const uid = mapResults.dicomData[tag];
+                if ( ! (uid in mappingOptions.uidMappings) ) {
+                   mappingOptions.uidMappings[uid] = {
+                      tag: tag,
+                      mappedUID: dcmjsModule.data.DicomMetaDictionary.uid(),
+                   };
+                }
+                mapResults.dicomData[tag] = mappingOptions.uidMappings[uid].mappedUID;
+            }
+        }
+    }
 
     return mapResults;
 }
 
 async function apply(organizeOptions) {
 
-    const mappingOptions = {};
+    const mappingResults = {
+      uidMappings : {},
+      instanceTagMappings : {},
+    };
+    const mappingOptions = {
+      uidMappings : mappingResults.uidMappings, // build up object as it is used
+    };
 
     //
     // first, get the folder mappings
@@ -154,6 +184,7 @@ async function apply(organizeOptions) {
     // finally, scan through the files from the input directory and save them to the output
     //
     dcmjs.log.level = dcmjs.log.levels.ERROR;
+
     const fileEntryList = await scanDirectory(organizeOptions.inputDirectory);
     for (let fileEntry of fileEntryList) {
 
@@ -161,14 +192,16 @@ async function apply(organizeOptions) {
 
         const file = await fileEntry.fileHandle.getFile();
         const fileArrayBuffer = await file.arrayBuffer();
+        // TODO: capture validation data in object and save as part of results object
         const dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer);
         const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
 
         // do the actually header mapping
         const mapResults = applyMappings(naturalData, mappingOptions);
+
+        // process the results and save the modified dataset
         const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
         const fileName = mapResults.filePath.split("/").slice(-1);
-
         dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(mapResults.dicomData);
         const modifiedArrayBuffer = dicomData.write();
 
@@ -182,8 +215,7 @@ async function apply(organizeOptions) {
             await writable.close();
         }
     }
-
 }
 
 
-export { getLog, apply, createNestedDirectories };
+export { dcmjs, getLog, apply };
