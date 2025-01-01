@@ -113,7 +113,8 @@ function applyMappings(dicomData, mappingOptions) {
     // apply previously collected uid mappings or create new ones
     //for tag in mapResults.dicomData
     const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
-    const noMapUIDRegExp = /SyntaxUID|ClassUID/; // TODO: RecordUID, SchemeUID, ContextUID, ResourceUID, TemplateUID?
+    // TODO: RecordUID, SchemeUID, ContextUID, ResourceUID, TemplateUID?
+    const noMapUIDRegExp = /SyntaxUID|ClassUID/;
     const mapAnywayRegExp = /ManufacturerDeviceClassUID/;
     for (let tag in mapResults.dicomData) {
         const mapTag = !noMapUIDRegExp.test(tag) || mapAnywayRegExp.test(tag);
@@ -183,10 +184,17 @@ async function apply(organizeOptions) {
     //
     // finally, scan through the files from the input directory and save them to the output
     //
-    dcmjs.log.level = dcmjs.log.levels.ERROR;
+    //dcmjs.log.level = dcmjs.log.levels.ERROR; // for the npm packaged version
+    dcmjs.log.setLevel(dcmjs.log.levels.ERROR); // for the locally built version
+    dcmjs.log.getLogger("validation.dcmjs").setLevel(dcmjs.log.levels.SILENT); // TODO: can't be done from npm version
 
     const fileEntryList = await scanDirectory(organizeOptions.inputDirectory);
+    let entryCount = 0;
     for (let fileEntry of fileEntryList) {
+        entryCount++;
+        if (entryCount % 100 == 0) {
+            console.log(`Processing file ${entryCount} of ${fileEntryList.length}`);
+        }
 
         mappingOptions.fileEntry = fileEntry;
 
@@ -194,9 +202,16 @@ async function apply(organizeOptions) {
         const fileArrayBuffer = await file.arrayBuffer();
         // TODO: capture validation data in object and save as part of results object
         const dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer);
-        const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
+
+        // Remove private tags
+        for (let hexTag in dicomData.dict) {
+            if (Number(hexTag[3] % 2) == 1) {
+                delete dicomData.dict[hexTag];
+            }
+        }
 
         // do the actually header mapping
+        const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
         const mapResults = applyMappings(naturalData, mappingOptions);
 
         // process the results and save the modified dataset
