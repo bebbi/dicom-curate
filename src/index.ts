@@ -1,4 +1,5 @@
 import * as dcmjs from "dcmjs"
+import * as mapdefaults from "./mapdefaults.js"
 
 function getLog() {
     return dcmjs.log.currentLevel;
@@ -110,27 +111,45 @@ function applyMappings(dicomData, mappingOptions) {
     // use filePath populated by mappingFunctions
     mapResults.filePath = filePath.join("/");
 
-    // apply previously collected uid mappings or create new ones
-    //for tag in mapResults.dicomData
+    // TODO: track the mappings done here for the log
     const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
-    // TODO: RecordUID, SchemeUID, ContextUID, ResourceUID, TemplateUID?
-    const noMapUIDRegExp = /SyntaxUID|ClassUID/;
-    const mapAnywayRegExp = /ManufacturerDeviceClassUID/;
     for (let tag in mapResults.dicomData) {
-        const mapTag = !noMapUIDRegExp.test(tag) || mapAnywayRegExp.test(tag);
-        if (tag in nameMap && mapTag) {
+        if (/_.*/.test(tag) {
+            continue; // ignore tags marked internal with leading underscore
+        }
+        if (tag in nameMap) {
             let vr = nameMap[tag].vr;
             if (vr == "UI") {
-                const uid = mapResults.dicomData[tag];
-                if ( ! (uid in mappingOptions.uidMappings) ) {
-                   mappingOptions.uidMappings[uid] = {
-                      tag: tag,
-                      mappedUID: dcmjsModule.data.DicomMetaDictionary.uid(),
-                   };
+                // apply previously collected uid mappings or create new ones
+                // - only map uid tags that are instance-specific
+                //   (i.e. not SOPClassUID or TransferSyntaxUID)
+                if (tag in mapdefaults.instanceUIDs) {
+                    const uid = mapResults.dicomData[tag];
+                    if ( ! (uid in mappingOptions.uidMappings) ) {
+                       mappingOptions.uidMappings[uid] = {
+                          tag: tag,
+                          mappedUID: dcmjsModule.data.DicomMetaDictionary.uid(),
+                       };
+                    }
+                    mapResults.dicomData[tag] = mappingOptions.uidMappings[uid].mappedUID;
                 }
-                mapResults.dicomData[tag] = mappingOptions.uidMappings[uid].mappedUID;
+            } else {
+                // other tags are handled according to mapdefaults rules
+                if (tag in mapdefaults.tagNamesToEmpty) {
+                    delete mapResults.dicomData[tag];
+                } else {
+                    if (! tag in mapdefaults.tagNamesToAlwaysKeep) {
+                        console.error(`instance contains tag ${tag} that is not defined in mapdefaults.  Deleting it.`);
+                        delete mapResults.dicomData[tag];
+                    }
+                }
             }
+        } else {
+            // TODO: this should go in the validation log
+            console.error(`instance contains tag ${tag} that is not in dictionary.  Deleting it.`);
+            delete mapResults.dicomData[tag];
         }
+
     }
 
     return mapResults;
@@ -204,6 +223,7 @@ async function apply(organizeOptions) {
         const dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer);
 
         // Remove private tags
+        // TODO: add option for `allowlist` of private tags
         for (let hexTag in dicomData.dict) {
             if (Number(hexTag[3] % 2) == 1) {
                 delete dicomData.dict[hexTag];
