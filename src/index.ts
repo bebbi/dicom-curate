@@ -114,6 +114,7 @@ function applyMappings(dicomData, mappingOptions) {
     // TODO: track the mappings done here for the log
     const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
     for (let tag in mapResults.dicomData) {
+        if (/_.*/.test(tag)) {
         if (/_.*/.test(tag) {
             continue; // ignore tags marked internal with leading underscore
         }
