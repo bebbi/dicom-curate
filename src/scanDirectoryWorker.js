@@ -42,4 +42,5 @@ async function scanDirectory(dir) {
 
   await traverse(dir, dir.name);
   self.postMessage({ response: "done" });
+  self.close();
 }
