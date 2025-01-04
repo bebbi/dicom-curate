@@ -4,7 +4,17 @@ import * as mapdefaults from "./mapdefaults.js"
 self.addEventListener("message", (event) => {
   switch (event.data.request) {
     case 'apply':
-      applyMappings(event.data.fileInfo, event.data.mappingOptions);
+      try {
+        applyMappings(event.data.fileInfo, event.data.mappingOptions).then( (mapResults) => {
+          self.postMessage({
+            response: "finished",
+            mapResults: mapResults,
+          });
+        });
+      } catch (error) {
+        self.postMessage({response: "error", error});
+        throw new Error("ERROR");
+      }
       break;
     default:
       console.error(`Unknown request ${event.data.request}`);
@@ -38,14 +48,9 @@ async function createNestedDirectories(topLevelDirectoryHandle, path) {
   return currentDirectoryHandle;
 }
 
-function applyMappings(fileInfo, mappingOptions) {
+async function applyMappings(fileInfo, mappingOptions) {
 
-    const mapResults = {
-        sourceInstanceUID: dicomData.SOPInstanceUID,
-        dicomData: dicomData,
-        filePath: "",
-        tagMappings: {},
-    };
+    const mapResults = {};
 
     //
     // First, read the dicom instance data from the file handle
@@ -69,7 +74,7 @@ function applyMappings(fileInfo, mappingOptions) {
 
     // Make make the naturalized data so parser code operates on with tags not hex
     const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
-
+    mapResults.sourceInstanceUID = naturalData.SOPInstanceUID;
 
     //
     // Then, do the actually header mapping
@@ -80,7 +85,7 @@ function applyMappings(fileInfo, mappingOptions) {
         getFilePathComp: (component) => {
             const pathComponents = mappingOptions.folderMappings.split("/");
             const componentIndex = pathComponents.indexOf(component);
-            const filePathComponents = mappingOptions.fileEntry.path.split("/");
+            const filePathComponents = fileInfo.path.split("/");
             return(filePathComponents[componentIndex]);
         },
         getMapping: (value, fromColumn, toColumn) => {
@@ -89,7 +94,7 @@ function applyMappings(fileInfo, mappingOptions) {
             return mappingOptions.fieldMappings.rowValues[rowIndex][columnIndex];
         },
         getDicom: (tagName) => {
-            return(dicomData[tagName]);
+            return(naturalData[tagName]);
         },
         addDays: (dicomDateString, offsetDays) => {
             const year = Number(dicomDateString.slice(0,4));
@@ -114,17 +119,18 @@ function applyMappings(fileInfo, mappingOptions) {
     mapResults.filePath = filePath.join("/");
 
     // collect the tag mappings before assigning them into dicomData
+    mapResults.tagMappings = {};
     for (let tag in dicom) {
         mapResults.tagMappings[tag] = dicom[tag]();
     }
     for (let tag in mapResults.tagMappings) {
-        mapResults.dicomData[tag] = mapResults.tagMappings[tag];
+        naturalData[tag] = mapResults.tagMappings[tag];
     }
 
     // Now apply the standard mappings
     // TODO: track the mappings done here for the log
     const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
-    for (let tag in mapResults.dicomData) {
+    for (let tag in naturalData) {
         if (/_.*/.test(tag)) {
             continue; // ignore tags marked internal with leading underscore
         }
@@ -135,39 +141,39 @@ function applyMappings(fileInfo, mappingOptions) {
                 // - only map uid tags that are instance-specific
                 //   (i.e. not SOPClassUID or TransferSyntaxUID)
                 if (tag in mapdefaults.instanceUIDs) {
-                    const uid = mapResults.dicomData[tag];
+                    const uid = dicomData[tag];
                     if ( ! (uid in mappingOptions.uidMappings) ) {
                        mappingOptions.uidMappings[uid] = {
                           tag: tag,
                           mappedUID: dcmjsModule.data.DicomMetaDictionary.uid(),
                        };
                     }
-                    mapResults.dicomData[tag] = mappingOptions.uidMappings[uid].mappedUID;
+                    naturalData[tag] = mappingOptions.uidMappings[uid].mappedUID;
                 }
             } else {
                 // other tags are handled according to mapdefaults rules
                 if (tag in mapdefaults.tagNamesToEmpty) {
-                    delete mapResults.dicomData[tag];
+                    delete naturalData[tag];
                 } else {
                     if (! tag in mapdefaults.tagNamesToAlwaysKeep) {
                         console.error(`instance contains tag ${tag} that is not defined in mapdefaults.  Deleting it.`);
-                        delete mapResults.dicomData[tag];
+                        delete naturalData[tag];
                     }
                 }
             }
         } else {
             // TODO: this should go in the validation log
             console.error(`instance contains tag ${tag} that is not in dictionary.  Deleting it.`);
-            delete mapResults.dicomData[tag];
+            delete naturalData[tag];
         }
     }
 
     // Finally, write the results
     const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
     const fileName = mapResults.filePath.split("/").slice(-1);
-    dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(mapResults.dicomData);
+    dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData);
     const modifiedArrayBuffer = dicomData.write();
-    const subDirctoryHandle = await createNestedDirectories(organizeOptions.outputDirectory, dirPath);
+    const subDirctoryHandle = await createNestedDirectories(mappingOptions.outputDirectory, dirPath);
     if (subDirctoryHandle == false) {
         console.error(`Cannot create directory for ${dirPath}`);
     } else {
@@ -177,8 +183,6 @@ function applyMappings(fileInfo, mappingOptions) {
         await writable.close();
     }
 
-    self.postMessage({
-      response: "finished",
-      mapResults: mapResults,
-    });
+    return mapResults;
+
 }

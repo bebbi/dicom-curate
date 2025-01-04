@@ -1,4 +1,8 @@
 
+//const mappingWorkerCount = 2;
+const mappingWorkerCount = navigator.hardwareConcurrency;
+
+
 //
 // Directory scanner web worker management
 //
@@ -10,19 +14,20 @@
 //   response: 'done'
 //
 // TODO: implement a buffering stream to request fileHandles in batches
-const workerFileList = [];
+const filesToProcess = [];
 const fileListWorker = new Worker(new URL("./scanDirectoryWorker.js", import.meta.url));
 let directoryScanFinished = false;
 fileListWorker.addEventListener("message", (event) => {
   switch (event.data.response) {
     case 'file':
-      workerFileList.push(event.data.fileInfo);
-      if (workerFileList.length > 10) {
+      filesToProcess.push(event.data.fileInfo);
+      if (filesToProcess.length > 10) {
         fileListWorker.postMessage({ request: "stop" });
       }
       dispatchMappingJobs();
       break;
     case 'done':
+      console.log("directoryScanFinished");
       directoryScanFinished = true;
       break;
     default:
@@ -41,56 +46,57 @@ fileListWorker.addEventListener("message", (event) => {
 //   response: 'finished', mapResults
 //
 let mappingOptions = {}; // TODO: only send to worker once
-const freeMappingWorkers = [];
-const busyStateByWorker = {};
+const availableMappingWorkers = [];
+let workersActive = 0;
 const mappingResultList = [];
 
-for (let workerIndex = 0; workerIndex < navigator.hardwareConcurrency; workerIndex++) {
-  const mappingWorker = new Worker(new URL("./applyMappingsWorker.js", import.meta.url), {type: 'module'});
+for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
+  let mappingWorker = new Worker(new URL("./applyMappingsWorker.js", import.meta.url), {type: 'module'});
+  mappingWorker.onerror = console.error;
 
   mappingWorker.addEventListener("message", (event) => {
     switch (event.data.response) {
       case 'finished':
-        mappingResultList.push(event.data.mappingResults);
-        freeMappingWorkers.push(mappingWorker);
+        availableMappingWorkers.push(mappingWorker);
+        mappingResultList.push(event.data.mapResults);
+        workersActive -= 1;
         dispatchMappingJobs();
+        if ((mappingResultList.length-1) % 100 == 0) {
+          console.log(`Finished mapping ${mappingResultList.length} files`);
+        }
         break;
       default:
         console.error(`Unknown response from worker ${event.data.response}`);
     }
   });
 
-  busyStateByWorker[mappingWorker] = false;
-  freeMappingWorkers.push(mappingWorker);
+  availableMappingWorkers.push(mappingWorker);
 }
 
 function dispatchMappingJobs() {
-  const workersFree = Object.values(busyStateByWorker).reduce((a,b) => {return a && b});
-  if ( directoryScanFinished && workersFree ) {
-    console.log("job is finished");
-  }
-  while (workerFileList.length > 0 && freeMappingWorkers.length > 0) {
-    const fileInfo = workerFileList.pop();
-    const mappingWorker = freeMappingWorkers.pop();
+  while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
+    const fileInfo = filesToProcess.pop();
+    const mappingWorker = availableMappingWorkers.pop();
     mappingWorker.postMessage({
       request: 'apply',
       fileInfo: fileInfo,
       mappingOptions: mappingOptions,
     });
-    busyStateByWorker[mappingWorker] = true;
+    workersActive += 1;
   }
-
-  if ((mappingResultList.length-1) % 100 == 0) {
-    console.log(`Finished mapping ${mappingResultList.length} files`);
+  if ( workersActive == 0 && directoryScanFinished && filesToProcess.length == 0 ) {
+    console.log("job is finished");
+    console.log(mappingResultList);
   }
 }
 
 async function collectMappingOptions(organizeOptions) {
 
     //
-    // first, get the folder mappings
+    // first, get the folder mappings and set output directory
     //
     mappingOptions.folderMappings = organizeOptions.filePathPattern;
+    mappingOptions.outputDirectory = organizeOptions.outputDirectory;
 
     //
     // then, get the field mappings from the csv file
@@ -125,7 +131,7 @@ async function collectMappingOptions(organizeOptions) {
 
 async function apply(organizeOptions) {
   fileListWorker.postMessage({ request: "scan", directoryHandle: organizeOptions.inputDirectory });
-  await collectMappingOptions(organizeOptions); // sets global
+  await collectMappingOptions(organizeOptions); // sets global mappingOptions
   dispatchMappingJobs();
 }
 
