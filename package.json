@@ -45,6 +45,9 @@
     "validate": "bebbi-scripts validate",
     "prepare": "husky install"
   },
+  "dependencies": {
+    "dcmjs": "^0.37.0"
+  },
   "devDependencies": {
     "bebbi-scripts": "^0.6.0",
     "husky": "^8.0.3"
