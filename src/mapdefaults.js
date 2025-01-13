@@ -13,6 +13,7 @@ var instanceUIDs = [
     "PrivateCodingSchemeCreatorUID",
     "CodeSetExtensionCreatorUID",
     "RefSOPInstanceUID",
+    "ReferencedSOPInstanceUID",
     "TransactionUID",
     "IrradiationEventUID",
     "CreatorVersionUID",
