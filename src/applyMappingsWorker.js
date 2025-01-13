@@ -1,5 +1,11 @@
-import * as dcmjs from "dcmjs"
-import * as mapdefaults from "./mapdefaults.js"
+import * as dcmjs from "dcmjs";
+import * as mapdefaults from "./mapdefaults.js";
+import * as uuid from "uuid";
+
+// value defined here:
+// https://www.rfc-editor.org/rfc/rfc9562#name-uuid-version-5
+const oidNamespace = "6ba7b812-9dad-11d1-80b4-00c04fd430c8";
+const uuidBasedUIDPrefix = "2.25.";
 
 self.addEventListener("message", (event) => {
   switch (event.data.request) {
@@ -21,6 +27,16 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// See https://github.com/bebbi/dcm-organize/issues/7
+function uidToV5BasedUID(uid) {
+  const hashedUID = uuid.v5(uid, oidNamespace);
+  const hashedUIDBytes = uuid.parse(hashedUID);
+  let mappedUID = uuidBasedUIDPrefix;
+  for (const byte of hashedUIDBytes) {
+    mappedUID += String(byte).padStart(3, '0');
+  }
+  return mappedUID;
+}
 
 async function createNestedDirectories(topLevelDirectoryHandle, path) {
   const pathSegments = path.split('/').filter(segment => segment !== '');
@@ -58,9 +74,8 @@ async function applyMappings(fileInfo, mappingOptions) {
     const file = await fileInfo.fileHandle.getFile();
     const fileArrayBuffer = await file.arrayBuffer();
     // TODO: capture validation data in object and save as part of results object
-    //dcmjs.log.level = dcmjs.log.levels.ERROR; // for the npm packaged version
-    dcmjs.log.setLevel(dcmjs.log.levels.ERROR); // for the locally built version
-    dcmjs.log.getLogger("validation.dcmjs").setLevel(dcmjs.log.levels.SILENT); // TODO: can't be done from npm version
+    dcmjs.log.setLevel(dcmjs.log.levels.ERROR);
+    dcmjs.log.getLogger("validation.dcmjs").setLevel(dcmjs.log.levels.SILENT);
     const dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer);
 
     //
@@ -128,45 +143,47 @@ async function applyMappings(fileInfo, mappingOptions) {
     }
 
     // Now apply the standard mappings
-    // TODO: track the mappings done here for the log
     const nameMap = dcmjs.data.DicomMetaDictionary.nameMap;
-    for (let tag in naturalData) {
-        if (/_.*/.test(tag)) {
-            continue; // ignore tags marked internal with leading underscore
-        }
-        if (tag in nameMap) {
-            let vr = nameMap[tag].vr;
-            if (vr == "UI") {
-                // apply previously collected uid mappings or create new ones
-                // - only map uid tags that are instance-specific
-                //   (i.e. not SOPClassUID or TransferSyntaxUID)
-                if (tag in mapdefaults.instanceUIDs) {
-                    const uid = dicomData[tag];
-                    if ( ! (uid in mappingOptions.uidMappings) ) {
-                       mappingOptions.uidMappings[uid] = {
-                          tag: tag,
-                          mappedUID: dcmjsModule.data.DicomMetaDictionary.uid(),
-                       };
-                    }
-                    naturalData[tag] = mappingOptions.uidMappings[uid].mappedUID;
-                }
-            } else {
-                // other tags are handled according to mapdefaults rules
-                if (tag in mapdefaults.tagNamesToEmpty) {
-                    delete naturalData[tag];
-                } else {
-                    if (! tag in mapdefaults.tagNamesToAlwaysKeep) {
-                        console.error(`instance contains tag ${tag} that is not defined in mapdefaults.  Deleting it.`);
-                        delete naturalData[tag];
-                    }
-                }
+    // Recursive function to handle sequences (naturalData is a top-level data)
+    function mapTagsInData (data) {
+        for (let tag of Object.keys(data)) {
+            if (/_.*/.test(tag)) {
+                continue; // ignore tags marked internal with leading underscore
             }
-        } else {
-            // TODO: this should go in the validation log
-            console.error(`instance contains tag ${tag} that is not in dictionary.  Deleting it.`);
-            delete naturalData[tag];
+            if (tag in nameMap) { // means it's a known tag
+                let vr = nameMap[tag].vr;
+                if (vr == "SQ") {
+                    for (let subdata of Object.values(data[tag])) {
+                        mapTagsInData(subdata);
+                    }
+                } else {
+                  if (vr == "UI") {
+                      if (mapdefaults.instanceUIDs.indexOf(tag) != -1) { // UIDs that need to be mapped
+                          const uid = data[tag];
+                          const mappedUID = uidToV5BasedUID(uid);
+                          data[tag] = mappedUID;
+                          mapResults.tagMappings[tag] = mappedUID;
+                      }
+                  } else {
+                      // other tags are handled according to mapdefaults rules
+                      if (tag in mapdefaults.tagNamesToEmpty) {
+                          delete data[tag];
+                      } else {
+                          if (! tag in mapdefaults.tagNamesToAlwaysKeep) {
+                              console.error(`instance contains tag ${tag} that is not defined in mapdefaults.  Deleting it.`);
+                              delete data[tag];
+                          }
+                      }
+                  }
+               }
+            } else {
+                // TODO: this should go in the validation log
+                console.error(`instance contains non-private tag ${tag} that is not in dictionary.  Deleting it.`);
+                delete data[tag];
+            }
         }
     }
+    mapTagsInData(naturalData);
 
     // Finally, write the results
     const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
@@ -184,5 +201,4 @@ async function applyMappings(fileInfo, mappingOptions) {
     }
 
     return mapResults;
-
 }
