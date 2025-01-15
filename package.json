@@ -43,11 +43,21 @@
     "format": "bebbi-scripts format",
     "lint": "bebbi-scripts lint",
     "validate": "bebbi-scripts validate",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate-profile": "node scripts/generateConfidentialityProfile.js"
   },
   "devDependencies": {
+    "@types/tar-stream": "^3",
+    "@types/xml2js": "^0",
+    "axios": "^1.7.9",
     "bebbi-scripts": "^0.6.0",
-    "husky": "^8.0.3"
+    "bz2": "^1.0.1",
+    "eslint": "^8.52.0",
+    "husky": "^8.0.3",
+    "prettier": "^3.1.0",
+    "prettier-eslint": "^16.1.2",
+    "tar-stream": "^3.1.7",
+    "xml2js": "^0.6.2"
   },
   "license": "MIT",
   "packageManager": "yarn@4.5.3"
