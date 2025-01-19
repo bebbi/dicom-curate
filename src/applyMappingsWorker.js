@@ -36,6 +36,7 @@ function uidToV5BasedUID(uid) {
   for (const byte of hashedUIDBytes) {
     mappedUID += String(byte).padStart(3, '0');
   }
+  mappedUID = mappedUID.replace(/^0+/, '');
   return mappedUID;
 }
 
