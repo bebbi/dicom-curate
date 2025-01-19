@@ -37,6 +37,7 @@ var instanceUIDs = [
     "RelatedFrameOfReferenceUID",
     "DoseReferenceUID",
     "MediaStorageSOPInstanceUID"
+    "StorageMediaFileSetID"
 ];
 
 var tagNamesToEmpty = [
