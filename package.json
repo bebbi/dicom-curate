@@ -47,9 +47,11 @@
   },
   "dependencies": {
     "dcmjs": "^0.37.0",
+    "lodash": "^4.17.21",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
+    "@types/lodash": "^4",
     "bebbi-scripts": "^0.6.0",
     "husky": "^8.0.3"
   },
