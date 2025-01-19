@@ -8,6 +8,8 @@ import {get as _get, set as _set, unset as _unset, cloneDeep as _cloneDeep} from
 const oidNamespace = "6ba7b812-9dad-11d1-80b4-00c04fd430c8";
 const uuidBasedUIDPrefix = "2.25.";
 
+const EXPLICIT_LITTLE_ENDIAN = "1.2.840.10008.1.2.1"
+
 self.addEventListener("message", (event) => {
   switch (event.data.request) {
     case 'apply':
@@ -65,6 +67,24 @@ async function createNestedDirectories(topLevelDirectoryHandle, path) {
 
   // Return the last directory handle
   return currentDirectoryHandle;
+}
+
+function mapMetaheader(metaHeader) {
+    const naturalMetadata = dcmjs.data.DicomMetaDictionary.naturalizeDataset(metaHeader);
+    // save the UID to add back later
+    const instanceUID = naturalMetadata.MediaStorageSOPInstanceUID;
+    // keep only the bare set of tags needed to make valid metaheader
+    for (let tag in naturalMetadata) {
+        if (mapdefaults.metaheaderTagsToKeep.indexOf(tag) == -1) {
+           delete naturalMetadata[tag];
+        }
+    }
+    // add the UID and transfer syntax explicitly
+    const mappedUID = uidToV5BasedUID(instanceUID);
+    naturalMetadata.MediaStorageSOPInstanceUID = mappedUID;
+    naturalMetadata.TransferSynxtaxUID = EXPLICIT_LITTLE_ENDIAN; // dcmjs always writes this
+    const mappedMetaheader = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalMetadata);
+    return mappedMetaheader;
 }
 
 function collectMappings(fileInfo, dicomData, mappingOptions) {
@@ -188,7 +208,7 @@ function collectMappings(fileInfo, dicomData, mappingOptions) {
                   }
                }
             } else {
-                mapResults.anomalies.push(`instance contains non-private tag ${tag} that is not in dictionary.  Marking it for deletion.`);
+                mapResults.anomalies.push(`instance contains tag ${tag} that is not in dictionary.  Marking it for deletion.`);
                 mapResults.mappings[tagPath] = [data[tag], "delete", undefined];
             }
         }
@@ -236,14 +256,15 @@ async function applyMappings(fileInfo, mappingOptions) {
         }
     }
 
-// TODO: apply mappings to metaheader information
-// TODO: doublecheck logic for private tags in sequences (check dictionary version)
-
+    // apply a hard-coded mapping to the metaheader data since
+    // it is of a highly constrained format
+    dicomData.meta = mapMetaheader(dicomData.meta);
 
     // Finally, write the results
     const dirPath = mapResults.filePath.split("/").slice(0,-1).join("/");
     const fileName = mapResults.filePath.split("/").slice(-1);
     dicomData.dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData);
+    // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
     const modifiedArrayBuffer = dicomData.write();
     const subDirctoryHandle = await createNestedDirectories(mappingOptions.outputDirectory, dirPath);
     if (subDirctoryHandle == false) {
