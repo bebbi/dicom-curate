@@ -36,8 +36,15 @@ var instanceUIDs = [
     "ReferencedFrameOfReferenceUID",
     "RelatedFrameOfReferenceUID",
     "DoseReferenceUID",
-    "MediaStorageSOPInstanceUID"
+    "MediaStorageSOPInstanceUID",
     "StorageMediaFileSetID"
+];
+
+var metaheaderTagsToKeep = [
+    "FileMetaInformationVersion",
+    "ImplementationClassUID",
+    "ImplementationVersionName",
+    "MediaStorageSOPClassUID"
 ];
 
 var tagNamesToEmpty = [
@@ -1061,4 +1068,4 @@ var tagNamesToAlwaysKeep = [
     "RefContentItemIdentifier"
 ];
 
-export { instanceUIDs, tagNamesToEmpty, tagNamesToAlwaysKeep };
+export { instanceUIDs, metaheaderTagsToKeep, tagNamesToEmpty, tagNamesToAlwaysKeep };
