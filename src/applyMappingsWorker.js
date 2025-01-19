@@ -32,11 +32,12 @@ self.addEventListener("message", (event) => {
 function uidToV5BasedUID(uid) {
   const hashedUID = uuid.v5(uid, oidNamespace);
   const hashedUIDBytes = uuid.parse(hashedUID);
-  let mappedUID = uuidBasedUIDPrefix;
+  let hashedString = ""
   for (const byte of hashedUIDBytes) {
-    mappedUID += String(byte).padStart(3, '0');
+    hashedString += String(byte).padStart(3, '0');
   }
-  mappedUID = mappedUID.replace(/^0+/, '');
+  hashedString = hashedString.replace(/^0+/, '');
+  let mappedUID = uuidBasedUIDPrefix + hashedString;
   return mappedUID;
 }
 
