@@ -200,7 +200,7 @@ function collectMappings(fileInfo, dicomData, mappingOptions) {
                       if (tag in mapdefaults.tagNamesToEmpty) {
                           mapResults.mappings[tagPath] = [data[tag], "delete", undefined];
                       } else {
-                          if (! tag in mapdefaults.tagNamesToAlwaysKeep) {
+                          if (! (tag in mapdefaults.tagNamesToAlwaysKeep) ) {
                               mapResults.anomalies.push(`instance contains tag ${tag} that is not defined in mapdefaults.  Marking it for deletion.`);
                               mapResults.mappings[tagPath] = [data[tag], "delete", undefined];
                           }
