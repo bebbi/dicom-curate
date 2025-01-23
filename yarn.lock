@@ -3949,6 +3949,7 @@ __metadata:
     dcmjs: "npm:^0.37.0"
     husky: "npm:^8.0.3"
     lodash: "npm:^4.17.21"
+    prettier: "npm:^3.4.2"
     uuid: "npm:^11.0.5"
   languageName: unknown
   linkType: soft
@@ -7986,7 +7987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.2.5":
+"prettier@npm:^3.2.5, prettier@npm:^3.4.2":
   version: 3.4.2
   resolution: "prettier@npm:3.4.2"
   bin:
