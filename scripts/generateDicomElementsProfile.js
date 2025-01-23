@@ -55,7 +55,7 @@ async function main() {
         const jsContent = `// Auto-generated file containing DICOM elements to always keep
 // Generated on: ${new Date().toISOString()}
 
-var elementNamesToAlwaysKeep = [
+export const elementNamesToAlwaysKeep = [
     ${[...preserveSet].map(e => `"${e}"`).join(',\n    ')}
 ];
 `;
