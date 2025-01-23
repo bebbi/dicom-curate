@@ -1,7 +1,7 @@
 // Auto-generated file containing DICOM elements to always keep
 // Generated on: 2025-01-21T15:04:08.918Z
 
-var elementNamesToAlwaysKeep = [
+export const elementNamesToAlwaysKeep = [
   'LengthToEnd',
   'SpecificCharacterSet',
   'LanguageCodeSequence',
