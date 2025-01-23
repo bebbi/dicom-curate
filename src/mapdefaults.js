@@ -6,7 +6,7 @@
 // Especially, looking at "*Time" tags, while time alone may not be critical,
 // we could develop a more consistent approach.
 
-var instanceUIDs = [
+const instanceUIDs = [
   'InstanceCreatorUID',
   'SOPInstanceUID',
   'FailedSOPInstanceUIDList',
@@ -40,14 +40,14 @@ var instanceUIDs = [
   'StorageMediaFileSetID',
 ]
 
-var metaheaderTagsToKeep = [
+const metaheaderTagsToKeep = [
   'FileMetaInformationVersion',
   'ImplementationClassUID',
   'ImplementationVersionName',
   'MediaStorageSOPClassUID',
 ]
 
-var tagNamesToEmpty = [
+const tagNamesToEmpty = [
   // please override these in specificReplaceDefaults to have useful values
   'PatientID',
   'PatientName',
@@ -281,7 +281,7 @@ var tagNamesToEmpty = [
 ]
 
 // list of safe tags (CTP: listed with just empty replacement value)
-var tagNamesToAlwaysKeep = [
+const tagNamesToAlwaysKeep = [
   //  the first here are specific to this tools workings
   'Item',
   'ItemDelimitationItem',
