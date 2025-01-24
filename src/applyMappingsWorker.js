@@ -300,14 +300,14 @@ async function applyMappings(fileInfo, mappingOptions) {
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
   const modifiedArrayBuffer = dicomData.write()
-  const subDirctoryHandle = await createNestedDirectories(
+  const subDirectoryHandle = await createNestedDirectories(
     mappingOptions.outputDirectory,
     dirPath,
   )
-  if (subDirctoryHandle == false) {
+  if (subDirectoryHandle == false) {
     console.error(`Cannot create directory for ${dirPath}`)
   } else {
-    const fileHandle = await subDirctoryHandle.getFileHandle(fileName, {
+    const fileHandle = await subDirectoryHandle.getFileHandle(fileName, {
       create: true,
     })
     const writable = await fileHandle.createWritable()
