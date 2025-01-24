@@ -136,11 +136,11 @@ async function collectMappingOptions(organizeOptions) {
 }
 
 async function apply(organizeOptions) {
+  await collectMappingOptions(organizeOptions) // sets global mappingOptions
   fileListWorker.postMessage({
     request: 'scan',
     directoryHandle: organizeOptions.inputDirectory,
   })
-  await collectMappingOptions(organizeOptions) // sets global mappingOptions
   dispatchMappingJobs()
 }
 
