@@ -124,7 +124,7 @@ function collectMappings(fileInfo, dicomData, mappingOptions) {
   // TODO: put this in recursive function to find nested private tags
   // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
   for (let hexTag in dicomData.dict) {
-    if (Number(hexTag[3] % 2) == 1) {
+    if (Number(hexTag[3]) % 2 === 1) {
       mapResults.mappings['x' + hexTag] = [
         String(dicomData.dict[hexTag].Value),
         'delete',
