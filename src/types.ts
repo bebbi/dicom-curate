@@ -26,7 +26,7 @@ export type TMapResults = {
   sourceInstanceUID: string
   filePath: string
   mappings: {
-    [lodashPath: string]:
+    [objectPath: string]:
       | [string, 'replace', string]
       | [string, 'delete', undefined]
   }
