@@ -6,7 +6,7 @@ const oidNamespace = '6ba7b812-9dad-11d1-80b4-00c04fd430c8'
 const uuidBasedUIDPrefix = '2.25.'
 
 // See https://github.com/bebbi/dcm-organize/issues/7
-export default function uidToV5BasedUID(uid) {
+export default function uidToV5BasedUID(uid: string) {
   const hashedUID = uuid.v5(uid, oidNamespace)
   const hashedUIDBytes = uuid.parse(hashedUID)
   let hashedString = ''

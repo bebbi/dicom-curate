@@ -19,5 +19,16 @@ export type TFileInfo = {
   path: string
   name: string
   size: number
-  fileHandle: FileSystemFileHandle | FileSystemDirectoryHandle
+  fileHandle: FileSystemFileHandle
+}
+
+export type TMapResults = {
+  sourceInstanceUID: string
+  filePath: string
+  mappings: {
+    [lodashPath: string]:
+      | [string, 'replace', string]
+      | [string, 'delete', undefined]
+  }
+  anomalies: string[]
 }

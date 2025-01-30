@@ -1,3 +1,5 @@
+declare var self: Window & typeof globalThis
+
 let keepScanning = true
 
 self.addEventListener('message', (event) => {
@@ -17,11 +19,11 @@ self.addEventListener('message', (event) => {
   }
 })
 
-async function scanDirectory(dir) {
-  async function traverse(dir, prefix) {
+async function scanDirectory(dir: FileSystemDirectoryHandle) {
+  async function traverse(dir: FileSystemDirectoryHandle, prefix: string) {
     for await (const entry of dir.values()) {
       if (entry.kind === 'file') {
-        const file = await entry.getFile()
+        const file = await (entry as FileSystemFileHandle).getFile()
         self.postMessage({
           response: 'file',
           fileInfo: {
@@ -33,7 +35,10 @@ async function scanDirectory(dir) {
         })
       } else if (entry.kind === 'directory') {
         if (keepScanning) {
-          await traverse(entry, prefix + '/' + entry.name)
+          await traverse(
+            entry as FileSystemDirectoryHandle,
+            prefix + '/' + entry.name,
+          )
         }
       }
     }
