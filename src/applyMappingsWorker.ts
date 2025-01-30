@@ -1,7 +1,7 @@
 import * as dcmjs from 'dcmjs'
 import createNestedDirectories from './createNestedDirectories'
 import dcmOrganize from './dcmOrganize'
-import type { TFileInfo, TMappingOptions } from './types'
+import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 
 declare var self: Window & typeof globalThis
 
@@ -33,7 +33,12 @@ async function applyMappings(
   fileInfo: TFileInfo,
   outputDirectory: FileSystemDirectoryHandle,
   mappingOptions: TMappingOptions,
-) {
+): Promise<
+  // anomalies is minimally present.
+  Omit<Partial<TMapResults>, 'anomalies'> & {
+    anomalies: TMapResults['anomalies']
+  }
+> {
   //
   // First, read the dicom instance data from the file handle
   //
@@ -56,8 +61,11 @@ async function applyMappings(
     dcmOrganize(fileInfo.path, dicomData, mappingOptions)
 
   // Finally, write the results
-  const dirPath = clonedMapResults.filePath.split('/').slice(0, -1).join('/')
-  const fileName = clonedMapResults.filePath.split('/').slice(-1)[0]
+  const dirPath = clonedMapResults.outputFilePath
+    .split('/')
+    .slice(0, -1)
+    .join('/')
+  const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
 
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
   const modifiedArrayBuffer = mappedDicomData.write()

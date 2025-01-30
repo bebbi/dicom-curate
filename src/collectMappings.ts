@@ -25,7 +25,7 @@ export default function collectMappings(
   // "anomalies" : a list of text strings describing any unexpected contents of the data
   const mapResults: TMapResults = {
     sourceInstanceUID: '',
-    filePath: '',
+    outputFilePath: '',
     mappings: {},
     anomalies: [],
   }
@@ -60,10 +60,10 @@ export default function collectMappings(
 
   // run the mapping functions that set the following two variables
   let dicom: { [keyword: string]: () => string } = {}
-  let filePath: string[] = []
+  let outputFilePathComponents: string[] = []
   // TODO: try/except with useful error hinting at mappingFns
   eval(mappingOptions.mappingFunctions)
-  mapResults.filePath = filePath.join('/')
+  mapResults.outputFilePath = outputFilePathComponents.join('/')
 
   // collect the tag mappings before assigning them into dicomData
   // - Note the mappingFunctions return a dictionary called 'dicom' of functions to call
