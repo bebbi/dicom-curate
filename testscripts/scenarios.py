@@ -63,7 +63,7 @@ ACRIN-NSCLC-FDG-PET-003,patient_3,3
 
     with open(os.path.join(scenarioDir, "mappingConfig.js"), "w") as f:
       f.write("""
-dicom = {
+dicomModifications = {
 // List DICOM Header tags for which you want to change values:
 // It's important to assign something to PatientName and PatientID as otherwise
 // they will just get emptied by the default behaviour
@@ -89,11 +89,11 @@ dicom = {
 // filePath lists the components of the new path to be written.
 // If taken from old path, component names must be available in filePathPattern,
 // and actual file path must be deep enough for getFilePathComp to find its match
-filePath = [
+outputFilePathComponents = [
     parser.getFilePathComp('trialname'),
-    parser.getFilePathComp('centersubj') + '_OR_' + parser.getDicom('PatientID'),
+    parser.getFilePathComp('centersubj'),
     parser.getDicom('StudyDate'),
-    parser.getDicom('SeriesDescription') + '_' + parser.getDicom('SeriesNumber'),
+    parser.getDicom('SeriesDescription') + '=' + parser.getDicom('SeriesNumber'),
     parser.getDicom('InstanceNumber') + '.dcm'
 ];
 """)
