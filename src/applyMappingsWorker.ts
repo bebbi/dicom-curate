@@ -52,12 +52,12 @@ async function applyMappings(
     return mapResults
   }
 
-  const {
-    dicomData: mappedDicomData,
-    dirPath,
-    fileName,
-    mapResults: clonedMapResults,
-  } = dcmOrganize(fileInfo.path, dicomData, mappingOptions)
+  const { dicomData: mappedDicomData, mapResults: clonedMapResults } =
+    dcmOrganize(fileInfo.path, dicomData, mappingOptions)
+
+  // Finally, write the results
+  const dirPath = clonedMapResults.filePath.split('/').slice(0, -1).join('/')
+  const fileName = clonedMapResults.filePath.split('/').slice(-1)[0]
 
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
   const modifiedArrayBuffer = mappedDicomData.write()
