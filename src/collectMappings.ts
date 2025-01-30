@@ -1,6 +1,6 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
-import type { TFileInfo, TMappingOptions, TMapResults } from './types'
+import type { TMappingOptions, TMapResults } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
 import getParser from './getParser'
@@ -8,7 +8,7 @@ import * as mapdefaults from './mapdefaults'
 import { get as _get } from 'lodash'
 
 export default function collectMappings(
-  fileInfo: TFileInfo,
+  inputFilePath: string,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
@@ -51,7 +51,7 @@ export default function collectMappings(
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
   // create a parser object to be used in the eval'ed mappingFunctions
-  const parser = getParser(mappingOptions, fileInfo, naturalData)
+  const parser = getParser(mappingOptions, inputFilePath, naturalData)
 
   // run the mapping functions that set the following two variables
   let dicom: { [keyword: string]: () => string } = {}

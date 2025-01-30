@@ -3,12 +3,12 @@ import * as mapdefaults from './mapdefaults'
 import collectMappings from './collectMappings'
 import mapMetaheader from './mapMetaheader'
 import type { TDicomData } from 'dcmjs'
-import type { TFileInfo, TMappingOptions } from './types'
+import type { TMappingOptions } from './types'
 
 import { set as _set, unset as _unset, cloneDeep as _cloneDeep } from 'lodash'
 
 export default function dcmOrganize(
-  fileInfo: TFileInfo,
+  inputFilePath: string,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ) {
@@ -16,7 +16,7 @@ export default function dcmOrganize(
   // Collect the mappings and apply them to the data
   //
   const [naturalData, mapResults] = collectMappings(
-    fileInfo,
+    inputFilePath,
     dicomData,
     mappingOptions,
   )
