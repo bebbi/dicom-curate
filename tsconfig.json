@@ -1,6 +1,8 @@
 {
   "extends": "bebbi-scripts/tsconfig.json",
   "compilerOptions": {
-    "allowJs": true
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["dom", "dom.asynciterable", "esnext"]
   }
 }

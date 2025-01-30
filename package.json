@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "description": "Organize and de-identify DICOM header data ",
   "type": "module",
-  "main": "dist/cjs/index.cjs",
+  "main": "dist/esm/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs"
+      "default": "./dist/esm/index.js"
     }
   },
   "files": [
@@ -37,7 +37,7 @@
   },
   "scripts": {
     "clean": "bebbi-scripts clean",
-    "build": "bebbi-scripts build",
+    "build": "bebbi-scripts build esm types",
     "watch": "bebbi-scripts build --watch",
     "test": "bebbi-scripts test",
     "format": "bebbi-scripts format",
