@@ -24,7 +24,7 @@ export type TFileInfo = {
 
 export type TMapResults = {
   sourceInstanceUID: string
-  filePath: string
+  outputFilePath: string
   mappings: {
     [objectPath: string]:
       | [string, 'replace', string]
