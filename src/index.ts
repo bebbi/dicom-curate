@@ -6,6 +6,10 @@ import type {
   OrganizeOptions,
 } from './types'
 
+type TMappingWorkerOptions = TMappingOptions & {
+  outputDirectory: FileSystemDirectoryHandle
+}
+
 //const mappingWorkerCount = 2;
 const mappingWorkerCount = navigator.hardwareConcurrency
 
@@ -48,11 +52,11 @@ fileListWorker.addEventListener('message', (event) => {
 // Apply mappings web worker management
 //
 // worker accepts these messages:
-//   request: 'apply', fileInfo, mappingOptions
+//   request: 'apply', fileInfo, outDirectoryHandle, mappingOptions
 // worker sends these messages:
 //   response: 'finished', mapResults
 //
-let mappingOptions: Partial<TMappingOptions> = {} // TODO: only send to worker once
+let mappingWorkerOptions: Partial<TMappingWorkerOptions> = {} // TODO: only send to worker once
 const availableMappingWorkers: Worker[] = []
 let workersActive = 0
 const mapResultsList: TMapResults[] = []
@@ -89,7 +93,13 @@ function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const fileInfo = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
-    mappingWorker.postMessage({ request: 'apply', fileInfo, mappingOptions })
+    const { outputDirectory, ...mappingOptions } = mappingWorkerOptions
+    mappingWorker.postMessage({
+      request: 'apply',
+      fileInfo,
+      outputDirectory,
+      mappingOptions,
+    })
     workersActive += 1
   }
   if (
@@ -104,7 +114,7 @@ function dispatchMappingJobs() {
 
 async function collectMappingOptions(
   organizeOptions: OrganizeOptions,
-): Promise<TMappingOptions> {
+): Promise<TMappingWorkerOptions> {
   //
   // first, get the folder mappings and set output directory
   //
@@ -128,10 +138,10 @@ async function collectMappingOptions(
 }
 
 async function apply(organizeOptions: OrganizeOptions) {
-  // Set global mappingOptions
-  mappingOptions = (await collectMappingOptions(
+  // Set global mappingWorkerOptions
+  mappingWorkerOptions = (await collectMappingOptions(
     organizeOptions,
-  )) as TMappingOptions
+  )) as TMappingWorkerOptions
   fileListWorker.postMessage({
     request: 'scan',
     directoryHandle: organizeOptions.inputDirectory,
