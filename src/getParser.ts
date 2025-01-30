@@ -1,20 +1,20 @@
 import * as dcmjs from 'dcmjs'
 import { getCsvMapping } from './csvMapping'
-import type { TMappingOptions, TFileInfo } from './types'
+import type { TMappingOptions } from './types'
 import type { TNaturalData } from 'dcmjs'
 
 type TParserOptions = Pick<TMappingOptions, 'folderMappings' | 'fieldMappings'>
 
 export default function getParser(
   { folderMappings, fieldMappings }: TParserOptions,
-  fileInfo: TFileInfo,
+  inputFilePath: string,
   naturalData: TNaturalData,
 ) {
   return {
     getFilePathComp: (component: string) => {
       const pathComponents = folderMappings.split('/')
       const componentIndex = pathComponents.indexOf(component)
-      const filePathComponents = fileInfo.path.split('/')
+      const filePathComponents = inputFilePath.split('/')
       return filePathComponents[componentIndex]
     },
     getMapping: getCsvMapping.bind(null, fieldMappings),
