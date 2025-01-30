@@ -1,28 +1,17 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
-import type { TFileInfo, TMappingOptions } from './types'
+import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
 import getParser from './getParser'
 import * as mapdefaults from './mapdefaults'
 import { get as _get } from 'lodash'
 
-type TMapResults = {
-  sourceInstanceUID: string
-  filePath: string
-  mappings: {
-    [lodashPath: string]:
-      | [string, 'replace', string]
-      | [string, 'delete', undefined]
-  }
-  anomalies: string[]
-}
-
 export default function collectMappings(
   fileInfo: TFileInfo,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
-) {
+): [TNaturalData, TMapResults] {
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
   // filePath : assembled string of path components
@@ -104,7 +93,7 @@ export default function collectMappings(
           }
         } else {
           if (vr === 'UI') {
-            if (mapdefaults.instanceUIDs.indexOf(tag) != -1) {
+            if (mapdefaults.instanceUIDs.indexOf(tag) !== -1) {
               // UIDs that need to be mapped
               const uid = data[tag]
               const mappedUID = uidToV5BasedUID(uid)

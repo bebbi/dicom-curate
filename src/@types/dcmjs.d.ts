@@ -1,19 +1,41 @@
-/*
- * Handle with care, mostly AI generated and probably with some errors
- */
 declare module 'dcmjs' {
-  // Bug where it can be undefined too.
   export type TDicomDataValue = any[]
   export type TDicomDataEntry = { Value: TDicomDataValue; vr: string }
+  export type TDicomDataDict = { [hex: string]: TDicomDataEntry }
+
   export type TNaturalData = Record<string, any>
   export type TDicomData = {
-    meta: { [hex: string]: TDicomDataEntry }
-    dict: { [hex: string]: TDicomDataEntry }
+    meta: TDicomDataDict
+    dict: TDicomDataDict
+  }
+  export type TDicomDictionaryEntry = {
+    tag: string // e.g., "00100010"
+    vr: string // e.g., "PN"
+    vm: string // e.g., "1"
+    name: string // e.g., "PatientName"
+    version: string
+  }
+  export type TDicomDictionary = {
+    [tag: string]: TDicomDictionaryEntry
   }
 
   export namespace data {
+    class DicomDict {
+      constructor(meta: TDicomDataDict)
+      meta: TDicomDataDict
+      dict: TDicomDataDict
+      write(): ArrayBuffer
+      merge(other: DicomDict): void
+    }
+
+    class DicomMessage {
+      constructor(arrayBuffer: ArrayBuffer)
+      static readFile(fileArrayBuffer: ArrayBuffer): DicomDict
+    }
+
     class DicomMetaDictionary {
       static nameMap: Record<string, any>
+      static dictionary: TDicomDictionary
       static getTagFromName(name: string): string
       static getNameFromTag(tag: string): string
       static getVR(tag: string): string
@@ -23,54 +45,63 @@ declare module 'dcmjs' {
       static naturalizeDataset(
         dataset: Record<string, TDicomDataEntry>,
       ): TNaturalData
-      static denaturalizeDataset(dataset: TNaturalData): TDicomData
+      static denaturalizeDataset(
+        dataset: TNaturalData,
+      ): Record<string, TDicomDataEntry>
+    }
+
+    function datasetToDict(dataset: Dataset): Record<string, TDicomDataEntry>
+    function datasetToBuffer(dataset: Dataset): ArrayBuffer
+    function datasetToBlob(dataset: Dataset): Blob
+  }
+
+  export namespace log {
+    /**
+     * Sets the global logging level.
+     * @param level - The desired logging level.
+     */
+    function setLevel(level: LogLevel): void
+
+    /**
+     * Retrieves a logger instance by name.
+     * @param name - The name of the logger.
+     * @returns A logger instance.
+     */
+    function getLogger(name: string): Logger
+
+    /**
+     * Enumeration of available log levels.
+     */
+    const levels: {
+      TRACE: LogLevel
+      DEBUG: LogLevel
+      INFO: LogLevel
+      WARN: LogLevel
+      ERROR: LogLevel
+      SILENT: LogLevel
     }
   }
 
-  export namespace dicom {
-    class Dataset {
-      constructor(data?: Record<string, TDicomDataEntry>)
-      elements: Record<string, TDicomDataEntry>
-      getElement(tag: string): TDicomDataEntry | undefined
-      setElement(tag: string, value: TDicomDataEntry): void
-    }
-
-    class DicomDict {
-      constructor()
-      dataset: Dataset
-      dumpToConsole(): void
-      merge(other: DicomDict): void
-    }
+  /**
+   * Represents a logger with methods for various logging levels.
+   */
+  export interface Logger {
+    setLevel(level: LogLevel): void
+    trace(...msg: any[]): void
+    debug(...msg: any[]): void
+    info(...msg: any[]): void
+    warn(...msg: any[]): void
+    error(...msg: any[]): void
   }
 
-  export namespace utilities {
-    class DicomMessage {
-      constructor(arrayBuffer: ArrayBuffer)
-      static read(arrayBuffer: ArrayBuffer): DicomMessage
-      static readFile(fileArrayBuffer: ArrayBuffer): {
-        meta: Record<string, TDicomDataEntry>
-        dict: Record<string, TDicomDataEntry>
-      }
-      toJSON(): object
-      getElement(tag: string): TDicomDataEntry | undefined
-    }
-  }
-
-  export namespace adapters {
-    class Cornerstone {
-      static imageIdToDataset(imageId: string): Promise<any>
-    }
-  }
-
-  export namespace normalizers {
-    class Normalizer {
-      static normalizeToDataset(data: any): any
-    }
-  }
-
-  export namespace tools {
-    class TID300 {
-      static toStructuredReport(dataset: any): object
-    }
-  }
+  /**
+   * Type representing the possible log levels.
+   */
+  export type LogLevel =
+    | 'trace'
+    | 'debug'
+    | 'info'
+    | 'warn'
+    | 'error'
+    | 'silent'
 }

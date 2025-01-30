@@ -1,5 +1,10 @@
 import { extractCsvMappings } from './csvMapping'
-import { TMappingOptions, OrganizeOptions } from './types'
+import type {
+  TMappingOptions,
+  TMapResults,
+  TFileInfo,
+  OrganizeOptions,
+} from './types'
 
 //const mappingWorkerCount = 2;
 const mappingWorkerCount = navigator.hardwareConcurrency
@@ -15,7 +20,7 @@ const mappingWorkerCount = navigator.hardwareConcurrency
 //   response: 'done'
 //
 // TODO: implement a buffering stream to request fileHandles in batches
-const filesToProcess = []
+const filesToProcess: TFileInfo[] = []
 const fileListWorker = new Worker(
   new URL('./scanDirectoryWorker.js', import.meta.url),
 )
@@ -48,9 +53,9 @@ fileListWorker.addEventListener('message', (event) => {
 //   response: 'finished', mapResults
 //
 let mappingOptions: Partial<TMappingOptions> = {} // TODO: only send to worker once
-const availableMappingWorkers = []
+const availableMappingWorkers: Worker[] = []
 let workersActive = 0
-const mappingResultList = []
+const mapResultsList: TMapResults[] = []
 
 for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
   let mappingWorker = new Worker(
@@ -59,29 +64,31 @@ for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
   )
   mappingWorker.onerror = console.error
 
+  /* eslint-disable no-loop-func */
   mappingWorker.addEventListener('message', (event) => {
     switch (event.data.response) {
       case 'finished':
         availableMappingWorkers.push(mappingWorker)
-        mappingResultList.push(event.data.mapResults)
+        mapResultsList.push(event.data.mapResults)
         workersActive -= 1
         dispatchMappingJobs()
-        if ((mappingResultList.length - 1) % 100 == 0) {
-          console.log(`Finished mapping ${mappingResultList.length} files`)
+        if ((mapResultsList.length - 1) % 100 === 0) {
+          console.log(`Finished mapping ${mapResultsList.length} files`)
         }
         break
       default:
         console.error(`Unknown response from worker ${event.data.response}`)
     }
   })
+  /* eslint-enable no-loop-func */
 
   availableMappingWorkers.push(mappingWorker)
 }
 
 function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
-    const fileInfo = filesToProcess.pop()
-    const mappingWorker = availableMappingWorkers.pop()
+    const fileInfo = filesToProcess.pop()!
+    const mappingWorker = availableMappingWorkers.pop()!
     mappingWorker.postMessage({ request: 'apply', fileInfo, mappingOptions })
     workersActive += 1
   }
@@ -91,7 +98,7 @@ function dispatchMappingJobs() {
     filesToProcess.length === 0
   ) {
     console.log('job is finished')
-    console.log(mappingResultList)
+    console.log(mapResultsList)
   }
 }
 
