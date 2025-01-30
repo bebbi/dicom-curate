@@ -39,17 +39,8 @@ export default function dcmOrganize(
   const mappedDicomData = new dcmjs.data.DicomDict(
     mapMetaheader(mapdefaults, dicomData.meta),
   )
-
-  // Finally, write the results
-  const dirPath = mapResults.filePath.split('/').slice(0, -1).join('/')
-  const fileName = mapResults.filePath.split('/').slice(-1)[0]
   mappedDicomData.dict =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
 
-  return {
-    dicomData: mappedDicomData,
-    dirPath,
-    fileName,
-    mapResults: _cloneDeep(mapResults),
-  }
+  return { dicomData: mappedDicomData, mapResults: _cloneDeep(mapResults) }
 }
