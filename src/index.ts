@@ -108,7 +108,7 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const folderMappings = organizeOptions.filePathPattern
+  const inputPathPattern = organizeOptions.filePathPattern
   const outputDirectory = organizeOptions.outputDirectory
 
   //
@@ -124,7 +124,7 @@ async function collectMappingOptions(
   const functionsFile = await organizeOptions.mappingFunctions.getFile()
   const mappingFunctions = await functionsFile.text()
 
-  return { folderMappings, outputDirectory, fieldMappings, mappingFunctions }
+  return { inputPathPattern, outputDirectory, fieldMappings, mappingFunctions }
 }
 
 async function apply(organizeOptions: OrganizeOptions) {

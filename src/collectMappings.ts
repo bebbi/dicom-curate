@@ -51,7 +51,12 @@ export default function collectMappings(
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
   // create a parser object to be used in the eval'ed mappingFunctions
-  const parser = getParser(mappingOptions, inputFilePath, naturalData)
+  const parser = getParser(
+    mappingOptions.inputPathPattern,
+    inputFilePath,
+    naturalData,
+    mappingOptions.fieldMappings,
+  )
 
   // run the mapping functions that set the following two variables
   let dicom: { [keyword: string]: () => string } = {}
