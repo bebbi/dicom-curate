@@ -59,20 +59,20 @@ export default function collectMappings(
   )
 
   // run the mapping functions that set the following two variables
-  let dicom: { [keyword: string]: () => string } = {}
+  let dicomModifications: { [keyword: string]: () => string } = {}
   let outputFilePathComponents: string[] = []
   // TODO: try/except with useful error hinting at mappingFns
   eval(mappingOptions.mappingFunctions)
   mapResults.outputFilePath = outputFilePathComponents.join('/')
 
   // collect the tag mappings before assigning them into dicomData
-  // - Note the mappingFunctions return a dictionary called 'dicom' of functions to call
+  // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
   //   for each tag they want to map
-  for (let tagPath in dicom) {
+  for (let tagPath in dicomModifications) {
     mapResults.mappings[tagPath] = [
       _get(naturalData, tagPath),
       'replace',
-      dicom[tagPath](),
+      dicomModifications[tagPath](),
     ]
   }
 
