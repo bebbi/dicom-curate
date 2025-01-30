@@ -2,6 +2,7 @@ import { TCsvMappings } from './csvMapping'
 
 export interface OrganizeOptions {
   inputDirectory: FileSystemDirectoryHandle
+  // identical to inputPathPattern.
   filePathPattern: string
   fieldMapping: FileSystemFileHandle
   mappingFunctions: FileSystemFileHandle
@@ -11,7 +12,7 @@ export interface OrganizeOptions {
 export type TMappingOptions = {
   fieldMappings: TCsvMappings
   mappingFunctions: string
-  folderMappings: string
+  inputPathPattern: string
   outputDirectory: FileSystemDirectoryHandle
 }
 
