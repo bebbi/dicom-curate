@@ -9,14 +9,16 @@ self.addEventListener('message', (event) => {
   switch (event.data.request) {
     case 'apply':
       try {
-        applyMappings(event.data.fileInfo, event.data.mappingOptions).then(
-          (mapResults) => {
-            self.postMessage({
-              response: 'finished',
-              mapResults: mapResults,
-            })
-          },
-        )
+        applyMappings(
+          event.data.fileInfo,
+          event.data.outputDirectory,
+          event.data.mappingOptions,
+        ).then((mapResults) => {
+          self.postMessage({
+            response: 'finished',
+            mapResults: mapResults,
+          })
+        })
       } catch (error) {
         self.postMessage({ response: 'error', error })
         throw new Error('ERROR')
@@ -29,6 +31,7 @@ self.addEventListener('message', (event) => {
 
 async function applyMappings(
   fileInfo: TFileInfo,
+  outputDirectory: FileSystemDirectoryHandle,
   mappingOptions: TMappingOptions,
 ) {
   //
@@ -59,7 +62,7 @@ async function applyMappings(
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
   const modifiedArrayBuffer = mappedDicomData.write()
   const subDirectoryHandle = await createNestedDirectories(
-    mappingOptions.outputDirectory,
+    outputDirectory,
     dirPath,
   )
   if (subDirectoryHandle === false) {

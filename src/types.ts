@@ -13,7 +13,6 @@ export type TMappingOptions = {
   fieldMappings: TCsvMappings
   mappingFunctions: string
   inputPathPattern: string
-  outputDirectory: FileSystemDirectoryHandle
 }
 
 export type TFileInfo = {
