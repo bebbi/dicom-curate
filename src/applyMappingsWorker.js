@@ -79,6 +79,9 @@ async function applyMappings(fileInfo, mappingOptions) {
   const fileName = mapResults.filePath.split('/').slice(-1)
   dicomData.dict =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
+
+  const clonedMapResults = _cloneDeep(mapResults)
+
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
   const modifiedArrayBuffer = dicomData.write()
   const subDirectoryHandle = await createNestedDirectories(
@@ -96,6 +99,5 @@ async function applyMappings(fileInfo, mappingOptions) {
     await writable.close()
   }
 
-  const clonedMapResults = _cloneDeep(mapResults)
   return clonedMapResults
 }
