@@ -1,3 +1,6 @@
+import { extractCsvMappings } from './csvMapping'
+import { TMappingOptions, OrganizeOptions } from './types'
+
 //const mappingWorkerCount = 2;
 const mappingWorkerCount = navigator.hardwareConcurrency
 
@@ -44,7 +47,7 @@ fileListWorker.addEventListener('message', (event) => {
 // worker sends these messages:
 //   response: 'finished', mapResults
 //
-let mappingOptions = {} // TODO: only send to worker once
+let mappingOptions: Partial<TMappingOptions> = {} // TODO: only send to worker once
 const availableMappingWorkers = []
 let workersActive = 0
 const mappingResultList = []
@@ -79,64 +82,49 @@ function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const fileInfo = filesToProcess.pop()
     const mappingWorker = availableMappingWorkers.pop()
-    mappingWorker.postMessage({
-      request: 'apply',
-      fileInfo: fileInfo,
-      mappingOptions: mappingOptions,
-    })
+    mappingWorker.postMessage({ request: 'apply', fileInfo, mappingOptions })
     workersActive += 1
   }
   if (
-    workersActive == 0 &&
+    workersActive === 0 &&
     directoryScanFinished &&
-    filesToProcess.length == 0
+    filesToProcess.length === 0
   ) {
     console.log('job is finished')
     console.log(mappingResultList)
   }
 }
 
-async function collectMappingOptions(organizeOptions) {
+async function collectMappingOptions(
+  organizeOptions: OrganizeOptions,
+): Promise<TMappingOptions> {
   //
   // first, get the folder mappings and set output directory
   //
-  mappingOptions.folderMappings = organizeOptions.filePathPattern
-  mappingOptions.outputDirectory = organizeOptions.outputDirectory
+  const folderMappings = organizeOptions.filePathPattern
+  const outputDirectory = organizeOptions.outputDirectory
 
   //
   // then, get the field mappings from the csv file
   //
   // assumes all fields are not repeated across rows
   const csvFile = await organizeOptions.fieldMapping.getFile()
-  const csvText = await csvFile.text()
-  const rows = csvText.trim().split('\n')
-  const headers = rows.slice(0, 1)[0].split(',')
-  const fieldMappings = {
-    headers: headers,
-    rowValues: {},
-    rowIndexByFieldValue: {},
-  }
-  headers.forEach((header) => {
-    fieldMappings.rowIndexByFieldValue[header] = {}
-  })
-  rows.slice(1).forEach((row, rowIndex) => {
-    fieldMappings.rowValues[rowIndex] = row.split(',')
-    fieldMappings.rowValues[rowIndex].forEach((fieldValue, columnIndex) => {
-      fieldMappings.rowIndexByFieldValue[headers[columnIndex]][fieldValue] =
-        rowIndex
-    })
-  })
-  mappingOptions.fieldMappings = fieldMappings
+  const fieldMappings = await extractCsvMappings(csvFile)
 
   //
   // then, get the mapping functions
   //
   const functionsFile = await organizeOptions.mappingFunctions.getFile()
-  mappingOptions.mappingFunctions = await functionsFile.text()
+  const mappingFunctions = await functionsFile.text()
+
+  return { folderMappings, outputDirectory, fieldMappings, mappingFunctions }
 }
 
-async function apply(organizeOptions) {
-  await collectMappingOptions(organizeOptions) // sets global mappingOptions
+async function apply(organizeOptions: OrganizeOptions) {
+  // Set global mappingOptions
+  mappingOptions = (await collectMappingOptions(
+    organizeOptions,
+  )) as TMappingOptions
   fileListWorker.postMessage({
     request: 'scan',
     directoryHandle: organizeOptions.inputDirectory,
