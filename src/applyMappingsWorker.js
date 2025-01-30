@@ -72,18 +72,20 @@ async function applyMappings(fileInfo, mappingOptions) {
 
   // apply a hard-coded mapping to the metaheader data since
   // it is of a highly constrained format
-  dicomData.meta = mapMetaheader(mapdefaults, dicomData.meta)
+  const mappedDicomData = new dcmjs.data.DicomDict(
+    mapMetaheader(mapdefaults, dicomData.meta),
+  )
 
   // Finally, write the results
   const dirPath = mapResults.filePath.split('/').slice(0, -1).join('/')
   const fileName = mapResults.filePath.split('/').slice(-1)
-  dicomData.dict =
+  mappedDicomData.dict =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
 
   const clonedMapResults = _cloneDeep(mapResults)
 
   // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
-  const modifiedArrayBuffer = dicomData.write()
+  const modifiedArrayBuffer = mappedDicomData.write()
   const subDirectoryHandle = await createNestedDirectories(
     mappingOptions.outputDirectory,
     dirPath,
