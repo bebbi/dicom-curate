@@ -1,20 +1,18 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
 import type { TDicomDataDict } from 'dcmjs'
+import { metaheaderTagsToKeep } from './config/dicom/metaheaderTagsToKeep'
 
 const EXPLICIT_LITTLE_ENDIAN = '1.2.840.10008.1.2.1'
 
-export default function mapMetaheader(
-  mapdefaults: { metaheaderTagsToKeep: string[] },
-  metaHeader: TDicomDataDict,
-) {
+export default function mapMetaheader(metaHeader: TDicomDataDict) {
   const naturalMetadata =
     dcmjs.data.DicomMetaDictionary.naturalizeDataset(metaHeader)
   // save the UID to add back later
   const instanceUID = naturalMetadata.MediaStorageSOPInstanceUID
   // keep only the bare set of tags needed to make valid metaheader
   for (let tag in naturalMetadata) {
-    if (mapdefaults.metaheaderTagsToKeep.indexOf(tag) === -1) {
+    if (metaheaderTagsToKeep.indexOf(tag) === -1) {
       delete naturalMetadata[tag]
     }
   }

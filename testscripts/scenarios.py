@@ -96,6 +96,15 @@ outputFilePathComponents = [
     parser.getDicom('SeriesDescription') + '=' + parser.getDicom('SeriesNumber'),
     parser.getDicom('InstanceNumber') + '.dcm'
 ];
+
+// Exceptions when activating `cleanDescriptorsOption`
+cleanDescriptorsExceptions = ['SeriesDescription'];
+retainPatientCharacteristicsSubset = [
+  'PatientsWeight',
+  'PatientsSize',
+  'PatientsAge',
+  'SelectorASValue',
+]
 """)
 
   if args.verbose:

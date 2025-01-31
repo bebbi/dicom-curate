@@ -1,17 +1,55 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
-import type { TMappingOptions, TMapResults } from './types'
+import type { TMappingOptions, TMapResults, TPs315EElement } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
 import getParser from './getParser'
-import * as mapdefaults from './mapdefaults'
+import { instanceUIDs } from './config/dicom/instanceUids'
+import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
+import { ps315EElements } from './config/dicom/ps315EElements'
+import { dcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
+import dummyValues from './config/dicom/dummyValues'
+
 import { get as _get } from 'lodash'
+
+const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
+
+function temporalVr(vr: string) {
+  return vr === 'DT' || vr === 'DA' || vr === 'TM'
+}
+
+function removeRetiredPrefix(name: string) {
+  return name.startsWith('RETIRED_') ? name.slice(8) : name
+}
 
 export default function collectMappings(
   inputFilePath: string,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
+  const {
+    cleanDescriptorsOption,
+    // K if Full, else C would mean modify. 'Off' would mean 1900-01-01 or so.
+    // TODO: Add all DA/TM etc to policy with D or such.
+    // And only if they are not already there.
+    // Then let retainDeviceIdentityOption remove some.
+    // CONTINUE HERE:
+    // 1. Do s'thing with this last option
+    // 2. Then apply, especially dummies. <- before *Comment|*Description!
+    // 3. Could improve UIDs etc.
+    retainLongitudinalTemporalInformationOptions,
+    // Filter the relevant ones by retainPatientCharacteristicsSubset
+    // then K for these
+    retainPatientCharacteristicsOption,
+    // among C, K only keep K (and document this)
+    // Attention there are dates there! Keep fixed independent of above.
+    retainDeviceIdentityOption,
+    retainUIDsOption,
+    retainSafePrivateOption,
+    // just has K's -> cancel out base
+    retainInstitutionIdentityOption,
+  } = mappingOptions.ps315Options
+
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
   // filePath : assembled string of path components
@@ -30,17 +68,22 @@ export default function collectMappings(
     anomalies: [],
   }
 
+  const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
+
   //
   // collect private tags and mark them for delete
   // TODO: put this in recursive function to find nested private tags
   // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
   for (let hexTag in dicomData.dict) {
     if (Number(hexTag[3]) % 2 === 1) {
-      mapResults.mappings['x' + hexTag] = [
-        String(dicomData.dict[hexTag].Value),
-        'delete',
-        undefined,
-      ]
+      if (!retainSafePrivateOption) {
+        mapResults.mappings['x' + hexTag] = [
+          String(dicomData.dict[hexTag].Value),
+          'delete',
+          'notRetainSafePrivate',
+          undefined,
+        ]
+      }
     }
   }
 
@@ -61,72 +104,236 @@ export default function collectMappings(
   // run the mapping functions that set the following two variables
   let dicomModifications: { [keyword: string]: () => string } = {}
   let outputFilePathComponents: string[] = []
+  let cleanDescriptorsExceptions: string[] = []
+  let retainPatientCharacteristicsSubset: string[] = []
   // TODO: try/except with useful error hinting at mappingFns
   eval(mappingOptions.mappingFunctions)
   mapResults.outputFilePath = outputFilePathComponents.join('/')
 
-  // collect the tag mappings before assigning them into dicomData
-  // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
-  //   for each tag they want to map
-  for (let tagPath in dicomModifications) {
-    mapResults.mappings[tagPath] = [
-      _get(naturalData, tagPath),
-      'replace',
-      dicomModifications[tagPath](),
-    ]
+  const [taggedps315EEls, wildcardEls] = ps315EElements.reduce(
+    (acc: [TPs315EElement[], TPs315EElement[]], item: TPs315EElement) => {
+      let idx = item.tag.includes('X') ? 1 : 0
+      if (item.name === 'Private Attributes') {
+        return acc
+      }
+
+      acc[idx].push(item)
+      return acc
+    },
+    [[], []],
+  )
+
+  console.log(
+    'TODO: Handle wildcardEls - convert tags into regex and separate if clause',
+  )
+
+  let cleanPolicy = taggedps315EEls.map(({ tag, basicProfile, ...rest }) => {
+    return {
+      ...rest,
+      // overwrite name with keyword, standardizing on a version without the
+      // dcmjs 'RETIRED_' prefix.
+      name: removeRetiredPrefix(
+        dcmjs.data.DicomMetaDictionary.dictionary[tag].name,
+      ),
+      rule: basicProfile.match(/[^/]*$/)?.[0] ?? '',
+    }
+  })
+  const taggedps315EElSet = new Set(cleanPolicy.map((item) => item.name))
+
+  let instanceUids: string[] = []
+
+  // We handle DA/TM/DT separately except for retainDeviceIdentity option
+  // Also handle UI separately
+  cleanPolicy = cleanPolicy.filter((p) => {
+    let vr = nameMap[p.name]?.vr
+    if (vr === 'UI') {
+      instanceUids.push(p.name)
+      return false
+    }
+    if (p.rule === 'U*') {
+      // already handled with deep UI cleaning approach
+      return false
+    }
+    return !temporalVr(vr) || 'rtnDevIdOpt' in p
+  })
+
+  if (retainPatientCharacteristicsOption) {
+    retainPatientCharacteristicsSubset.forEach((name) => {
+      // Filter out elements from policy if they match subset
+      // but only if they are eligible.
+      // If matches an element but is not eligible, keep in filter.
+      // We keep independent of 'K' or 'C'.
+      cleanPolicy = cleanPolicy.filter(
+        (p) => p.name !== name || !('rtnPatCharsOpt' in p),
+      )
+    })
   }
+
+  // These are all 'K' -> remove from filter.
+  if (retainInstitutionIdentityOption) {
+    cleanPolicy = cleanPolicy.filter((p) => !('rtnInstIdOpt' in p))
+  }
+
+  // We ignore the 'C's which are mostly AETitles
+  if (retainDeviceIdentityOption) {
+    cleanPolicy = cleanPolicy.filter(
+      (p) => !('rtnDevIdOpt' in p) || p.rtnDevIdOpt !== 'K',
+    )
+  }
+
+  const cleanPolicyMap = Object.fromEntries(
+    cleanPolicy.map((item) => [item.name, item]),
+  )
 
   // Now collect the standard mappings with a
   // recursive function to handle sequences (naturalData is a top-level instance of data).
   // Calls modify mapResults in the outer function scope.
-  const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
   function collectMappingsInData(data: TNaturalData, path = '') {
-    for (let tag in data) {
-      if (/_.*/.test(tag)) {
+    for (let name in data) {
+      if (/_.*/.test(name)) {
         continue // ignore tags marked internal with leading underscore
       }
-      const tagPath = path + tag
-      if (tag in nameMap) {
-        // means it's a known tag
-        let vr = nameMap[tag].vr
-        if (vr === 'SQ') {
+      const tagPath = path + name
+      if (name in nameMap) {
+        // means it's a known name
+        let vr = nameMap[name].vr
+        // Remove optional RETIRED_ prefix as below we check against
+        // dictionaries that don't work this way.
+        const normalName = removeRetiredPrefix(name)
+        if (
+          normalName in cleanPolicyMap &&
+          (!cleanDescriptorsOption ||
+            !cleanDescriptorsExceptions.includes(normalName))
+        ) {
+          const { rule } = cleanPolicyMap[normalName]
+          switch (rule) {
+            case 'Z': {
+              mapResults.mappings[tagPath] = [
+                data[name],
+                'replace',
+                'PS3.15E',
+                vr === 'SQ' ? [] : '',
+              ]
+              break
+            }
+            case 'D': {
+              mapResults.mappings[tagPath] = [
+                _get(naturalData, tagPath),
+                'replace',
+                'PS3.15E',
+                dummyValues[vr],
+              ]
+              break
+            }
+            default: {
+              if (rule !== 'X') {
+                mapResults.anomalies.push(
+                  `don't know how to handle PS3.15E rule ${rule} for ${normalName}.`,
+                )
+              }
+              mapResults.mappings[tagPath] = [
+                data[name],
+                'delete',
+                'PS3.15E',
+                undefined,
+              ]
+            }
+          }
+        } else if (vr === 'SQ') {
           let subDataIndex = 0
-          for (let subData of Object.values(data[tag]) as TNaturalData[]) {
-            let subPath = `${path}${tag}[${subDataIndex}].`
+          for (let subData of Object.values(data[name]) as TNaturalData[]) {
+            let subPath = `${path}${name}[${subDataIndex}].`
             collectMappingsInData(subData, subPath)
             subDataIndex += 1
           }
-        } else {
-          if (vr === 'UI') {
-            if (mapdefaults.instanceUIDs.indexOf(tag) !== -1) {
-              // UIDs that need to be mapped
-              const uid = data[tag]
-              const mappedUID = uidToV5BasedUID(uid)
-              mapResults.mappings[tagPath] = [uid, 'replace', mappedUID]
-            }
-          } else {
-            // other tags are handled according to mapdefaults rules
-            if (tag in mapdefaults.tagNamesToEmpty) {
-              mapResults.mappings[tagPath] = [data[tag], 'delete', undefined]
-            } else {
-              if (!(tag in mapdefaults.tagNamesToAlwaysKeep)) {
-                mapResults.anomalies.push(
-                  `instance contains tag ${tag} that is not defined in mapdefaults.  Marking it for deletion.`,
-                )
-                mapResults.mappings[tagPath] = [data[tag], 'delete', undefined]
-              }
-            }
+        } else if (vr === 'UI' && !retainUIDsOption) {
+          if (instanceUIDs.indexOf(normalName) !== -1) {
+            // UIDs that need to be mapped
+            const uid = data[name]
+            const mappedUID = uidToV5BasedUID(uid)
+            mapResults.mappings[tagPath] = [
+              uid,
+              'replace',
+              'notRetainInstanceUID',
+              mappedUID,
+            ]
           }
+        } else if (
+          // "For example, one approach is to remove all description and
+          // comment Attributes except Series Description (0008,103E), since
+          // this Attribute rarely contains identifying or diagnosis information
+          // yet is typically a reliable source of useful information about the
+          // acquisition technique populated automatically from modality device
+          // protocols, though it still could be cleaned as described in Note 2"
+          cleanDescriptorsOption &&
+          (normalName.endsWith('Comment') ||
+            normalName.endsWith('Description')) &&
+          !cleanDescriptorsExceptions.includes(normalName)
+        ) {
+          mapResults.mappings[tagPath] = [
+            data[name],
+            'delete',
+            'cleanDescriptors',
+            undefined,
+          ]
+        } else if (
+          !elementNamesToAlwaysKeepSet.has(normalName) &&
+          // Some 3.15 options allow us to keep more of the tagged elements by reducing
+          // elements from the cleanProfile.
+          // Therefore, after the specific options are applied, elements to keep could be
+          // in the taggedps315EElSet.
+          !taggedps315EElSet.has(normalName)
+        ) {
+          mapResults.anomalies.push(
+            `instance contains attribute ${normalName} that is not defined in elementNamesToAlwaysKeep.  Marking it for deletion.`,
+          )
+          mapResults.mappings[tagPath] = [
+            data[name],
+            'delete',
+            'notInElmtsToKeep',
+            undefined,
+          ]
         }
       } else {
         mapResults.anomalies.push(
-          `instance contains tag ${tag} that is not in dictionary.  Marking it for deletion.`,
+          `instance contains attribute ${name} that is not in dictionary.  Marking it for deletion.`,
         )
-        mapResults.mappings[tagPath] = [data[tag], 'delete', undefined]
+        mapResults.mappings[tagPath] = [
+          data[name],
+          'delete',
+          'notInDcmjsDictionary',
+          undefined,
+        ]
       }
     }
   }
   collectMappingsInData(naturalData)
+
+  Object.entries(dcmOrganizeStamp).forEach(([name, newValue]) => {
+    const oldValue = _get(naturalData, name)
+    if (oldValue !== newValue) {
+      mapResults.mappings[name] = [
+        oldValue,
+        'replace',
+        'dcm-organize',
+        newValue,
+      ]
+    }
+  })
+
+  // Moving this after collectMappingsInData as this should take precedence.
+  // collect the tag mappings before assigning them into dicomData
+  // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
+  //   for each tag they want to map
+  for (let tagPath in dicomModifications) {
+    // This overrides any default action if tagPath is the same
+    mapResults.mappings[tagPath] = [
+      _get(naturalData, tagPath),
+      'replace',
+      'mappingFunction',
+      dicomModifications[tagPath](),
+    ]
+  }
 
   return [naturalData, mapResults]
 }

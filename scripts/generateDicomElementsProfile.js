@@ -31,17 +31,18 @@ async function main() {
     await mkdir(configDir, { recursive: true })
 
     // Fetch the DICOM elements to anonymize
-    const elementsToAnonymize = await fetchDicomStandard(
+    const ps315EElements = await fetchDicomStandard(
       'confidentiality_profile_attributes.json',
     )
-    const anonymizeSet = new Set(
-      elementsToAnonymize.map((element) => element.tag),
-    )
+    const anonymizeSet = new Set(ps315EElements.map((element) => element.tag))
 
     // Save the elements to anonymize to a JSON file
     await writeFile(
-      join(configDir, 'elementsToAnonymize.json'),
-      JSON.stringify(elementsToAnonymize, null, 2),
+      join(configDir, 'ps315EElements.ts'),
+      `import type { TPs315EElement } from '../../types'
+
+export const ps315EElements: TPs315EElement[] = ` +
+        JSON.stringify(ps315EElements, null, 2),
     )
 
     // Fetch all DICOM elements
@@ -60,7 +61,7 @@ async function main() {
 // Generated on: ${new Date().toISOString()}
 
 export const elementNamesToAlwaysKeep = [
-    ${[...preserveSet].map((e) => `"${e}"`).join(',\n    ')}
+    ${[...preserveSet].map((e) => `'${e}'`).join(',\n    ')}
 ];
 `
 
@@ -68,8 +69,8 @@ export const elementNamesToAlwaysKeep = [
     await writeFile(join(configDir, 'elementNamesToAlwaysKeep.ts'), jsContent)
 
     console.log('Successfully generated:')
-    console.log('- elementNamesToAlwaysKeep.js')
-    console.log('- elementsToAnonymize.json')
+    console.log('- elementNamesToAlwaysKeep.ts')
+    console.log('- ps315EElements.ts')
   } catch (error) {
     console.error('Error:', error.message)
     process.exit(1)
