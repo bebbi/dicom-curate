@@ -3,7 +3,7 @@ declare module 'dcmjs' {
   export type TDicomDataEntry = { Value: TDicomDataValue; vr: string }
   export type TDicomDataDict = { [hex: string]: TDicomDataEntry }
 
-  export type TNaturalData = Record<string, any>
+  export type TNaturalData = { [keyword: string]: any }
   export type TDicomData = {
     meta: TDicomDataDict
     dict: TDicomDataDict
@@ -34,7 +34,15 @@ declare module 'dcmjs' {
     }
 
     class DicomMetaDictionary {
-      static nameMap: Record<string, any>
+      static nameMap: {
+        [keyWord: string]: {
+          tag: string
+          vr: string
+          name: string
+          vm: string
+          version: string
+        }
+      }
       static dictionary: TDicomDictionary
       static getTagFromName(name: string): string
       static getNameFromTag(tag: string): string

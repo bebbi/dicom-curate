@@ -1,5 +1,4 @@
 import * as dcmjs from 'dcmjs'
-import * as mapdefaults from './mapdefaults'
 import collectMappings from './collectMappings'
 import mapMetaheader from './mapMetaheader'
 import type { TDicomData } from 'dcmjs'
@@ -21,7 +20,7 @@ export default function dcmOrganize(
     mappingOptions,
   )
   for (let tagPath in mapResults.mappings) {
-    const [, operation, mappedValue] = mapResults.mappings[tagPath]
+    const [, operation, , mappedValue] = mapResults.mappings[tagPath]
     switch (operation) {
       case 'delete':
         _unset(naturalData, tagPath)
@@ -37,7 +36,7 @@ export default function dcmOrganize(
   // apply a hard-coded mapping to the metaheader data since
   // it is of a highly constrained format
   const mappedDicomData = new dcmjs.data.DicomDict(
-    mapMetaheader(mapdefaults, dicomData.meta),
+    mapMetaheader(dicomData.meta),
   )
   mappedDicomData.dict =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
