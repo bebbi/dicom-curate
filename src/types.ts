@@ -1,4 +1,5 @@
 import { TCsvMappings } from './csvMapping'
+import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
@@ -65,4 +66,6 @@ export type TPs315EElement = {
   rtnInstIdOpt?: string
   cleanGraphOpt?: string
   rtnSafePrivOpt?: string
+  // introduced by us
+  exceptCondition?: (attrs: TNaturalData) => boolean
 }
