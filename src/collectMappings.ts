@@ -22,6 +22,8 @@ const ps315EElements = rawPs315EElements.map((elm) => {
       return {
         ...elm,
         exceptCondition: (data: TNaturalData) => data.Modality === 'DOC',
+        // Unless it's a DOC modality, we can remove this tag.
+        basicProfile: 'X',
       }
     }
     default:
