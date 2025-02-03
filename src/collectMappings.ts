@@ -25,6 +25,15 @@ const ps315EElements = rawPs315EElements.map((elm) => {
         basicProfile: 'X',
       }
     }
+    case 'VerifyingObserverSequence': {
+      return {
+        ...elm,
+        exceptCondition: (data: TNaturalData) => data.Modality === 'SR',
+        // Unless it's a SR modality, we can remove this tag.
+        // It is only optional in "KO" modality
+        basicProfile: 'X',
+      }
+    }
     default:
       return elm
   }
