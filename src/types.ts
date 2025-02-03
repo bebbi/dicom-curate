@@ -1,6 +1,6 @@
 import { TCsvMappings } from './csvMapping'
 
-export type TPS315Options = {
+export type TPs315Options = {
   cleanDescriptorsOption: boolean
   retainLongitudinalTemporalInformationOptions: 'Off' | 'Modified' | 'Full'
   retainPatientCharacteristicsOption: boolean
@@ -17,14 +17,14 @@ export interface OrganizeOptions {
   fieldMapping: FileSystemFileHandle
   mappingFunctions: FileSystemFileHandle
   outputDirectory: FileSystemDirectoryHandle
-  ps315Options: TPS315Options
+  ps315Options: TPs315Options
 }
 
 export type TMappingOptions = {
   fieldMappings: TCsvMappings
   mappingFunctions: string
   inputPathPattern: string
-  ps315Options: TPS315Options
+  ps315Options: TPs315Options
 }
 
 export type TFileInfo = {

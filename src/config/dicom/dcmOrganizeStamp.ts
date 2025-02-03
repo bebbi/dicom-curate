@@ -1,7 +1,7 @@
 import { supportedCid7050 } from './cid7050'
-import type { TPS315Options } from '../../types'
+import type { TPs315Options } from '../../types'
 
-export function getDcmOrganizeStamp(options: TPS315Options) {
+export function getDcmOrganizeStamp(options: TPs315Options) {
   return {
     PatientIdentityRemoved: 'YES',
     DeidentificationMethod: 'See dcm-organize README for details',
@@ -15,11 +15,11 @@ export function getDcmOrganizeStamp(options: TPS315Options) {
   }
 }
 
-export function getCid7050Codes(options: TPS315Options) {
+export function getCid7050Codes(options: TPs315Options) {
   const seq = [supportedCid7050.basicApplicationConfidentialityProfile]
 
   Object.entries(options).forEach(([_option, v]) => {
-    const option = _option as keyof TPS315Options
+    const option = _option as keyof TPs315Options
 
     if (v === false || v === 'Off') {
       return
