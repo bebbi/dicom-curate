@@ -2,7 +2,15 @@ import { supportedCid7050 } from './cid7050'
 import type { TPs315Options } from '../../types'
 
 export function getDcmOrganizeStamp(options: TPs315Options) {
+  const tempOpt = options.retainLongitudinalTemporalInformationOptions
+  const tempModified =
+    tempOpt === 'Off'
+      ? 'REMOVED'
+      : tempOpt === 'Full'
+        ? 'UNMODIFIED'
+        : 'MODIFIED'
   return {
+    LongitudinalTemporalInformationModified: tempModified,
     PatientIdentityRemoved: 'YES',
     DeidentificationMethod: 'See dcm-organize README for details',
     DeidentificationMethodCodeSequence: getCid7050Codes(options).map(
