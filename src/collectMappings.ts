@@ -5,7 +5,7 @@ import type { TDicomData, TNaturalData } from 'dcmjs'
 
 import getParser from './getParser'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
-import { ps315EElements } from './config/dicom/ps315EElements'
+import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
 import { ps36TableA1 } from './config/dicom/ps36TableA1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
 import dummyValues from './config/dicom/dummyValues'
@@ -13,6 +13,21 @@ import dummyValues from './config/dicom/dummyValues'
 import { get as _get } from 'lodash'
 
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
+
+// Special handling of 3.15 variables.
+// Names still in non-keyword form, but conditions are in keyword form.
+const ps315EElements = rawPs315EElements.map((elm) => {
+  switch (elm.name) {
+    case 'Encapsulated Document': {
+      return {
+        ...elm,
+        exceptCondition: (data: TNaturalData) => data.Modality === 'DOC',
+      }
+    }
+    default:
+      return elm
+  }
+})
 
 function temporalVr(vr: string) {
   return vr === 'DT' || vr === 'DA' || vr === 'TM'
@@ -203,7 +218,8 @@ export default function collectMappings(
         if (
           normalName in cleanPolicyMap &&
           (!cleanDescriptorsOption ||
-            !cleanDescriptorsExceptions.includes(normalName))
+            !cleanDescriptorsExceptions.includes(normalName)) &&
+          !cleanPolicyMap[normalName].exceptCondition?.(data)
         ) {
           const { rule } = cleanPolicyMap[normalName]
           switch (rule) {
