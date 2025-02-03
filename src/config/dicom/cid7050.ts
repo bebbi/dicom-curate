@@ -1,7 +1,7 @@
 import type { TPs315Options } from '../../types'
 
 export const supportedCid7050: Record<
-  | keyof Omit<TPs315Options, 'retainLongitudinalTemporalInformationOptions'>
+  | Exclude<keyof TPs315Options, 'retainLongitudinalTemporalInformationOptions'>
   | 'retainLongitudinalTemporalInformationFullDatesOptions'
   | 'retainLongitudinalTemporalInformationModifiedDatesOptions'
   | 'basicApplicationConfidentialityProfile',
