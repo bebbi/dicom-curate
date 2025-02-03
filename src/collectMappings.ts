@@ -6,6 +6,7 @@ import type { TDicomData, TNaturalData } from 'dcmjs'
 import getParser from './getParser'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
+import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
 import { ps36TableA1 } from './config/dicom/ps36TableA1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
 import dummyValues from './config/dicom/dummyValues'
@@ -304,6 +305,18 @@ export default function collectMappings(
             data[name],
             'delete',
             'cleanDescriptors',
+            undefined,
+          ]
+        } else if (
+          normalName in retainAdditionalIds &&
+          (!retainDeviceIdentityOption ||
+            !retainAdditionalIds[normalName] ||
+            !retainAdditionalIds[normalName].rtnDevIdOpt)
+        ) {
+          mapResults.mappings[tagPath] = [
+            data[name],
+            'delete',
+            'notInRtnAdditionalIds',
             undefined,
           ]
         } else if (
