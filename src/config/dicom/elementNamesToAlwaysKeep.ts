@@ -1,5 +1,5 @@
 // Auto-generated file containing DICOM elements to always keep
-// Generated on: 2025-01-31T09:12:49.220Z
+// Generated on: 2025-02-03T15:05:09.448Z
 
 export const elementNamesToAlwaysKeep = [
   'LengthToEnd',

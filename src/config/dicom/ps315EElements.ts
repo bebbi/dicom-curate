@@ -3,6 +3,7 @@ import type { TPs315EElement } from '../../types'
 export const ps315EElements: TPs315EElement[] = [
   {
     name: 'Accession Number',
+    keyword: 'AccessionNumber',
     tag: '(0008,0050)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -10,6 +11,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Comments',
+    keyword: 'AcquisitionComments',
     tag: '(0018,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -18,6 +20,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Context Sequence',
+    keyword: 'AcquisitionContextSequence',
     tag: '(0040,0555)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -26,6 +29,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Date',
+    keyword: 'AcquisitionDate',
     tag: '(0008,0022)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -35,6 +39,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition DateTime',
+    keyword: 'AcquisitionDateTime',
     tag: '(0008,002A)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -44,6 +49,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Device Processing Description',
+    keyword: 'AcquisitionDeviceProcessingDescription',
     tag: '(0018,1400)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -51,7 +57,8 @@ export const ps315EElements: TPs315EElement[] = [
     id: '00181400',
   },
   {
-    name: 'Acquisition Field Of View Label',
+    name: 'Acquisition Field of View Label',
+    keyword: 'AcquisitionFieldOfViewLabel',
     tag: '(0018,11BB)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -60,6 +67,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Protocol Description',
+    keyword: 'AcquisitionProtocolDescription',
     tag: '(0018,9424)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -68,6 +76,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition Time',
+    keyword: 'AcquisitionTime',
     tag: '(0008,0032)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -77,6 +86,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Acquisition UID',
+    keyword: 'AcquisitionUID',
     tag: '(0008,0017)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -85,6 +95,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Actual Human Performers Sequence',
+    keyword: 'ActualHumanPerformersSequence',
     tag: '(0040,4035)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -92,6 +103,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Additional Patient History',
+    keyword: 'AdditionalPatientHistory',
     tag: '(0010,21B0)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -100,6 +112,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Address (Trial)',
+    keyword: 'AddressTrial',
     tag: '(0040,A353)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -107,6 +120,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Admission ID',
+    keyword: 'AdmissionID',
     tag: '(0038,0010)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -114,6 +128,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Admitting Date',
+    keyword: 'AdmittingDate',
     tag: '(0038,0020)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -123,6 +138,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Admitting Diagnoses Code Sequence',
+    keyword: 'AdmittingDiagnosesCodeSequence',
     tag: '(0008,1084)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -131,6 +147,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Admitting Diagnoses Description',
+    keyword: 'AdmittingDiagnosesDescription',
     tag: '(0008,1080)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -139,6 +156,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Admitting Time',
+    keyword: 'AdmittingTime',
     tag: '(0038,0021)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -148,6 +166,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Affected SOP Instance UID',
+    keyword: 'AffectedSOPInstanceUID',
     tag: '(0000,1000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -156,6 +175,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Allergies',
+    keyword: 'Allergies',
     tag: '(0010,2110)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -165,6 +185,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Annotation Group Description',
+    keyword: 'AnnotationGroupDescription',
     tag: '(006A,0006)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -173,6 +194,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Annotation Group Label',
+    keyword: 'AnnotationGroupLabel',
     tag: '(006A,0005)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -181,6 +203,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Annotation Group UID',
+    keyword: 'AnnotationGroupUID',
     tag: '(006A,0003)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -189,6 +212,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Approval Status DateTime',
+    keyword: 'ApprovalStatusDateTime',
     tag: '(0044,0004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -198,6 +222,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Arbitrary',
+    keyword: 'Arbitrary',
     tag: '(4000,0010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -205,6 +230,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Assertion DateTime',
+    keyword: 'AssertionDateTime',
     tag: '(0044,0104)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -214,6 +240,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Assertion Expiration DateTime',
+    keyword: 'AssertionExpirationDateTime',
     tag: '(0044,0105)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -223,6 +250,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Attribute Modification DateTime',
+    keyword: 'AttributeModificationDateTime',
     tag: '(0400,0562)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -232,6 +260,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Author Observer Sequence',
+    keyword: 'AuthorObserverSequence',
     tag: '(0040,A078)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -239,6 +268,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Barcode Value',
+    keyword: 'BarcodeValue',
     tag: '(2200,0005)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -246,6 +276,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Beam Description',
+    keyword: 'BeamDescription',
     tag: '(300A,00C3)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -254,6 +285,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Beam Hold Transition DateTime',
+    keyword: 'BeamHoldTransitionDateTime',
     tag: '(300C,0127)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -264,6 +296,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Bolus Description',
+    keyword: 'BolusDescription',
     tag: '(300A,00DD)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -272,6 +305,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Branch of Service',
+    keyword: 'BranchOfService',
     tag: '(0010,1081)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -279,6 +313,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Calibration Date',
+    keyword: 'CalibrationDate',
     tag: '(0014,407E)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -289,6 +324,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Calibration DateTime',
+    keyword: 'CalibrationDateTime',
     tag: '(0018,1203)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -299,6 +335,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Calibration Time',
+    keyword: 'CalibrationTime',
     tag: '(0014,407C)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -309,6 +346,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Camera Owner Name',
+    keyword: 'CameraOwnerName',
     tag: '(0016,004D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -316,6 +354,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Cassette ID',
+    keyword: 'CassetteID',
     tag: '(0018,1007)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -324,6 +363,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Certificate of Signer',
+    keyword: 'CertificateOfSigner',
     tag: '(0400,0115)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -331,6 +371,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Certified Timestamp',
+    keyword: 'CertifiedTimestamp',
     tag: '(0400,0310)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -340,6 +381,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Coordinating Center Name',
+    keyword: 'ClinicalTrialCoordinatingCenterName',
     tag: '(0012,0060)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -348,6 +390,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Protocol Ethics Committee Approval Number',
+    keyword: 'ClinicalTrialProtocolEthicsCommitteeApprovalNumber',
     tag: '(0012,0082)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -355,6 +398,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Protocol Ethics Committee Name',
+    keyword: 'ClinicalTrialProtocolEthicsCommitteeName',
     tag: '(0012,0081)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -363,6 +407,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Protocol ID',
+    keyword: 'ClinicalTrialProtocolID',
     tag: '(0012,0020)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -370,6 +415,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Protocol Name',
+    keyword: 'ClinicalTrialProtocolName',
     tag: '(0012,0021)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -377,6 +423,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Series Description',
+    keyword: 'ClinicalTrialSeriesDescription',
     tag: '(0012,0072)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -385,6 +432,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Series ID',
+    keyword: 'ClinicalTrialSeriesID',
     tag: '(0012,0071)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -392,6 +440,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Site ID',
+    keyword: 'ClinicalTrialSiteID',
     tag: '(0012,0030)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -400,6 +449,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Site Name',
+    keyword: 'ClinicalTrialSiteName',
     tag: '(0012,0031)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -408,6 +458,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Sponsor Name',
+    keyword: 'ClinicalTrialSponsorName',
     tag: '(0012,0010)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -415,6 +466,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Subject ID',
+    keyword: 'ClinicalTrialSubjectID',
     tag: '(0012,0040)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -422,6 +474,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Subject Reading ID',
+    keyword: 'ClinicalTrialSubjectReadingID',
     tag: '(0012,0042)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -429,6 +482,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Time Point Description',
+    keyword: 'ClinicalTrialTimePointDescription',
     tag: '(0012,0051)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -437,6 +491,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Clinical Trial Time Point ID',
+    keyword: 'ClinicalTrialTimePointID',
     tag: '(0012,0050)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -444,6 +499,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Comments on Radiation Dose',
+    keyword: 'CommentsOnRadiationDose',
     tag: '(0040,0310)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -452,6 +508,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Comments on the Performed Procedure Step',
+    keyword: 'CommentsOnThePerformedProcedureStep',
     tag: '(0040,0280)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -460,6 +517,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Compensator Description',
+    keyword: 'CompensatorDescription',
     tag: '(300A,02EB)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -468,6 +526,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Concatenation UID',
+    keyword: 'ConcatenationUID',
     tag: '(0020,9161)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -476,6 +535,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Conceptual Volume Combination Description',
+    keyword: 'ConceptualVolumeCombinationDescription',
     tag: '(3010,000F)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -484,6 +544,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Conceptual Volume Description',
+    keyword: 'ConceptualVolumeDescription',
     tag: '(3010,0017)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -492,6 +553,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Conceptual Volume UID',
+    keyword: 'ConceptualVolumeUID',
     tag: '(3010,0006)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -500,6 +562,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Confidentiality Constraint on Patient Data Description',
+    keyword: 'ConfidentialityConstraintOnPatientDataDescription',
     tag: '(0040,3001)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -507,6 +570,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Constituent Conceptual Volume UID',
+    keyword: 'ConstituentConceptualVolumeUID',
     tag: '(3010,0013)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -515,6 +579,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Consulting Physician's Name",
+    keyword: 'ConsultingPhysicianName',
     tag: '(0008,009C)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -522,6 +587,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Consulting Physician Identification Sequence',
+    keyword: 'ConsultingPhysicianIdentificationSequence',
     tag: '(0008,009D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -529,6 +595,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Container Component ID',
+    keyword: 'ContainerComponentID',
     tag: '(0050,001B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -536,6 +603,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Container Description',
+    keyword: 'ContainerDescription',
     tag: '(0040,051A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -544,6 +612,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Container Identifier',
+    keyword: 'ContainerIdentifier',
     tag: '(0040,0512)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -551,6 +620,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Content Creator's Identification Code Sequence",
+    keyword: 'ContentCreatorIdentificationCodeSequence',
     tag: '(0070,0086)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -558,6 +628,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Content Creator's Name",
+    keyword: 'ContentCreatorName',
     tag: '(0070,0084)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -565,6 +636,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Content Date',
+    keyword: 'ContentDate',
     tag: '(0008,0023)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -574,6 +646,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Content Sequence',
+    keyword: 'ContentSequence',
     tag: '(0040,A730)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -582,6 +655,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Content Time',
+    keyword: 'ContentTime',
     tag: '(0008,0033)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -591,6 +665,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Context Group Local Version',
+    keyword: 'ContextGroupLocalVersion',
     tag: '(0008,0107)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -600,6 +675,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Context Group Version',
+    keyword: 'ContextGroupVersion',
     tag: '(0008,0106)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -609,6 +685,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Contrast/Bolus Agent',
+    keyword: 'ContrastBolusAgent',
     tag: '(0018,0010)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -617,6 +694,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Contrast/Bolus Start Time',
+    keyword: 'ContrastBolusStartTime',
     tag: '(0018,1042)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -626,6 +704,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Contrast/Bolus Stop Time',
+    keyword: 'ContrastBolusStopTime',
     tag: '(0018,1043)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -635,6 +714,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Contribution DateTime',
+    keyword: 'ContributionDateTime',
     tag: '(0018,A002)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -644,6 +724,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Contribution Description',
+    keyword: 'ContributionDescription',
     tag: '(0018,A003)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -652,6 +733,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Country of Residence',
+    keyword: 'CountryOfResidence',
     tag: '(0010,2150)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -659,6 +741,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Creation Date',
+    keyword: 'CreationDate',
     tag: '(2100,0040)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -668,6 +751,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Creation Time',
+    keyword: 'CreationTime',
     tag: '(2100,0050)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -677,6 +761,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Current Observer (Trial)',
+    keyword: 'CurrentObserverTrial',
     tag: '(0040,A307)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -684,6 +769,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Current Patient Location',
+    keyword: 'CurrentPatientLocation',
     tag: '(0038,0300)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -691,6 +777,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Curve Data',
+    keyword: 'CurveData',
     tag: '(50XX,XXXX)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -699,6 +786,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Curve Date',
+    keyword: 'CurveDate',
     tag: '(0008,0025)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -708,6 +796,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Curve Time',
+    keyword: 'CurveTime',
     tag: '(0008,0035)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -717,6 +806,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Custodial Organization Sequence',
+    keyword: 'CustodialOrganizationSequence',
     tag: '(0040,A07C)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -724,6 +814,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Data Set Trailing Padding',
+    keyword: 'DataSetTrailingPadding',
     tag: '(FFFC,FFFC)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -731,6 +822,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date',
+    keyword: 'Date',
     tag: '(0040,A121)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -740,6 +832,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Document or Verbal Transaction (Trial)',
+    keyword: 'DateOfDocumentOrVerbalTransactionTrial',
     tag: '(0040,A110)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -749,6 +842,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Installation',
+    keyword: 'DateOfInstallation',
     tag: '(0018,1205)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -759,6 +853,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Last Calibration',
+    keyword: 'DateOfLastCalibration',
     tag: '(0018,1200)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -769,6 +864,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Last Detector Calibration',
+    keyword: 'DateOfLastDetectorCalibration',
     tag: '(0018,700C)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -779,6 +875,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Manufacture',
+    keyword: 'DateOfManufacture',
     tag: '(0018,1204)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -789,6 +886,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Date of Secondary Capture',
+    keyword: 'DateOfSecondaryCapture',
     tag: '(0018,1012)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -798,6 +896,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'DateTime',
+    keyword: 'DateTime',
     tag: '(0040,A120)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -807,6 +906,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'DateTime of Last Calibration',
+    keyword: 'DateTimeOfLastCalibration',
     tag: '(0018,1202)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -817,6 +917,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Decay Correction DateTime',
+    keyword: 'DecayCorrectionDateTime',
     tag: '(0018,9701)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -826,6 +927,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Decomposition Description',
+    keyword: 'DecompositionDescription',
     tag: '(0018,937F)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -834,6 +936,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Derivation Description',
+    keyword: 'DerivationDescription',
     tag: '(0008,2111)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -842,6 +945,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Destination AE',
+    keyword: 'DestinationAE',
     tag: '(2100,0140)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -850,6 +954,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Detector ID',
+    keyword: 'DetectorID',
     tag: '(0018,700A)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -858,6 +963,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device Alternate Identifier',
+    keyword: 'DeviceAlternateIdentifier',
     tag: '(3010,001B)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -865,6 +971,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device Description',
+    keyword: 'DeviceDescription',
     tag: '(0050,0020)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -873,6 +980,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device Label',
+    keyword: 'DeviceLabel',
     tag: '(3010,002D)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -881,6 +989,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device Serial Number',
+    keyword: 'DeviceSerialNumber',
     tag: '(0018,1000)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -889,6 +998,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device Setting Description',
+    keyword: 'DeviceSettingDescription',
     tag: '(0016,004B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -897,6 +1007,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Device UID',
+    keyword: 'DeviceUID',
     tag: '(0018,1002)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -906,6 +1017,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Digital Signature DateTime',
+    keyword: 'DigitalSignatureDateTime',
     tag: '(0400,0105)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -915,6 +1027,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Digital Signatures Sequence',
+    keyword: 'DigitalSignaturesSequence',
     tag: '(FFFA,FFFA)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -922,6 +1035,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Digital Signature UID',
+    keyword: 'DigitalSignatureUID',
     tag: '(0400,0100)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -929,6 +1043,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Dimension Organization UID',
+    keyword: 'DimensionOrganizationUID',
     tag: '(0020,9164)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -937,6 +1052,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Discharge Date',
+    keyword: 'DischargeDate',
     tag: '(0038,0030)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -946,6 +1062,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Discharge Diagnosis Description',
+    keyword: 'DischargeDiagnosisDescription',
     tag: '(0038,0040)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -954,6 +1071,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Discharge Time',
+    keyword: 'DischargeTime',
     tag: '(0038,0032)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -963,6 +1081,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Displacement Reference Label',
+    keyword: 'DisplacementReferenceLabel',
     tag: '(300A,079A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -971,6 +1090,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Distribution Address',
+    keyword: 'DistributionAddress',
     tag: '(4008,011A)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -978,6 +1098,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Distribution Name',
+    keyword: 'DistributionName',
     tag: '(4008,0119)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -985,6 +1106,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Dose Reference Description',
+    keyword: 'DoseReferenceDescription',
     tag: '(300A,0016)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -993,6 +1115,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Dose Reference UID',
+    keyword: 'DoseReferenceUID',
     tag: '(300A,0013)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1001,6 +1124,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Dosimetric Objective UID',
+    keyword: 'DosimetricObjectiveUID',
     tag: '(3010,006E)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1009,6 +1133,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Effective DateTime',
+    keyword: 'EffectiveDateTime',
     tag: '(0068,6226)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1018,6 +1143,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Encapsulated Document',
+    keyword: 'EncapsulatedDocument',
     tag: '(0042,0011)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1025,6 +1151,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'End Acquisition DateTime',
+    keyword: 'EndAcquisitionDateTime',
     tag: '(0018,9517)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -1034,6 +1161,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Entity Description',
+    keyword: 'EntityDescription',
     tag: '(3010,0037)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1042,6 +1170,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Entity Label',
+    keyword: 'EntityLabel',
     tag: '(3010,0035)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1050,6 +1179,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Entity Long Label',
+    keyword: 'EntityLongLabel',
     tag: '(3010,0038)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1058,6 +1188,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Entity Name',
+    keyword: 'EntityName',
     tag: '(3010,0036)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1066,6 +1197,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Equipment Frame of Reference Description',
+    keyword: 'EquipmentFrameOfReferenceDescription',
     tag: '(300A,0676)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1074,6 +1206,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Ethics Committee Approval Effectiveness End Date',
+    keyword: 'EthicsCommitteeApprovalEffectivenessEndDate',
     tag: '(0012,0087)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1083,6 +1216,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Ethics Committee Approval Effectiveness Start Date',
+    keyword: 'EthicsCommitteeApprovalEffectivenessStartDate',
     tag: '(0012,0086)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1092,6 +1226,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Ethnic Group',
+    keyword: 'EthnicGroup',
     tag: '(0010,2160)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1100,6 +1235,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Exclusion Start DateTime',
+    keyword: 'ExclusionStartDateTime',
     tag: '(0018,9804)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1109,6 +1245,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Expected Completion DateTime',
+    keyword: 'ExpectedCompletionDateTime',
     tag: '(0040,4011)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1118,6 +1255,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Failed SOP Instance UID List',
+    keyword: 'FailedSOPInstanceUIDList',
     tag: '(0008,0058)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -1126,6 +1264,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Fiducial UID',
+    keyword: 'FiducialUID',
     tag: '(0070,031A)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1134,6 +1273,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Filler Order Number / Imaging Service Request',
+    keyword: 'FillerOrderNumberImagingServiceRequest',
     tag: '(0040,2017)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -1141,6 +1281,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Filter Lookup Table Description',
+    keyword: 'FilterLookupTableDescription',
     tag: '(003A,032B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1149,6 +1290,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Findings Group Recording Date (Trial)',
+    keyword: 'FindingsGroupRecordingDateTrial',
     tag: '(0040,A023)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1158,6 +1300,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Findings Group Recording Time (Trial)',
+    keyword: 'FindingsGroupRecordingTimeTrial',
     tag: '(0040,A024)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1167,6 +1310,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'First Treatment Date',
+    keyword: 'FirstTreatmentDate',
     tag: '(3008,0054)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -1176,6 +1320,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Fixation Device Description',
+    keyword: 'FixationDeviceDescription',
     tag: '(300A,0196)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1184,6 +1329,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Flow Identifier',
+    keyword: 'FlowIdentifier',
     tag: '(0034,0002)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1191,6 +1337,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Flow Identifier Sequence',
+    keyword: 'FlowIdentifierSequence',
     tag: '(0034,0001)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1198,6 +1345,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Fractionation Notes',
+    keyword: 'FractionationNotes',
     tag: '(3010,007F)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -1206,6 +1354,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Fraction Group Description',
+    keyword: 'FractionGroupDescription',
     tag: '(300A,0072)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1214,6 +1363,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Frame Acquisition DateTime',
+    keyword: 'FrameAcquisitionDateTime',
     tag: '(0018,9074)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1223,6 +1373,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Frame Comments',
+    keyword: 'FrameComments',
     tag: '(0020,9158)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1231,6 +1382,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Frame of Reference UID',
+    keyword: 'FrameOfReferenceUID',
     tag: '(0020,0052)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1239,6 +1391,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Frame Origin Timestamp',
+    keyword: 'FrameOriginTimestamp',
     tag: '(0034,0007)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1248,6 +1401,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Frame Reference DateTime',
+    keyword: 'FrameReferenceDateTime',
     tag: '(0018,9151)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1257,6 +1411,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Functional Sync Pulse',
+    keyword: 'FunctionalSyncPulse',
     tag: '(0018,9623)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1266,6 +1421,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Gantry ID',
+    keyword: 'GantryID',
     tag: '(0018,1008)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1274,6 +1430,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Generator ID',
+    keyword: 'GeneratorID',
     tag: '(0018,1005)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1282,6 +1439,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Altitude',
+    keyword: 'GPSAltitude',
     tag: '(0016,0076)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1289,6 +1447,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Altitude Ref',
+    keyword: 'GPSAltitudeRef',
     tag: '(0016,0075)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1296,6 +1455,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Area Information',
+    keyword: 'GPSAreaInformation',
     tag: '(0016,008C)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1303,6 +1463,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Date Stamp',
+    keyword: 'GPSDateStamp',
     tag: '(0016,008D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1312,6 +1473,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Bearing',
+    keyword: 'GPSDestBearing',
     tag: '(0016,0088)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1319,6 +1481,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Bearing Ref',
+    keyword: 'GPSDestBearingRef',
     tag: '(0016,0087)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1326,6 +1489,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Distance',
+    keyword: 'GPSDestDistance',
     tag: '(0016,008A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1333,6 +1497,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Distance Ref',
+    keyword: 'GPSDestDistanceRef',
     tag: '(0016,0089)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1340,6 +1505,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Latitude',
+    keyword: 'GPSDestLatitude',
     tag: '(0016,0084)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1347,6 +1513,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Latitude Ref',
+    keyword: 'GPSDestLatitudeRef',
     tag: '(0016,0083)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1354,6 +1521,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Longitude',
+    keyword: 'GPSDestLongitude',
     tag: '(0016,0086)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1361,6 +1529,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Dest Longitude Ref',
+    keyword: 'GPSDestLongitudeRef',
     tag: '(0016,0085)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1368,6 +1537,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Differential',
+    keyword: 'GPSDifferential',
     tag: '(0016,008E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1375,6 +1545,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS DOP',
+    keyword: 'GPSDOP',
     tag: '(0016,007B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1382,6 +1553,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Img Direction',
+    keyword: 'GPSImgDirection',
     tag: '(0016,0081)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1389,6 +1561,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Img Direction Ref',
+    keyword: 'GPSImgDirectionRef',
     tag: '(0016,0080)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1396,6 +1569,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Latitude',
+    keyword: 'GPSLatitude',
     tag: '(0016,0072)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1403,6 +1577,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Latitude Ref',
+    keyword: 'GPSLatitudeRef',
     tag: '(0016,0071)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1410,6 +1585,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Longitude',
+    keyword: 'GPSLongitude',
     tag: '(0016,0074)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1417,6 +1593,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Longitude Ref',
+    keyword: 'GPSLongitudeRef',
     tag: '(0016,0073)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1424,6 +1601,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Map Datum',
+    keyword: 'GPSMapDatum',
     tag: '(0016,0082)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1431,6 +1609,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Measure Mode',
+    keyword: 'GPSMeasureMode',
     tag: '(0016,007A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1438,6 +1617,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Processing Method',
+    keyword: 'GPSProcessingMethod',
     tag: '(0016,008B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1445,6 +1625,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Satellites',
+    keyword: 'GPSSatellites',
     tag: '(0016,0078)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1452,6 +1633,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Speed',
+    keyword: 'GPSSpeed',
     tag: '(0016,007D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1459,6 +1641,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Speed Ref',
+    keyword: 'GPSSpeedRef',
     tag: '(0016,007C)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1466,6 +1649,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Status',
+    keyword: 'GPSStatus',
     tag: '(0016,0079)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1473,6 +1657,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Time Stamp',
+    keyword: 'GPSTimeStamp',
     tag: '(0016,0077)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1480,6 +1665,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Track',
+    keyword: 'GPSTrack',
     tag: '(0016,007F)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1487,6 +1673,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Track Ref',
+    keyword: 'GPSTrackRef',
     tag: '(0016,007E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1494,6 +1681,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'GPS Version ID',
+    keyword: 'GPSVersionID',
     tag: '(0016,0070)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1501,6 +1689,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Graphic Annotation Sequence',
+    keyword: 'GraphicAnnotationSequence',
     tag: '(0070,0001)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1509,6 +1698,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Hanging Protocol Creation DateTime',
+    keyword: 'HangingProtocolCreationDateTime',
     tag: '(0072,000A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1518,6 +1708,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'HL7 Document Effective Time',
+    keyword: 'HL7DocumentEffectiveTime',
     tag: '(0040,E004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1527,6 +1718,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Human Performer's Name",
+    keyword: 'HumanPerformerName',
     tag: '(0040,4037)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1534,13 +1726,15 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Human Performer's Organization",
+    keyword: 'HumanPerformerOrganization',
     tag: '(0040,4036)',
     stdCompIOD: 'N',
     basicProfile: 'X',
     id: '00404036',
   },
   {
-    name: 'Icon Image Sequence\n\n(see Note 11)',
+    name: 'Icon Image Sequence',
+    keyword: 'IconImageSequence',
     tag: '(0088,0200)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1548,6 +1742,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Identifying Comments',
+    keyword: 'IdentifyingComments',
     tag: '(0008,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1556,6 +1751,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Image Comments',
+    keyword: 'ImageComments',
     tag: '(0020,4000)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1564,6 +1760,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Image Presentation Comments',
+    keyword: 'ImagePresentationComments',
     tag: '(0028,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1571,6 +1768,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Imaging Service Request Comments',
+    keyword: 'ImagingServiceRequestComments',
     tag: '(0040,2400)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1579,6 +1777,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Impedance Measurement DateTime',
+    keyword: 'ImpedanceMeasurementDateTime',
     tag: '(003A,0314)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1588,6 +1787,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Impressions',
+    keyword: 'Impressions',
     tag: '(4008,0300)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1596,6 +1796,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Information Issue DateTime',
+    keyword: 'InformationIssueDateTime',
     tag: '(0068,6270)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1605,6 +1806,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instance Coercion DateTime',
+    keyword: 'InstanceCoercionDateTime',
     tag: '(0008,0015)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1614,6 +1816,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instance Creation Date',
+    keyword: 'InstanceCreationDate',
     tag: '(0008,0012)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -1623,6 +1826,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instance Creation Time',
+    keyword: 'InstanceCreationTime',
     tag: '(0008,0013)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -1632,6 +1836,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instance Creator UID',
+    keyword: 'InstanceCreatorUID',
     tag: '(0008,0014)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1640,6 +1845,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instance Origin Status',
+    keyword: 'InstanceOriginStatus',
     tag: '(0400,0600)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1647,6 +1853,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Institution Address',
+    keyword: 'InstitutionAddress',
     tag: '(0008,0081)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1655,6 +1862,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Institutional Department Name',
+    keyword: 'InstitutionalDepartmentName',
     tag: '(0008,1040)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1663,6 +1871,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Institutional Department Type Code Sequence',
+    keyword: 'InstitutionalDepartmentTypeCodeSequence',
     tag: '(0008,1041)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1671,6 +1880,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Institution Code Sequence',
+    keyword: 'InstitutionCodeSequence',
     tag: '(0008,0082)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -1679,6 +1889,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Institution Name',
+    keyword: 'InstitutionName',
     tag: '(0008,0080)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -1687,6 +1898,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Instruction Performed DateTime',
+    keyword: 'InstructionPerformedDateTime',
     tag: '(0018,9919)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -1696,6 +1908,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Insurance Plan Identification',
+    keyword: 'InsurancePlanIdentification',
     tag: '(0010,1050)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1703,6 +1916,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intended Fraction Start Time',
+    keyword: 'IntendedFractionStartTime',
     tag: '(3010,0085)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1712,6 +1926,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intended Phase End Date',
+    keyword: 'IntendedPhaseEndDate',
     tag: '(3010,004D)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -1721,6 +1936,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intended Phase Start Date',
+    keyword: 'IntendedPhaseStartDate',
     tag: '(3010,004C)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -1730,6 +1946,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intended Recipients of Results Identification Sequence',
+    keyword: 'IntendedRecipientsOfResultsIdentificationSequence',
     tag: '(0040,1011)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1737,6 +1954,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interlock DateTime',
+    keyword: 'InterlockDateTime',
     tag: '(300A,0741)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1746,6 +1964,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interlock Description',
+    keyword: 'InterlockDescription',
     tag: '(300A,0742)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1754,6 +1973,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interlock Origin Description',
+    keyword: 'InterlockOriginDescription',
     tag: '(300A,0783)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -1762,6 +1982,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Approval Date',
+    keyword: 'InterpretationApprovalDate',
     tag: '(4008,0112)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1771,6 +1992,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Approval Time',
+    keyword: 'InterpretationApprovalTime',
     tag: '(4008,0113)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1780,6 +2002,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Approver Sequence',
+    keyword: 'InterpretationApproverSequence',
     tag: '(4008,0111)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1787,6 +2010,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Author',
+    keyword: 'InterpretationAuthor',
     tag: '(4008,010C)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1794,6 +2018,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Diagnosis Description',
+    keyword: 'InterpretationDiagnosisDescription',
     tag: '(4008,0115)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1802,6 +2027,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation ID',
+    keyword: 'InterpretationID',
     tag: '(4008,0200)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1809,6 +2035,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation ID Issuer',
+    keyword: 'InterpretationIDIssuer',
     tag: '(4008,0202)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1816,6 +2043,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Recorded Date',
+    keyword: 'InterpretationRecordedDate',
     tag: '(4008,0100)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1825,6 +2053,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Recorded Time',
+    keyword: 'InterpretationRecordedTime',
     tag: '(4008,0101)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1834,6 +2063,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Recorder',
+    keyword: 'InterpretationRecorder',
     tag: '(4008,0102)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1841,6 +2071,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Text',
+    keyword: 'InterpretationText',
     tag: '(4008,010B)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1849,6 +2080,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Transcriber',
+    keyword: 'InterpretationTranscriber',
     tag: '(4008,010A)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1856,6 +2088,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Transcription Date',
+    keyword: 'InterpretationTranscriptionDate',
     tag: '(4008,0108)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1865,6 +2098,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Interpretation Transcription Time',
+    keyword: 'InterpretationTranscriptionTime',
     tag: '(4008,0109)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1874,6 +2108,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intervention Drug Start Time',
+    keyword: 'InterventionDrugStartTime',
     tag: '(0018,0035)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1883,6 +2118,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Intervention Drug Stop Time',
+    keyword: 'InterventionDrugStopTime',
     tag: '(0018,0027)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1892,6 +2128,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Irradiation Event UID',
+    keyword: 'IrradiationEventUID',
     tag: '(0008,3010)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -1900,6 +2137,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issue Date of Imaging Service Request',
+    keyword: 'IssueDateOfImagingServiceRequest',
     tag: '(0040,2004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -1909,6 +2147,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Admission ID',
+    keyword: 'IssuerOfAdmissionID',
     tag: '(0038,0011)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1916,6 +2155,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Admission ID Sequence',
+    keyword: 'IssuerOfAdmissionIDSequence',
     tag: '(0038,0014)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1923,6 +2163,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Protocol ID',
+    keyword: 'IssuerOfClinicalTrialProtocolID',
     tag: '(0012,0022)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1930,6 +2171,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Series ID',
+    keyword: 'IssuerOfClinicalTrialSeriesID',
     tag: '(0012,0073)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1937,6 +2179,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Site ID',
+    keyword: 'IssuerOfClinicalTrialSiteID',
     tag: '(0012,0032)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1944,6 +2187,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Subject ID',
+    keyword: 'IssuerOfClinicalTrialSubjectID',
     tag: '(0012,0041)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1951,6 +2195,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Subject Reading ID',
+    keyword: 'IssuerOfClinicalTrialSubjectReadingID',
     tag: '(0012,0043)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1958,6 +2203,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Clinical Trial Time Point ID',
+    keyword: 'IssuerOfClinicalTrialTimePointID',
     tag: '(0012,0055)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1965,6 +2211,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Patient ID',
+    keyword: 'IssuerOfPatientID',
     tag: '(0010,0021)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1972,6 +2219,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Service Episode ID',
+    keyword: 'IssuerOfServiceEpisodeID',
     tag: '(0038,0061)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1979,6 +2227,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of Service Episode ID Sequence',
+    keyword: 'IssuerOfServiceEpisodeIDSequence',
     tag: '(0038,0064)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -1986,6 +2235,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of the Container Identifier Sequence',
+    keyword: 'IssuerOfTheContainerIdentifierSequence',
     tag: '(0040,0513)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -1993,6 +2243,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issuer of the Specimen Identifier Sequence',
+    keyword: 'IssuerOfTheSpecimenIdentifierSequence',
     tag: '(0040,0562)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2000,6 +2251,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Issue Time of Imaging Service Request',
+    keyword: 'IssueTimeOfImagingServiceRequest',
     tag: '(0040,2005)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2009,6 +2261,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Label Text',
+    keyword: 'LabelText',
     tag: '(2200,0002)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -2017,6 +2270,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Large Palette Color Lookup Table UID',
+    keyword: 'LargePaletteColorLookupTableUID',
     tag: '(0028,1214)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -2025,6 +2279,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Last Menstrual Date',
+    keyword: 'LastMenstrualDate',
     tag: '(0010,21D0)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2034,6 +2289,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Lens Make',
+    keyword: 'LensMake',
     tag: '(0016,004F)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2042,6 +2298,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Lens Model',
+    keyword: 'LensModel',
     tag: '(0016,0050)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2050,6 +2307,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Lens Serial Number',
+    keyword: 'LensSerialNumber',
     tag: '(0016,0051)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2058,6 +2316,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Lens Specification',
+    keyword: 'LensSpecification',
     tag: '(0016,004E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2066,6 +2325,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Long Device Description',
+    keyword: 'LongDeviceDescription',
     tag: '(0050,0021)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2074,6 +2334,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'MAC',
+    keyword: 'MAC',
     tag: '(0400,0404)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2081,6 +2342,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Maker Note',
+    keyword: 'MakerNote',
     tag: '(0016,002B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2089,6 +2351,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Manufacturer's Device Class UID",
+    keyword: 'ManufacturerDeviceClassUID',
     tag: '(0018,100B)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2098,6 +2361,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Manufacturer's Device Identifier",
+    keyword: 'ManufacturerDeviceIdentifier',
     tag: '(3010,0043)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2106,6 +2370,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Media Storage SOP Instance UID',
+    keyword: 'MediaStorageSOPInstanceUID',
     tag: '(0002,0003)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -2114,6 +2379,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Medical Alerts',
+    keyword: 'MedicalAlerts',
     tag: '(0010,2000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2122,6 +2388,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Medical Record Locator',
+    keyword: 'MedicalRecordLocator',
     tag: '(0010,1090)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2129,6 +2396,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Military Rank',
+    keyword: 'MilitaryRank',
     tag: '(0010,1080)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2136,6 +2404,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modified Attributes Sequence',
+    keyword: 'ModifiedAttributesSequence',
     tag: '(0400,0550)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2143,6 +2412,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modified Image Date',
+    keyword: 'ModifiedImageDate',
     tag: '(0020,3403)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2152,6 +2422,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modified Image Description',
+    keyword: 'ModifiedImageDescription',
     tag: '(0020,3406)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2159,6 +2430,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modified Image Time',
+    keyword: 'ModifiedImageTime',
     tag: '(0020,3405)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2168,6 +2440,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modifying Device ID',
+    keyword: 'ModifyingDeviceID',
     tag: '(0020,3401)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2176,6 +2449,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Modifying System',
+    keyword: 'ModifyingSystem',
     tag: '(0400,0563)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -2184,6 +2458,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Most Recent Treatment Date',
+    keyword: 'MostRecentTreatmentDate',
     tag: '(3008,0056)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -2193,6 +2468,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Multi-energy Acquisition Description',
+    keyword: 'MultienergyAcquisitionDescription',
     tag: '(0018,937B)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2201,6 +2477,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Multiplex Group UID',
+    keyword: 'MultiplexGroupUID',
     tag: '(003A,0310)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2209,6 +2486,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Name of Physician(s) Reading Study',
+    keyword: 'NameOfPhysiciansReadingStudy',
     tag: '(0008,1060)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2216,6 +2494,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Names of Intended Recipients of Results',
+    keyword: 'NamesOfIntendedRecipientsOfResults',
     tag: '(0040,1010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2223,6 +2502,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Network ID',
+    keyword: 'NetworkID',
     tag: '(0008,1000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2231,6 +2511,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Nonconforming Data Element Value',
+    keyword: 'NonconformingDataElementValue',
     tag: '(0400,0552)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2238,6 +2519,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Nonconforming Modified Attributes Sequence',
+    keyword: 'NonconformingModifiedAttributesSequence',
     tag: '(0400,0551)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2245,6 +2527,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation Date (Trial)',
+    keyword: 'ObservationDateTrial',
     tag: '(0040,A192)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2254,6 +2537,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation DateTime',
+    keyword: 'ObservationDateTime',
     tag: '(0040,A032)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -2263,6 +2547,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation Start DateTime',
+    keyword: 'ObservationStartDateTime',
     tag: '(0040,A033)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2272,6 +2557,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation Subject UID (Trial)',
+    keyword: 'ObservationSubjectUIDTrial',
     tag: '(0040,A402)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -2280,6 +2566,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation Time (Trial)',
+    keyword: 'ObservationTimeTrial',
     tag: '(0040,A193)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2289,6 +2576,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Observation UID',
+    keyword: 'ObservationUID',
     tag: '(0040,A171)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2297,6 +2585,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Occupation',
+    keyword: 'Occupation',
     tag: '(0010,2180)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2305,6 +2594,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Operator Identification Sequence',
+    keyword: 'OperatorIdentificationSequence',
     tag: '(0008,1072)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -2312,6 +2602,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Operators' Name",
+    keyword: 'OperatorsName',
     tag: '(0008,1070)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -2319,6 +2610,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Order Callback Phone Number',
+    keyword: 'OrderCallbackPhoneNumber',
     tag: '(0040,2010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2326,6 +2618,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Order Callback Telecom Information',
+    keyword: 'OrderCallbackTelecomInformation',
     tag: '(0040,2011)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2333,6 +2626,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Order Entered By',
+    keyword: 'OrderEnteredBy',
     tag: '(0040,2008)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2340,6 +2634,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Order Enterer's Location",
+    keyword: 'OrderEntererLocation',
     tag: '(0040,2009)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2347,6 +2642,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Original Attributes Sequence',
+    keyword: 'OriginalAttributesSequence',
     tag: '(0400,0561)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2354,6 +2650,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Originator',
+    keyword: 'Originator',
     tag: '(2100,0070)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2362,6 +2659,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Other Clinical Trial Protocol IDs Sequence',
+    keyword: 'OtherClinicalTrialProtocolIDsSequence',
     tag: '(0012,0023)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2369,6 +2667,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Other Patient IDs',
+    keyword: 'OtherPatientIDs',
     tag: '(0010,1000)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2376,6 +2675,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Other Patient IDs Sequence',
+    keyword: 'OtherPatientIDsSequence',
     tag: '(0010,1002)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2383,6 +2683,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Other Patient Names',
+    keyword: 'OtherPatientNames',
     tag: '(0010,1001)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2390,6 +2691,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Overlay Comments',
+    keyword: 'OverlayComments',
     tag: '(60XX,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2398,6 +2700,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Overlay Data',
+    keyword: 'OverlayData',
     tag: '(60XX,3000)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2406,6 +2709,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Overlay Date',
+    keyword: 'OverlayDate',
     tag: '(0008,0024)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2415,6 +2719,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Overlay Time',
+    keyword: 'OverlayTime',
     tag: '(0008,0034)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2424,6 +2729,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Override DateTime',
+    keyword: 'OverrideDateTime',
     tag: '(300A,0760)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -2433,6 +2739,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Palette Color Lookup Table UID',
+    keyword: 'PaletteColorLookupTableUID',
     tag: '(0028,1199)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2441,6 +2748,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Participant Sequence',
+    keyword: 'ParticipantSequence',
     tag: '(0040,A07A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2448,6 +2756,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Participation DateTime',
+    keyword: 'ParticipationDateTime',
     tag: '(0040,A082)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2457,6 +2766,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Address",
+    keyword: 'PatientAddress',
     tag: '(0010,1040)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2464,6 +2774,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Age",
+    keyword: 'PatientAge',
     tag: '(0010,1010)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2472,6 +2783,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Birth Date",
+    keyword: 'PatientBirthDate',
     tag: '(0010,0030)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2479,6 +2791,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Birth Name",
+    keyword: 'PatientBirthName',
     tag: '(0010,1005)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2486,6 +2799,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Birth Time",
+    keyword: 'PatientBirthTime',
     tag: '(0010,0032)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2493,6 +2807,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Institution Residence",
+    keyword: 'PatientInstitutionResidence',
     tag: '(0038,0400)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2500,6 +2815,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Insurance Plan Code Sequence",
+    keyword: 'PatientInsurancePlanCodeSequence',
     tag: '(0010,0050)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2507,6 +2823,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Mother's Birth Name",
+    keyword: 'PatientMotherBirthName',
     tag: '(0010,1060)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2514,6 +2831,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Name",
+    keyword: 'PatientName',
     tag: '(0010,0010)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2521,6 +2839,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Primary Language Code Sequence",
+    keyword: 'PatientPrimaryLanguageCodeSequence',
     tag: '(0010,0101)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2528,6 +2847,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Primary Language Modifier Code Sequence",
+    keyword: 'PatientPrimaryLanguageModifierCodeSequence',
     tag: '(0010,0102)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2535,6 +2855,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Religious Preference",
+    keyword: 'PatientReligiousPreference',
     tag: '(0010,21F0)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2542,6 +2863,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Sex",
+    keyword: 'PatientSex',
     tag: '(0010,0040)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2550,6 +2872,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Sex Neutered",
+    keyword: 'PatientSexNeutered',
     tag: '(0010,2203)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -2558,6 +2881,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Size",
+    keyword: 'PatientSize',
     tag: '(0010,1020)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2566,6 +2890,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Telecom Information",
+    keyword: 'PatientTelecomInformation',
     tag: '(0010,2155)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2573,6 +2898,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Telephone Numbers",
+    keyword: 'PatientTelephoneNumbers',
     tag: '(0010,2154)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2580,6 +2906,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Patient's Weight",
+    keyword: 'PatientWeight',
     tag: '(0010,1030)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2588,6 +2915,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Comments',
+    keyword: 'PatientComments',
     tag: '(0010,4000)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2596,6 +2924,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient ID',
+    keyword: 'PatientID',
     tag: '(0010,0020)',
     stdCompIOD: 'Y',
     basicProfile: 'Z/D',
@@ -2603,6 +2932,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Setup Photo Description',
+    keyword: 'PatientSetupPhotoDescription',
     tag: '(300A,0794)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2611,6 +2941,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Setup UID',
+    keyword: 'PatientSetupUID',
     tag: '(300A,0650)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -2619,6 +2950,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient State',
+    keyword: 'PatientState',
     tag: '(0038,0500)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2628,6 +2960,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Transport Arrangements',
+    keyword: 'PatientTransportArrangements',
     tag: '(0040,1004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2635,6 +2968,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Treatment Preparation Method Description',
+    keyword: 'PatientTreatmentPreparationMethodDescription',
     tag: '(300A,0792)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2643,6 +2977,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Patient Treatment Preparation Procedure Parameter Description',
+    keyword: 'PatientTreatmentPreparationProcedureParameterDescription',
     tag: '(300A,078E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2651,6 +2986,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Location',
+    keyword: 'PerformedLocation',
     tag: '(0040,0243)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2658,6 +2994,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step Description',
+    keyword: 'PerformedProcedureStepDescription',
     tag: '(0040,0254)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2666,6 +3003,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step End Date',
+    keyword: 'PerformedProcedureStepEndDate',
     tag: '(0040,0250)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2675,6 +3013,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step End DateTime',
+    keyword: 'PerformedProcedureStepEndDateTime',
     tag: '(0040,4051)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2684,6 +3023,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step End Time',
+    keyword: 'PerformedProcedureStepEndTime',
     tag: '(0040,0251)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2693,6 +3033,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step ID',
+    keyword: 'PerformedProcedureStepID',
     tag: '(0040,0253)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2700,6 +3041,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step Start Date',
+    keyword: 'PerformedProcedureStepStartDate',
     tag: '(0040,0244)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2709,6 +3051,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step Start DateTime',
+    keyword: 'PerformedProcedureStepStartDateTime',
     tag: '(0040,4050)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2718,6 +3061,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Procedure Step Start Time',
+    keyword: 'PerformedProcedureStepStartTime',
     tag: '(0040,0245)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2727,6 +3071,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Station AE Title',
+    keyword: 'PerformedStationAETitle',
     tag: '(0040,0241)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2735,6 +3080,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Station Geographic Location Code Sequence',
+    keyword: 'PerformedStationGeographicLocationCodeSequence',
     tag: '(0040,4030)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2743,6 +3089,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Station Name',
+    keyword: 'PerformedStationName',
     tag: '(0040,0242)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2751,6 +3098,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performed Station Name Code Sequence',
+    keyword: 'PerformedStationNameCodeSequence',
     tag: '(0040,4028)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2759,6 +3107,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Performing Physician's Name",
+    keyword: 'PerformingPhysicianName',
     tag: '(0008,1050)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2766,6 +3115,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Performing Physician Identification Sequence',
+    keyword: 'PerformingPhysicianIdentificationSequence',
     tag: '(0008,1052)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2773,6 +3123,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Person's Address",
+    keyword: 'PersonAddress',
     tag: '(0040,1102)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2780,6 +3131,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Person's Telecom Information",
+    keyword: 'PersonTelecomInformation',
     tag: '(0040,1104)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2787,6 +3139,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Person's Telephone Numbers",
+    keyword: 'PersonTelephoneNumbers',
     tag: '(0040,1103)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2794,6 +3147,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Person Identification Code Sequence',
+    keyword: 'PersonIdentificationCodeSequence',
     tag: '(0040,1101)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -2801,6 +3155,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Person Name',
+    keyword: 'PersonName',
     tag: '(0040,A123)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -2808,6 +3163,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Physician(s) of Record',
+    keyword: 'PhysiciansOfRecord',
     tag: '(0008,1048)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2815,6 +3171,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Physician(s) of Record Identification Sequence',
+    keyword: 'PhysiciansOfRecordIdentificationSequence',
     tag: '(0008,1049)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2822,6 +3179,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Physician(s) Reading Study Identification Sequence',
+    keyword: 'PhysiciansReadingStudyIdentificationSequence',
     tag: '(0008,1062)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2829,6 +3187,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Physician Approving Interpretation',
+    keyword: 'PhysicianApprovingInterpretation',
     tag: '(4008,0114)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2836,6 +3195,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Placer Order Number / Imaging Service Request',
+    keyword: 'PlacerOrderNumberImagingServiceRequest',
     tag: '(0040,2016)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2843,6 +3203,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Plate ID',
+    keyword: 'PlateID',
     tag: '(0018,1004)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2851,6 +3212,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Position Acquisition Template Description',
+    keyword: 'PositionAcquisitionTemplateDescription',
     tag: '(3002,0123)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2859,6 +3221,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Position Acquisition Template Name',
+    keyword: 'PositionAcquisitionTemplateName',
     tag: '(3002,0121)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2867,6 +3230,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Pregnancy Status',
+    keyword: 'PregnancyStatus',
     tag: '(0010,21C0)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2875,6 +3239,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Pre-Medication',
+    keyword: 'PreMedication',
     tag: '(0040,0012)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2883,6 +3248,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Prescription Description',
+    keyword: 'PrescriptionDescription',
     tag: '(300A,000E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2891,6 +3257,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Prescription Notes',
+    keyword: 'PrescriptionNotes',
     tag: '(3010,007B)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2899,6 +3266,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Prescription Notes Sequence',
+    keyword: 'PrescriptionNotesSequence',
     tag: '(3010,0081)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -2907,6 +3275,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Presentation Creation Date',
+    keyword: 'PresentationCreationDate',
     tag: '(0070,0082)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2916,6 +3285,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Presentation Creation Time',
+    keyword: 'PresentationCreationTime',
     tag: '(0070,0083)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2925,6 +3295,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Presentation Display Collection UID',
+    keyword: 'PresentationDisplayCollectionUID',
     tag: '(0070,1101)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2933,6 +3304,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Presentation Sequence Collection UID',
+    keyword: 'PresentationSequenceCollectionUID',
     tag: '(0070,1102)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -2941,6 +3313,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Prior Treatment Dose Description',
+    keyword: 'PriorTreatmentDoseDescription',
     tag: '(3010,0061)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2948,15 +3321,8 @@ export const ps315EElements: TPs315EElement[] = [
     id: '30100061',
   },
   {
-    name: 'Private Attributes',
-    tag: '(GGGG,EEEE) WHERE GGGG IS ODD',
-    stdCompIOD: 'N',
-    basicProfile: 'X',
-    rtnSafePrivOpt: 'C',
-    id: 'ggggeeee-where-gggg-is-odd',
-  },
-  {
     name: 'Procedure Step Cancellation DateTime',
+    keyword: 'ProcedureStepCancellationDateTime',
     tag: '(0040,4052)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2966,6 +3332,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Product Expiration DateTime',
+    keyword: 'ProductExpirationDateTime',
     tag: '(0044,000B)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -2975,6 +3342,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Protocol Name',
+    keyword: 'ProtocolName',
     tag: '(0018,1030)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -2983,6 +3351,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Pyramid Description',
+    keyword: 'PyramidDescription',
     tag: '(0008,1088)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2991,6 +3360,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Pyramid Label',
+    keyword: 'PyramidLabel',
     tag: '(0020,0027)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -2999,6 +3369,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Pyramid UID',
+    keyword: 'PyramidUID',
     tag: '(0008,0019)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3007,6 +3378,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiation Dose Identification Label',
+    keyword: 'RadiationDoseIdentificationLabel',
     tag: '(300A,0619)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3015,6 +3387,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiation Dose In-Vivo Measurement Label',
+    keyword: 'RadiationDoseInVivoMeasurementLabel',
     tag: '(300A,0623)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3023,6 +3396,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiation Generation Mode Description',
+    keyword: 'RadiationGenerationModeDescription',
     tag: '(300A,067D)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3031,6 +3405,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiation Generation Mode Label',
+    keyword: 'RadiationGenerationModeLabel',
     tag: '(300A,067C)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3039,6 +3414,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiopharmaceutical Start DateTime',
+    keyword: 'RadiopharmaceuticalStartDateTime',
     tag: '(0018,1078)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3048,6 +3424,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiopharmaceutical Start Time',
+    keyword: 'RadiopharmaceuticalStartTime',
     tag: '(0018,1072)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3057,6 +3434,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiopharmaceutical Stop DateTime',
+    keyword: 'RadiopharmaceuticalStopDateTime',
     tag: '(0018,1079)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3066,6 +3444,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Radiopharmaceutical Stop Time',
+    keyword: 'RadiopharmaceuticalStopTime',
     tag: '(0018,1073)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3075,6 +3454,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Omission Description',
+    keyword: 'ReasonForOmissionDescription',
     tag: '(300C,0113)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3083,6 +3463,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Requested Procedure Code Sequence',
+    keyword: 'ReasonForRequestedProcedureCodeSequence',
     tag: '(0040,100A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3091,6 +3472,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Study',
+    keyword: 'ReasonForStudy',
     tag: '(0032,1030)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3099,6 +3481,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Superseding',
+    keyword: 'ReasonForSuperseding',
     tag: '(3010,005C)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3107,6 +3490,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for the Attribute Modification',
+    keyword: 'ReasonForTheAttributeModification',
     tag: '(0400,0565)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3115,6 +3499,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for the Imaging Service Request',
+    keyword: 'ReasonForTheImagingServiceRequest',
     tag: '(0040,2001)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3123,6 +3508,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for the Requested Procedure',
+    keyword: 'ReasonForTheRequestedProcedure',
     tag: '(0040,1002)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3131,6 +3517,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Visit',
+    keyword: 'ReasonForVisit',
     tag: '(0032,1066)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3139,6 +3526,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reason for Visit Code Sequence',
+    keyword: 'ReasonForVisitCodeSequence',
     tag: '(0032,1067)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3147,6 +3535,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Receiving AE',
+    keyword: 'ReceivingAE',
     tag: '(0074,1234)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3155,6 +3544,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Recorded RT Control Point DateTime',
+    keyword: 'RecordedRTControlPointDateTime',
     tag: '(300A,073A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3164,6 +3554,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Conceptual Volume UID',
+    keyword: 'ReferencedConceptualVolumeUID',
     tag: '(3010,000B)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3172,6 +3563,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced DateTime',
+    keyword: 'ReferencedDateTime',
     tag: '(0040,A13A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3181,6 +3573,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Digital Signature Sequence',
+    keyword: 'ReferencedDigitalSignatureSequence',
     tag: '(0400,0402)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3188,6 +3581,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Dose Reference UID',
+    keyword: 'ReferencedDoseReferenceUID',
     tag: '(300A,0083)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3196,6 +3590,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Dosimetric Objective UID',
+    keyword: 'ReferencedDosimetricObjectiveUID',
     tag: '(3010,006F)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3204,6 +3599,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Fiducials UID',
+    keyword: 'ReferencedFiducialsUID',
     tag: '(3010,0031)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3212,6 +3608,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Frame of Reference UID',
+    keyword: 'ReferencedFrameOfReferenceUID',
     tag: '(3006,0024)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3220,6 +3617,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced General Purpose Scheduled Procedure Step Transaction UID',
+    keyword: 'ReferencedGeneralPurposeScheduledProcedureStepTransactionUID',
     tag: '(0040,4023)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -3228,6 +3626,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Image Sequence',
+    keyword: 'ReferencedImageSequence',
     tag: '(0008,1140)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/U*',
@@ -3236,6 +3635,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Observation UID (Trial)',
+    keyword: 'ReferencedObservationUIDTrial',
     tag: '(0040,A172)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -3244,6 +3644,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Patient Alias Sequence',
+    keyword: 'ReferencedPatientAliasSequence',
     tag: '(0038,0004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3251,6 +3652,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Patient Photo Sequence',
+    keyword: 'ReferencedPatientPhotoSequence',
     tag: '(0010,1100)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3258,6 +3660,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Patient Sequence',
+    keyword: 'ReferencedPatientSequence',
     tag: '(0008,1120)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3266,6 +3669,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Performed Procedure Step Sequence',
+    keyword: 'ReferencedPerformedProcedureStepSequence',
     tag: '(0008,1111)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -3274,6 +3678,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced SOP Instance MAC Sequence',
+    keyword: 'ReferencedSOPInstanceMACSequence',
     tag: '(0400,0403)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3281,6 +3686,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced SOP Instance UID',
+    keyword: 'ReferencedSOPInstanceUID',
     tag: '(0008,1155)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3289,6 +3695,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced SOP Instance UID in File',
+    keyword: 'ReferencedSOPInstanceUIDInFile',
     tag: '(0004,1511)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -3297,6 +3704,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Study Sequence',
+    keyword: 'ReferencedStudySequence',
     tag: '(0008,1110)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -3305,6 +3713,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referenced Treatment Position Group UID',
+    keyword: 'ReferencedTreatmentPositionGroupUID',
     tag: '(300A,0785)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3313,6 +3722,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Referring Physician's Address",
+    keyword: 'ReferringPhysicianAddress',
     tag: '(0008,0092)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3320,6 +3730,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Referring Physician's Name",
+    keyword: 'ReferringPhysicianName',
     tag: '(0008,0090)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3327,6 +3738,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Referring Physician's Telephone Numbers",
+    keyword: 'ReferringPhysicianTelephoneNumbers',
     tag: '(0008,0094)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3334,6 +3746,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Referring Physician Identification Sequence',
+    keyword: 'ReferringPhysicianIdentificationSequence',
     tag: '(0008,0096)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3341,6 +3754,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Region of Residence',
+    keyword: 'RegionOfResidence',
     tag: '(0010,2152)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3348,6 +3762,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Related Frame of Reference UID',
+    keyword: 'RelatedFrameOfReferenceUID',
     tag: '(3006,00C2)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -3356,6 +3771,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Request Attributes Sequence',
+    keyword: 'RequestAttributesSequence',
     tag: '(0040,0275)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3364,6 +3780,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Contrast Agent',
+    keyword: 'RequestedContrastAgent',
     tag: '(0032,1070)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3372,6 +3789,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Procedure Comments',
+    keyword: 'RequestedProcedureComments',
     tag: '(0040,1400)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3380,6 +3798,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Procedure Description',
+    keyword: 'RequestedProcedureDescription',
     tag: '(0032,1060)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -3388,6 +3807,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Procedure ID',
+    keyword: 'RequestedProcedureID',
     tag: '(0040,1001)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3395,6 +3815,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Procedure Location',
+    keyword: 'RequestedProcedureLocation',
     tag: '(0040,1005)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3402,6 +3823,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested Series Description',
+    keyword: 'RequestedSeriesDescription',
     tag: '(0018,9937)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3410,6 +3832,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requested SOP Instance UID',
+    keyword: 'RequestedSOPInstanceUID',
     tag: '(0000,1001)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -3418,6 +3841,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requesting AE',
+    keyword: 'RequestingAE',
     tag: '(0074,1236)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3426,6 +3850,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requesting Physician',
+    keyword: 'RequestingPhysician',
     tag: '(0032,1032)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3433,6 +3858,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Requesting Service',
+    keyword: 'RequestingService',
     tag: '(0032,1033)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3440,6 +3866,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Respiratory Motion Compensation Technique Description',
+    keyword: 'RespiratoryMotionCompensationTechniqueDescription',
     tag: '(0018,9185)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3448,6 +3875,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Responsible Organization',
+    keyword: 'ResponsibleOrganization',
     tag: '(0010,2299)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3455,6 +3883,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Responsible Person',
+    keyword: 'ResponsiblePerson',
     tag: '(0010,2297)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3462,6 +3891,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Results Comments',
+    keyword: 'ResultsComments',
     tag: '(4008,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3470,6 +3900,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Results Distribution List Sequence',
+    keyword: 'ResultsDistributionListSequence',
     tag: '(4008,0118)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3477,6 +3908,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Results ID',
+    keyword: 'ResultsID',
     tag: '(4008,0040)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3484,6 +3916,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Results ID Issuer',
+    keyword: 'ResultsIDIssuer',
     tag: '(4008,0042)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3491,6 +3924,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Retrieve AE Title',
+    keyword: 'RetrieveAETitle',
     tag: '(0008,0054)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3499,6 +3933,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Review Date',
+    keyword: 'ReviewDate',
     tag: '(300E,0004)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3508,6 +3943,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Reviewer Name',
+    keyword: 'ReviewerName',
     tag: '(300E,0008)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -3515,6 +3951,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Review Time',
+    keyword: 'ReviewTime',
     tag: '(300E,0005)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3524,6 +3961,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Creator Sequence',
+    keyword: 'ROICreatorSequence',
     tag: '(3006,004D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3531,6 +3969,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI DateTime',
+    keyword: 'ROIDateTime',
     tag: '(3006,002D)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3540,6 +3979,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Description',
+    keyword: 'ROIDescription',
     tag: '(3006,0028)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3548,6 +3988,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Generation Description',
+    keyword: 'ROIGenerationDescription',
     tag: '(3006,0038)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3556,6 +3997,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Interpreter',
+    keyword: 'ROIInterpreter',
     tag: '(3006,00A6)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3563,6 +4005,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Interpreter Sequence',
+    keyword: 'ROIInterpreterSequence',
     tag: '(3006,004E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3570,6 +4013,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Name',
+    keyword: 'ROIName',
     tag: '(3006,0026)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3578,6 +4022,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Observation DateTime',
+    keyword: 'ROIObservationDateTime',
     tag: '(3006,002E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3587,6 +4032,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Observation Description',
+    keyword: 'ROIObservationDescription',
     tag: '(3006,0088)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3595,6 +4041,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'ROI Observation Label',
+    keyword: 'ROIObservationLabel',
     tag: '(3006,0085)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3603,6 +4050,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Accessory Device Slot ID',
+    keyword: 'RTAccessoryDeviceSlotID',
     tag: '(300A,0615)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3610,6 +4058,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Accessory Holder Slot ID',
+    keyword: 'RTAccessoryHolderSlotID',
     tag: '(300A,0611)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3617,6 +4066,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Physician Intent Narrative',
+    keyword: 'RTPhysicianIntentNarrative',
     tag: '(3010,005A)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -3625,6 +4075,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Plan Date',
+    keyword: 'RTPlanDate',
     tag: '(300A,0006)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -3634,6 +4085,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Plan Description',
+    keyword: 'RTPlanDescription',
     tag: '(300A,0004)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3642,6 +4094,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Plan Label',
+    keyword: 'RTPlanLabel',
     tag: '(300A,0002)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3650,6 +4103,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Plan Name',
+    keyword: 'RTPlanName',
     tag: '(300A,0003)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3658,6 +4112,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Plan Time',
+    keyword: 'RTPlanTime',
     tag: '(300A,0007)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -3667,6 +4122,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Prescription Label',
+    keyword: 'RTPrescriptionLabel',
     tag: '(3010,0054)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3675,6 +4131,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Tolerance Set Label',
+    keyword: 'RTToleranceSetLabel',
     tag: '(300A,062A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3683,6 +4140,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Treatment Approach Label',
+    keyword: 'RTTreatmentApproachLabel',
     tag: '(3010,0056)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -3691,6 +4149,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'RT Treatment Phase UID',
+    keyword: 'RTTreatmentPhaseUID',
     tag: '(3010,003B)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -3699,6 +4158,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Safe Position Exit Date',
+    keyword: 'SafePositionExitDate',
     tag: '(3008,0162)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3708,6 +4168,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Safe Position Exit Time',
+    keyword: 'SafePositionExitTime',
     tag: '(3008,0164)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3717,6 +4178,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Safe Position Return Date',
+    keyword: 'SafePositionReturnDate',
     tag: '(3008,0166)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3726,6 +4188,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Safe Position Return Time',
+    keyword: 'SafePositionReturnTime',
     tag: '(3008,0168)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3735,6 +4198,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Admission Date',
+    keyword: 'ScheduledAdmissionDate',
     tag: '(0038,001A)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3744,6 +4208,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Admission Time',
+    keyword: 'ScheduledAdmissionTime',
     tag: '(0038,001B)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3753,6 +4218,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Discharge Date',
+    keyword: 'ScheduledDischargeDate',
     tag: '(0038,001C)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3762,6 +4228,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Discharge Time',
+    keyword: 'ScheduledDischargeTime',
     tag: '(0038,001D)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3771,6 +4238,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Human Performers Sequence',
+    keyword: 'ScheduledHumanPerformersSequence',
     tag: '(0040,4034)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3778,6 +4246,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Patient Institution Residence',
+    keyword: 'ScheduledPatientInstitutionResidence',
     tag: '(0038,001E)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3785,6 +4254,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: "Scheduled Performing Physician's Name",
+    keyword: 'ScheduledPerformingPhysicianName',
     tag: '(0040,0006)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3792,6 +4262,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Performing Physician Identification Sequence',
+    keyword: 'ScheduledPerformingPhysicianIdentificationSequence',
     tag: '(0040,000B)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3799,6 +4270,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Description',
+    keyword: 'ScheduledProcedureStepDescription',
     tag: '(0040,0007)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3807,6 +4279,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step End Date',
+    keyword: 'ScheduledProcedureStepEndDate',
     tag: '(0040,0004)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3816,6 +4289,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step End Time',
+    keyword: 'ScheduledProcedureStepEndTime',
     tag: '(0040,0005)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3825,6 +4299,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Expiration DateTime',
+    keyword: 'ScheduledProcedureStepExpirationDateTime',
     tag: '(0040,4008)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3834,6 +4309,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step ID',
+    keyword: 'ScheduledProcedureStepID',
     tag: '(0040,0009)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -3841,6 +4317,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Location',
+    keyword: 'ScheduledProcedureStepLocation',
     tag: '(0040,0011)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3849,6 +4326,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Modification DateTime',
+    keyword: 'ScheduledProcedureStepModificationDateTime',
     tag: '(0040,4010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3858,6 +4336,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Start Date',
+    keyword: 'ScheduledProcedureStepStartDate',
     tag: '(0040,0002)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3867,6 +4346,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Start DateTime',
+    keyword: 'ScheduledProcedureStepStartDateTime',
     tag: '(0040,4005)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3876,6 +4356,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Procedure Step Start Time',
+    keyword: 'ScheduledProcedureStepStartTime',
     tag: '(0040,0003)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3885,6 +4366,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Station AE Title',
+    keyword: 'ScheduledStationAETitle',
     tag: '(0040,0001)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3893,6 +4375,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Station Geographic Location Code Sequence',
+    keyword: 'ScheduledStationGeographicLocationCodeSequence',
     tag: '(0040,4027)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3901,6 +4384,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Station Name',
+    keyword: 'ScheduledStationName',
     tag: '(0040,0010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3909,6 +4393,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Station Name Code Sequence',
+    keyword: 'ScheduledStationNameCodeSequence',
     tag: '(0040,4025)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3917,6 +4402,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Location',
+    keyword: 'ScheduledStudyLocation',
     tag: '(0032,1020)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3925,6 +4411,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Location AE Title',
+    keyword: 'ScheduledStudyLocationAETitle',
     tag: '(0032,1021)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3933,6 +4420,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Start Date',
+    keyword: 'ScheduledStudyStartDate',
     tag: '(0032,1000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3942,6 +4430,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Start Time',
+    keyword: 'ScheduledStudyStartTime',
     tag: '(0032,1001)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3951,6 +4440,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Stop Date',
+    keyword: 'ScheduledStudyStopDate',
     tag: '(0032,1010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3960,6 +4450,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Scheduled Study Stop Time',
+    keyword: 'ScheduledStudyStopTime',
     tag: '(0032,1011)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -3969,6 +4460,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector AE Value',
+    keyword: 'SelectorAEValue',
     tag: '(0072,005E)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3977,6 +4469,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector AS Value',
+    keyword: 'SelectorASValue',
     tag: '(0072,005F)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3985,6 +4478,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector DA Value',
+    keyword: 'SelectorDAValue',
     tag: '(0072,0061)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -3994,6 +4488,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector DT Value',
+    keyword: 'SelectorDTValue',
     tag: '(0072,0063)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4003,6 +4498,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector LO Value',
+    keyword: 'SelectorLOValue',
     tag: '(0072,0066)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4011,6 +4507,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector LT Value',
+    keyword: 'SelectorLTValue',
     tag: '(0072,0068)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4019,6 +4516,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector OB Value',
+    keyword: 'SelectorOBValue',
     tag: '(0072,0065)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4026,6 +4524,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector PN Value',
+    keyword: 'SelectorPNValue',
     tag: '(0072,006A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4033,6 +4532,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector SH Value',
+    keyword: 'SelectorSHValue',
     tag: '(0072,006C)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4041,6 +4541,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector ST Value',
+    keyword: 'SelectorSTValue',
     tag: '(0072,006E)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4049,6 +4550,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector TM Value',
+    keyword: 'SelectorTMValue',
     tag: '(0072,006B)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4058,6 +4560,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector UN Value',
+    keyword: 'SelectorUNValue',
     tag: '(0072,006D)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4065,6 +4568,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector UR Value',
+    keyword: 'SelectorURValue',
     tag: '(0072,0071)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4072,6 +4576,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Selector UT Value',
+    keyword: 'SelectorUTValue',
     tag: '(0072,0070)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4080,6 +4585,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Series Date',
+    keyword: 'SeriesDate',
     tag: '(0008,0021)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4089,6 +4595,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Series Description',
+    keyword: 'SeriesDescription',
     tag: '(0008,103E)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4097,6 +4604,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Series Instance UID',
+    keyword: 'SeriesInstanceUID',
     tag: '(0020,000E)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4105,6 +4613,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Series Time',
+    keyword: 'SeriesTime',
     tag: '(0008,0031)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4114,6 +4623,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Service Episode Description',
+    keyword: 'ServiceEpisodeDescription',
     tag: '(0038,0062)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4122,6 +4632,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Service Episode ID',
+    keyword: 'ServiceEpisodeID',
     tag: '(0038,0060)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4129,6 +4640,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Setup Technique Description',
+    keyword: 'SetupTechniqueDescription',
     tag: '(300A,01B2)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4137,6 +4649,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Shielding Device Description',
+    keyword: 'ShieldingDeviceDescription',
     tag: '(300A,01A6)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4145,6 +4658,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Slide Identifier',
+    keyword: 'SlideIdentifier',
     tag: '(0040,06FA)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4152,6 +4666,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Smoking Status',
+    keyword: 'SmokingStatus',
     tag: '(0010,21A0)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4160,6 +4675,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'SOP Authorization DateTime',
+    keyword: 'SOPAuthorizationDateTime',
     tag: '(0100,0420)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4169,6 +4685,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'SOP Instance UID',
+    keyword: 'SOPInstanceUID',
     tag: '(0008,0018)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4177,6 +4694,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Conceptual Volume UID',
+    keyword: 'SourceConceptualVolumeUID',
     tag: '(3010,0015)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4185,6 +4703,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source End DateTime',
+    keyword: 'SourceEndDateTime',
     tag: '(0018,936A)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4194,6 +4713,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Frame of Reference UID',
+    keyword: 'SourceFrameOfReferenceUID',
     tag: '(0064,0003)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4202,6 +4722,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Identifier',
+    keyword: 'SourceIdentifier',
     tag: '(0034,0005)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4209,6 +4730,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Image Sequence',
+    keyword: 'SourceImageSequence',
     tag: '(0008,2112)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/U*',
@@ -4217,6 +4739,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Manufacturer',
+    keyword: 'SourceManufacturer',
     tag: '(300A,0216)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4225,6 +4748,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source of Previous Values',
+    keyword: 'SourceOfPreviousValues',
     tag: '(0400,0564)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4233,6 +4757,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Serial Number',
+    keyword: 'SourceSerialNumber',
     tag: '(3008,0105)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -4241,6 +4766,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Start DateTime',
+    keyword: 'SourceStartDateTime',
     tag: '(0018,9369)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4250,6 +4776,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Strength Reference Date',
+    keyword: 'SourceStrengthReferenceDate',
     tag: '(300A,022C)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4259,6 +4786,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Source Strength Reference Time',
+    keyword: 'SourceStrengthReferenceTime',
     tag: '(300A,022E)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4268,6 +4796,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Special Needs',
+    keyword: 'SpecialNeeds',
     tag: '(0038,0050)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4276,6 +4805,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen Accession Number',
+    keyword: 'SpecimenAccessionNumber',
     tag: '(0040,050A)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4283,6 +4813,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen Detailed Description',
+    keyword: 'SpecimenDetailedDescription',
     tag: '(0040,0602)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4291,6 +4822,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen Identifier',
+    keyword: 'SpecimenIdentifier',
     tag: '(0040,0551)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4298,6 +4830,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen Preparation Sequence',
+    keyword: 'SpecimenPreparationSequence',
     tag: '(0040,0610)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4306,6 +4839,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen Short Description',
+    keyword: 'SpecimenShortDescription',
     tag: '(0040,0600)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4314,6 +4848,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Specimen UID',
+    keyword: 'SpecimenUID',
     tag: '(0040,0554)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4322,6 +4857,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Start Acquisition DateTime',
+    keyword: 'StartAcquisitionDateTime',
     tag: '(0018,9516)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4331,6 +4867,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Station AE Title',
+    keyword: 'StationAETitle',
     tag: '(0008,0055)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4339,6 +4876,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Station Name',
+    keyword: 'StationName',
     tag: '(0008,1010)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z/D',
@@ -4347,6 +4885,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Storage Media File-set UID',
+    keyword: 'StorageMediaFileSetUID',
     tag: '(0088,0140)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4355,6 +4894,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Structure Set Date',
+    keyword: 'StructureSetDate',
     tag: '(3006,0008)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4364,6 +4904,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Structure Set Description',
+    keyword: 'StructureSetDescription',
     tag: '(3006,0006)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4372,6 +4913,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Structure Set Label',
+    keyword: 'StructureSetLabel',
     tag: '(3006,0002)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4380,6 +4922,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Structure Set Name',
+    keyword: 'StructureSetName',
     tag: '(3006,0004)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4388,6 +4931,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Structure Set Time',
+    keyword: 'StructureSetTime',
     tag: '(3006,0009)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4397,6 +4941,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Arrival Date',
+    keyword: 'StudyArrivalDate',
     tag: '(0032,1040)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4406,6 +4951,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Arrival Time',
+    keyword: 'StudyArrivalTime',
     tag: '(0032,1041)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4415,6 +4961,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Comments',
+    keyword: 'StudyComments',
     tag: '(0032,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4423,6 +4970,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Completion Date',
+    keyword: 'StudyCompletionDate',
     tag: '(0032,1050)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4432,6 +4980,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Completion Time',
+    keyword: 'StudyCompletionTime',
     tag: '(0032,1051)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4441,6 +4990,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Date',
+    keyword: 'StudyDate',
     tag: '(0008,0020)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4450,6 +5000,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Description',
+    keyword: 'StudyDescription',
     tag: '(0008,1030)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4458,6 +5009,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study ID',
+    keyword: 'StudyID',
     tag: '(0020,0010)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4465,6 +5017,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study ID Issuer',
+    keyword: 'StudyIDIssuer',
     tag: '(0032,0012)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4472,6 +5025,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Instance UID',
+    keyword: 'StudyInstanceUID',
     tag: '(0020,000D)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4480,6 +5034,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Read Date',
+    keyword: 'StudyReadDate',
     tag: '(0032,0034)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4489,6 +5044,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Read Time',
+    keyword: 'StudyReadTime',
     tag: '(0032,0035)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4498,6 +5054,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Time',
+    keyword: 'StudyTime',
     tag: '(0008,0030)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4507,6 +5064,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Verified Date',
+    keyword: 'StudyVerifiedDate',
     tag: '(0032,0032)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4516,6 +5074,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Study Verified Time',
+    keyword: 'StudyVerifiedTime',
     tag: '(0032,0033)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4525,6 +5084,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Substance Administration DateTime',
+    keyword: 'SubstanceAdministrationDateTime',
     tag: '(0044,0010)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4534,6 +5094,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Synchronization Frame of Reference UID',
+    keyword: 'SynchronizationFrameOfReferenceUID',
     tag: '(0020,0200)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4542,6 +5103,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Target UID',
+    keyword: 'TargetUID',
     tag: '(0018,2042)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4550,6 +5112,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Telephone Number (Trial)',
+    keyword: 'TelephoneNumberTrial',
     tag: '(0040,A354)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4557,6 +5120,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Template Extension Creator UID',
+    keyword: 'TemplateExtensionCreatorUID',
     tag: '(0040,DB0D)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -4565,6 +5129,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Template Extension Organization UID',
+    keyword: 'TemplateExtensionOrganizationUID',
     tag: '(0040,DB0C)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -4573,6 +5138,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Template Local Version',
+    keyword: 'TemplateLocalVersion',
     tag: '(0040,DB07)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4582,6 +5148,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Template Version',
+    keyword: 'TemplateVersion',
     tag: '(0040,DB06)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4591,6 +5158,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Text Comments',
+    keyword: 'TextComments',
     tag: '(4000,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4598,6 +5166,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Text String',
+    keyword: 'TextString',
     tag: '(2030,0020)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4605,6 +5174,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Time',
+    keyword: 'Time',
     tag: '(0040,A122)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4614,6 +5184,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Time of Document Creation or Verbal Transaction (Trial)',
+    keyword: 'TimeOfDocumentCreationOrVerbalTransactionTrial',
     tag: '(0040,A112)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4623,6 +5194,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Time of Last Calibration',
+    keyword: 'TimeOfLastCalibration',
     tag: '(0018,1201)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4633,6 +5205,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Time of Last Detector Calibration',
+    keyword: 'TimeOfLastDetectorCalibration',
     tag: '(0018,700E)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4643,6 +5216,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Time of Secondary Capture',
+    keyword: 'TimeOfSecondaryCapture',
     tag: '(0018,1014)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4652,6 +5226,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Timezone Offset From UTC',
+    keyword: 'TimezoneOffsetFromUTC',
     tag: '(0008,0201)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4661,6 +5236,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Topic Author',
+    keyword: 'TopicAuthor',
     tag: '(0088,0910)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4668,6 +5244,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Topic Keywords',
+    keyword: 'TopicKeywords',
     tag: '(0088,0912)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4675,6 +5252,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Topic Subject',
+    keyword: 'TopicSubject',
     tag: '(0088,0906)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4682,6 +5260,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Topic Title',
+    keyword: 'TopicTitle',
     tag: '(0088,0904)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4689,6 +5268,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Tracking UID',
+    keyword: 'TrackingUID',
     tag: '(0062,0021)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4697,6 +5277,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Transaction UID',
+    keyword: 'TransactionUID',
     tag: '(0008,1195)',
     stdCompIOD: 'N',
     basicProfile: 'U',
@@ -4705,6 +5286,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Transducer Identification Sequence',
+    keyword: 'TransducerIdentificationSequence',
     tag: '(0018,5011)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4713,6 +5295,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Control Point Date',
+    keyword: 'TreatmentControlPointDate',
     tag: '(3008,0024)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4722,6 +5305,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Control Point Time',
+    keyword: 'TreatmentControlPointTime',
     tag: '(3008,0025)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4731,6 +5315,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Date',
+    keyword: 'TreatmentDate',
     tag: '(3008,0250)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4740,6 +5325,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Machine Name',
+    keyword: 'TreatmentMachineName',
     tag: '(300A,00B2)',
     stdCompIOD: 'Y',
     basicProfile: 'X/Z',
@@ -4748,6 +5334,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Position Group Label',
+    keyword: 'TreatmentPositionGroupLabel',
     tag: '(300A,0608)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4756,6 +5343,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Position Group UID',
+    keyword: 'TreatmentPositionGroupUID',
     tag: '(300A,0609)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4764,6 +5352,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Session UID',
+    keyword: 'TreatmentSessionUID',
     tag: '(300A,0700)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4772,6 +5361,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Site',
+    keyword: 'TreatmentSite',
     tag: '(3010,0077)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4780,6 +5370,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Sites',
+    keyword: 'TreatmentSites',
     tag: '(300A,000B)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4788,6 +5379,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Technique Notes',
+    keyword: 'TreatmentTechniqueNotes',
     tag: '(3010,007A)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4796,6 +5388,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Time',
+    keyword: 'TreatmentTime',
     tag: '(3008,0251)',
     stdCompIOD: 'Y',
     basicProfile: 'X/D',
@@ -4805,6 +5398,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Tolerance Violation DateTime',
+    keyword: 'TreatmentToleranceViolationDateTime',
     tag: '(300A,0736)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4814,6 +5408,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Treatment Tolerance Violation Description',
+    keyword: 'TreatmentToleranceViolationDescription',
     tag: '(300A,0734)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4822,6 +5417,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'UDI Sequence',
+    keyword: 'UDISequence',
     tag: '(0018,100A)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4830,6 +5426,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'UID',
+    keyword: 'UID',
     tag: '(0040,A124)',
     stdCompIOD: 'Y',
     basicProfile: 'U',
@@ -4837,6 +5434,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Unique Device Identifier',
+    keyword: 'UniqueDeviceIdentifier',
     tag: '(0018,1009)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4845,6 +5443,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'User Content Label',
+    keyword: 'UserContentLabel',
     tag: '(3010,0033)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4853,6 +5452,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'User Content Long Label',
+    keyword: 'UserContentLongLabel',
     tag: '(3010,0034)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4861,6 +5461,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verbal Source (Trial)',
+    keyword: 'VerbalSourceTrial',
     tag: '(0040,A352)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4868,6 +5469,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verbal Source Identifier Code Sequence (Trial)',
+    keyword: 'VerbalSourceIdentifierCodeSequenceTrial',
     tag: '(0040,A358)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4875,6 +5477,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verification DateTime',
+    keyword: 'VerificationDateTime',
     tag: '(0040,A030)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4884,6 +5487,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verifying Observer Identification Code Sequence',
+    keyword: 'VerifyingObserverIdentificationCodeSequence',
     tag: '(0040,A088)',
     stdCompIOD: 'Y',
     basicProfile: 'Z',
@@ -4891,6 +5495,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verifying Observer Name',
+    keyword: 'VerifyingObserverName',
     tag: '(0040,A075)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4898,6 +5503,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verifying Observer Sequence',
+    keyword: 'VerifyingObserverSequence',
     tag: '(0040,A073)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4905,6 +5511,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Verifying Organization',
+    keyword: 'VerifyingOrganization',
     tag: '(0040,A027)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4912,6 +5519,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Visit Comments',
+    keyword: 'VisitComments',
     tag: '(0038,4000)',
     stdCompIOD: 'N',
     basicProfile: 'X',
@@ -4920,6 +5528,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'Waveform Filter Description',
+    keyword: 'WaveformFilterDescription',
     tag: '(003A,0329)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4928,6 +5537,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'X-Ray Detector ID',
+    keyword: 'XRayDetectorID',
     tag: '(0018,9371)',
     stdCompIOD: 'Y',
     basicProfile: 'D',
@@ -4936,6 +5546,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'X-Ray Detector Label',
+    keyword: 'XRayDetectorLabel',
     tag: '(0018,9373)',
     stdCompIOD: 'Y',
     basicProfile: 'X',
@@ -4944,6 +5555,7 @@ export const ps315EElements: TPs315EElement[] = [
   },
   {
     name: 'X-Ray Source ID',
+    keyword: 'XRaySourceID',
     tag: '(0018,9367)',
     stdCompIOD: 'Y',
     basicProfile: 'D',

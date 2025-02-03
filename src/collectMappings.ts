@@ -14,11 +14,10 @@ import { get as _get } from 'lodash'
 
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
 
-// Special handling of 3.15 variables.
-// Names still in non-keyword form, but conditions are in keyword form.
+// Special conditions for some PS3.15 E1.1 elements.
 const ps315EElements = rawPs315EElements.map((elm) => {
-  switch (elm.name) {
-    case 'Encapsulated Document': {
+  switch (elm.keyword) {
+    case 'EncapsulatedDocument': {
       return {
         ...elm,
         exceptCondition: (data: TNaturalData) => data.Modality === 'DOC',
@@ -130,9 +129,6 @@ export default function collectMappings(
   const [taggedps315EEls, wildcardEls] = ps315EElements.reduce(
     (acc: [TPs315EElement[], TPs315EElement[]], item: TPs315EElement) => {
       let idx = item.tag.includes('X') ? 1 : 0
-      if (item.name === 'Private Attributes') {
-        return acc
-      }
 
       acc[idx].push(item)
       return acc
@@ -144,27 +140,22 @@ export default function collectMappings(
     'TODO: Handle wildcardEls - convert tags into regex and separate if clause',
   )
 
-  let cleanPolicy = taggedps315EEls.map(({ tag, basicProfile, ...rest }) => {
+  let cleanPolicy = taggedps315EEls.map(({ basicProfile, ...rest }) => {
     return {
       ...rest,
-      // overwrite name with keyword, standardizing on a version without the
-      // dcmjs 'RETIRED_' prefix.
-      name: removeRetiredPrefix(
-        dcmjs.data.DicomMetaDictionary.dictionary[tag].name,
-      ),
       rule: basicProfile.match(/[^/]*$/)?.[0] ?? '',
     }
   })
-  const taggedps315EElSet = new Set(cleanPolicy.map((item) => item.name))
+  const taggedps315EElSet = new Set(cleanPolicy.map((item) => item.keyword))
 
   let instanceUids: string[] = []
 
   // We handle DA/TM/DT separately except for retainDeviceIdentity option
   // Also handle UI separately
   cleanPolicy = cleanPolicy.filter((p) => {
-    let vr = nameMap[p.name]?.vr
+    let vr = nameMap[p.keyword]?.vr
     if (vr === 'UI') {
-      instanceUids.push(p.name)
+      instanceUids.push(p.keyword)
       return false
     }
     if (p.rule === 'U*') {
@@ -175,13 +166,13 @@ export default function collectMappings(
   })
 
   if (retainPatientCharacteristicsOption) {
-    retainPatientCharacteristicsSubset.forEach((name) => {
+    retainPatientCharacteristicsSubset.forEach((keyword) => {
       // Filter out elements from policy if they match subset
       // but only if they are eligible.
       // If matches an element but is not eligible, keep in filter.
       // We keep independent of 'K' or 'C'.
       cleanPolicy = cleanPolicy.filter(
-        (p) => p.name !== name || !('rtnPatCharsOpt' in p),
+        (p) => p.keyword !== keyword || !('rtnPatCharsOpt' in p),
       )
     })
   }
@@ -199,7 +190,7 @@ export default function collectMappings(
   }
 
   const cleanPolicyMap = Object.fromEntries(
-    cleanPolicy.map((item) => [item.name, item]),
+    cleanPolicy.map((item) => [item.keyword, item]),
   )
 
   // Now collect the standard mappings with a
