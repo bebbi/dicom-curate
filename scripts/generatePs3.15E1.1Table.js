@@ -77,12 +77,18 @@ async function main() {
     // Standardize on keywords as names.
     ps315EElements = ps315EElements
       .filter((el) => el.name !== 'Private Attributes')
-      .map(({ name, ...rest }) => {
+      .map(({ name, rtnDevIdOpt, ...rest }) => {
         // Fix an error in PS3.15E1.1 where some "of" are written "Of"
         name = name.replaceAll(' Of ', ' of ').replace(/\n.*/s, '')
 
         const elDef = allElements.find((el) => el.name === name)
-        return { name, keyword: elDef.keyword, ...rest }
+
+        const updatedEl = { name, keyword: elDef.keyword, ...rest }
+
+        // Fix that BeamHoldTransitionDateTime erroneously features rtnDevIdOpt
+        return name === 'Beam Hold Transition DateTime'
+          ? updatedEl
+          : { ...updatedEl, rtnDevIdOpt }
       })
 
     const protectSet = new Set(ps315EElements.map((element) => element.tag))
