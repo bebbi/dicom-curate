@@ -34,7 +34,7 @@ async function main() {
     const ps315EElements = await fetchDicomStandard(
       'confidentiality_profile_attributes.json',
     )
-    const anonymizeSet = new Set(ps315EElements.map((element) => element.tag))
+    const protectSet = new Set(ps315EElements.map((element) => element.tag))
 
     // Save the elements to anonymize to a JSON file
     await writeFile(
@@ -51,7 +51,7 @@ export const ps315EElements: TPs315EElement[] = ` +
 
     // Create a set of elements to preserve (using keywords)
     for (const element of allElements) {
-      if (!anonymizeSet.has(element.tag) && element.keyword) {
+      if (!protectSet.has(element.tag) && element.keyword) {
         preserveSet.add(element.keyword)
       }
     }
