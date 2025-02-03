@@ -23,7 +23,7 @@ export interface OrganizeOptions {
 
 export type TMappingOptions = {
   fieldMappings: TCsvMappings
-  mappingFunctions: string
+  mappingScript: string
   inputPathPattern: string
   ps315Options: TPs315Options
 }
