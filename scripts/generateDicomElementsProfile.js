@@ -57,7 +57,7 @@ export const ps315EElements: TPs315EElement[] = ` +
     }
 
     // Create the JavaScript content for the element names to always keep
-    const jsContent = `// Auto-generated file containing DICOM elements to always keep
+    const tsContent = `// Auto-generated file containing DICOM elements to always keep
 // Generated on: ${new Date().toISOString()}
 
 export const elementNamesToAlwaysKeep = [
@@ -66,7 +66,7 @@ export const elementNamesToAlwaysKeep = [
 `
 
     // Write the JavaScript file
-    await writeFile(join(configDir, 'elementNamesToAlwaysKeep.ts'), jsContent)
+    await writeFile(join(configDir, 'elementNamesToAlwaysKeep.ts'), tsContent)
 
     console.log('Successfully generated:')
     console.log('- elementNamesToAlwaysKeep.ts')
