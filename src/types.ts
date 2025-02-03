@@ -52,6 +52,7 @@ export type TMapResults = {
 
 export type TPs315EElement = {
   name: string
+  keyword: string
   tag: string
   stdCompIOD: 'Y' | 'N'
   id: string

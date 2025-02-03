@@ -30,10 +30,61 @@ async function main() {
     // Ensure the configuration directory exists
     await mkdir(configDir, { recursive: true })
 
+    // Fetch all DICOM elements
+    let allElements = await fetchDicomStandard('attributes.json')
+
+    // Fix name mistake in PS3.6
+    allElements = allElements.map((el) => {
+      if (el.name.includes('GenerationMode')) {
+        return {
+          ...el,
+          name: el.name.replace('GenerationMode', 'Generation Mode'),
+        }
+      }
+      return el
+    })
+
+    // Workaround: We add Affected SOP Instance UID because we need it
+    // for the name mapping. It occurs in PS3.15E. It is PS3.07, not PS3.06
+    allElements.push(
+      ...[
+        {
+          tag: '(0000,1000)',
+          name: 'Affected SOP Instance UID',
+          keyword: 'AffectedSOPInstanceUID',
+          valueRepresentation: 'UI',
+          valueMultiplicity: '1',
+          retired: 'N',
+          id: '00001000',
+        },
+        {
+          tag: '(0000,1001)',
+          name: 'Requested SOP Instance UID',
+          keyword: 'RequestedSOPInstanceUID',
+          valueRepresentation: 'UI',
+          valueMultiplicity: '1',
+          retired: 'N',
+          id: '00001001',
+        },
+      ],
+    )
+
     // Fetch the DICOM elements to anonymize
-    const ps315EElements = await fetchDicomStandard(
+    let ps315EElements = await fetchDicomStandard(
       'confidentiality_profile_attributes.json',
     )
+
+    // Standardize on keywords as names.
+    ps315EElements = ps315EElements
+      .filter((el) => el.name !== 'Private Attributes')
+      .map(({ name, ...rest }) => {
+        // Fix an error in PS3.15E1.1 where some "of" are written "Of"
+        name = name.replaceAll(' Of ', ' of ').replace(/\n.*/s, '')
+
+        const elDef = allElements.find((el) => el.name === name)
+        return { name, keyword: elDef.keyword, ...rest }
+      })
+
     const protectSet = new Set(ps315EElements.map((element) => element.tag))
 
     // Save the elements to anonymize to a JSON file
@@ -45,8 +96,6 @@ export const ps315EElements: TPs315EElement[] = ` +
         JSON.stringify(ps315EElements, null, 2),
     )
 
-    // Fetch all DICOM elements
-    const allElements = await fetchDicomStandard('attributes.json')
     const preserveSet = new Set()
 
     // Create a set of elements to preserve (using keywords)
