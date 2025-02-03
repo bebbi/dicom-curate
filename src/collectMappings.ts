@@ -7,7 +7,7 @@ import getParser from './getParser'
 import { instanceUIDs } from './config/dicom/instanceUids'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements } from './config/dicom/ps315EElements'
-import { dcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
+import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
 import dummyValues from './config/dicom/dummyValues'
 
 import { get as _get } from 'lodash'
@@ -309,17 +309,19 @@ export default function collectMappings(
   }
   collectMappingsInData(naturalData)
 
-  Object.entries(dcmOrganizeStamp).forEach(([name, newValue]) => {
-    const oldValue = _get(naturalData, name)
-    if (oldValue !== newValue) {
-      mapResults.mappings[name] = [
-        oldValue,
-        'replace',
-        'dcm-organize',
-        newValue,
-      ]
-    }
-  })
+  Object.entries(getDcmOrganizeStamp(mappingOptions.ps315Options)).forEach(
+    ([name, newValue]) => {
+      const oldValue = _get(naturalData, name)
+      if (oldValue !== newValue) {
+        mapResults.mappings[name] = [
+          oldValue,
+          'replace',
+          'dcm-organize',
+          newValue,
+        ]
+      }
+    },
+  )
 
   // Moving this after collectMappingsInData as this should take precedence.
   // collect the tag mappings before assigning them into dicomData

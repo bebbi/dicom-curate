@@ -1,6 +1,6 @@
 import { TCsvMappings } from './csvMapping'
 
-type TPS315Options = {
+export type TPS315Options = {
   cleanDescriptorsOption: boolean
   retainLongitudinalTemporalInformationOptions: 'Off' | 'Modified' | 'Full'
   retainPatientCharacteristicsOption: boolean
@@ -34,12 +34,16 @@ export type TFileInfo = {
   fileHandle: FileSystemFileHandle
 }
 
+// Includes deep sequences
+type TAttr = { [name: string]: string | TAttr[] }
+
 export type TMapResults = {
   sourceInstanceUID: string
   outputFilePath: string
   mappings: {
+    // TAttr[]: exclude individual { key: value } objects
     [objectPath: string]:
-      | [string, 'replace', string, string | never[]]
+      | [string, 'replace', string, string | TAttr[]]
       | [string, 'delete', string, undefined]
   }
   anomalies: string[]
