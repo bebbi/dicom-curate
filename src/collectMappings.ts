@@ -133,7 +133,7 @@ export default function collectMappings(
   let cleanDescriptorsExceptions: string[] = []
   let retainPatientCharacteristicsSubset: string[] = []
   // TODO: try/except with useful error hinting at mappingFns
-  eval(mappingOptions.mappingFunctions)
+  eval(mappingOptions.mappingScript)
   mapResults.outputFilePath = outputFilePathComponents.join('/')
 
   const [taggedps315EEls, wildcardEls] = ps315EElements.reduce(

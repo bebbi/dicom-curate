@@ -132,7 +132,7 @@ async function collectMappingOptions(
   // then, get the mapping functions
   //
   const functionsFile = await organizeOptions.mappingFunctions.getFile()
-  const mappingFunctions = await functionsFile.text()
+  const mappingScript = await functionsFile.text()
 
   const ps315Options = organizeOptions.ps315Options
 
@@ -140,7 +140,7 @@ async function collectMappingOptions(
     inputPathPattern,
     outputDirectory,
     fieldMappings,
-    mappingFunctions,
+    mappingScript,
     ps315Options,
   }
 }
