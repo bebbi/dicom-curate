@@ -1,3 +1,8 @@
+/*
+ * A value of `false` means, don't retain.
+ * A value of { rtnDevIdOpt: true } means retain if the corresponding option is
+ * selected
+ */
 export const retainAdditionalIds: {
   [keyword: string]: false | { rtnDevIdOpt: true }
 } = {
