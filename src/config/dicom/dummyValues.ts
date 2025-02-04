@@ -1,8 +1,8 @@
 const dummyValues: Record<string, any> = {
   AE: 'INVALID_AE',
   CS: 'REDACTED',
-  DA: '99990101',
-  DT: '99990101123456.123456',
+  DA: '99991231',
+  DT: '99991231235959.999999',
   LT: 'REDACTED',
   OB: '00',
   PN: 'REDACTED^REDACTED',
@@ -10,10 +10,10 @@ const dummyValues: Record<string, any> = {
   // TODO: Needs a mechanism to actually create dummy items?
   SQ: [],
   ST: 'REDACTED',
-  TM: '123456.123456',
+  TM: '235959.999999',
   UC: 'REDACTED',
   UN: 'REDACTED',
-  UR: 'http://invalid.invalid',
+  UR: 'https://invalid.invalid',
   UT: 'REDACTED',
 }
 
