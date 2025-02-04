@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "dcmjs": "^0.37.0",
+    "iso8601-duration": "^2.1.2",
     "lodash": "^4.17.21",
     "uuid": "^11.0.5"
   },
