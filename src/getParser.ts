@@ -8,21 +8,30 @@ export default function getParser(
   naturalData: TNaturalData,
   fieldMappings: TCsvMappings,
 ) {
+  function getDicom(tagName: string) {
+    if (tagName in dcmjs.data.DicomMetaDictionary.dictionary) {
+      // if in hex like "(0008,0100)", convert to text key
+      tagName = dcmjs.data.DicomMetaDictionary.dictionary[tagName].name
+    }
+    return naturalData[tagName]
+  }
+
+  function getFilePathComp(component: string) {
+    const pathComponents = inputPathPattern.split('/')
+    const componentIndex = pathComponents.indexOf(component)
+    const filePathComponents = inputFilePath.split('/')
+    return filePathComponents[componentIndex]
+  }
+
   return {
-    getFilePathComp: (component: string) => {
-      const pathComponents = inputPathPattern.split('/')
-      const componentIndex = pathComponents.indexOf(component)
-      const filePathComponents = inputFilePath.split('/')
-      return filePathComponents[componentIndex]
+    getFrom(source: string, identifier: string) {
+      return source === 'dicom'
+        ? getDicom(identifier)
+        : getFilePathComp(identifier)
     },
+    getFilePathComp,
     getMapping: getCsvMapping.bind(null, fieldMappings),
-    getDicom(tagName: string) {
-      if (tagName in dcmjs.data.DicomMetaDictionary.dictionary) {
-        // if in hex like "(0008,0100)", convert to text key
-        tagName = dcmjs.data.DicomMetaDictionary.dictionary[tagName].name
-      }
-      return naturalData[tagName]
-    },
+    getDicom,
     addDays: (dicomDateString: string, offsetDays: number) => {
       const year = Number(dicomDateString.slice(0, 4))
       const monthIndex = Number(dicomDateString.slice(4, 6)) - 1

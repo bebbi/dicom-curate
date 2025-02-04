@@ -9,6 +9,7 @@ import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElemen
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
 import { ps36TableA1 } from './config/dicom/ps36TableA1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
+import { offsetDateTime, iso8601 } from './offsetDateTime'
 import dummyValues from './config/dicom/dummyValues'
 
 import { get as _get } from 'lodash'
@@ -55,24 +56,11 @@ export default function collectMappings(
 ): [TNaturalData, TMapResults] {
   const {
     cleanDescriptorsOption,
-    // K if Full, else C would mean modify. 'Off' would mean 1900-01-01 or so.
-    // TODO: Add all DA/TM etc to policy with D or such.
-    // And only if they are not already there.
-    // Then let retainDeviceIdentityOption remove some.
-    // CONTINUE HERE:
-    // 1. Do s'thing with this last option
-    // 2. Then apply, especially dummies. <- before *Comment|*Description!
-    // 3. Could improve UIDs etc.
     retainLongitudinalTemporalInformationOptions,
-    // Filter the relevant ones by retainPatientCharacteristicsSubset
-    // then K for these
     retainPatientCharacteristicsOption,
-    // among C, K only keep K (and document this)
-    // Attention there are dates there! Keep fixed independent of above.
     retainDeviceIdentityOption,
     retainUIDsOption,
     retainSafePrivateOption,
-    // just has K's -> cancel out base
     retainInstitutionIdentityOption,
   } = mappingOptions.ps315Options
 
@@ -95,23 +83,6 @@ export default function collectMappings(
   }
 
   const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
-
-  //
-  // collect private tags and mark them for delete
-  // TODO: put this in recursive function to find nested private tags
-  // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
-  for (let hexTag in dicomData.dict) {
-    if (Number(hexTag[3]) % 2 === 1) {
-      if (!retainSafePrivateOption) {
-        mapResults.mappings['x' + hexTag] = [
-          String(dicomData.dict[hexTag].Value),
-          'delete',
-          'notRetainSafePrivate',
-          undefined,
-        ]
-      }
-    }
-  }
 
   // Make make the naturalized data so parser code operates on with tags not hex
   const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(
@@ -160,10 +131,10 @@ export default function collectMappings(
 
   let instanceUids: string[] = []
 
-  // We handle DA/TM/DT separately except for retainDeviceIdentity option
-  // Also handle UI separately
+  // We handle UIs separately
   cleanPolicy = cleanPolicy.filter((p) => {
     let vr = nameMap[p.keyword]?.vr
+
     if (vr === 'UI') {
       instanceUids.push(p.keyword)
       return false
@@ -172,7 +143,8 @@ export default function collectMappings(
       // already handled with deep UI cleaning approach
       return false
     }
-    return !temporalVr(vr) || 'rtnDevIdOpt' in p
+
+    return true
   })
 
   if (retainPatientCharacteristicsOption) {
@@ -187,16 +159,33 @@ export default function collectMappings(
     })
   }
 
-  // These are all 'K' -> remove from filter.
+  // These are all 'K' -> simply remove from cleanPolicy.
   if (retainInstitutionIdentityOption) {
     cleanPolicy = cleanPolicy.filter((p) => !('rtnInstIdOpt' in p))
   }
 
-  // We ignore the 'C's which are mostly AETitles
-  if (retainDeviceIdentityOption) {
-    cleanPolicy = cleanPolicy.filter(
-      (p) => !('rtnDevIdOpt' in p) || p.rtnDevIdOpt !== 'K',
-    )
+  const datesToRetain = new Set<string>()
+  // On any date modifications, consider retainDeviceIdentityOption
+  if (
+    retainLongitudinalTemporalInformationOptions !== 'Full' &&
+    retainDeviceIdentityOption
+  ) {
+    cleanPolicy.forEach((p) => {
+      if (
+        'rtnDevIdOpt' in p &&
+        // We still remove the 'C's which are mostly AETitles
+        p.rtnDevIdOpt === 'K' &&
+        temporalVr(nameMap[p.keyword]?.vr)
+      ) {
+        datesToRetain.add(p.keyword)
+      }
+    })
+  }
+
+  // Any level of keeping or offsetting longitudinal info, remove them from cleanPolicy
+  if (retainLongitudinalTemporalInformationOptions !== 'Off') {
+    // Just remove all temporal VRs from cleanPolicy, that's it.
+    cleanPolicy = cleanPolicy.filter((p) => !temporalVr(nameMap[p.keyword]?.vr))
   }
 
   const cleanPolicyMap = Object.fromEntries(
@@ -219,16 +208,20 @@ export default function collectMappings(
         // dictionaries that don't work this way.
         const normalName = removeRetiredPrefix(name)
         if (
+          // We should clean it
           normalName in cleanPolicyMap &&
+          // Either cleanDescOpt is off (we handle those separately) or
+          // if it's on, it's not one of the exception tags
           (!cleanDescriptorsOption ||
             !cleanDescriptorsExceptions.includes(normalName)) &&
+          // No condition for an exception applies
           !cleanPolicyMap[normalName].exceptCondition?.(data)
         ) {
           const { rule } = cleanPolicyMap[normalName]
           switch (rule) {
             case 'Z': {
               mapResults.mappings[tagPath] = [
-                data[name],
+                _get(naturalData, tagPath),
                 'replace',
                 'PS3.15E',
                 vr === 'SQ' ? [] : '',
@@ -264,6 +257,37 @@ export default function collectMappings(
             let subPath = `${path}${name}[${subDataIndex}].`
             collectMappingsInData(subData, subPath)
             subDataIndex += 1
+          }
+        } else if (temporalVr(vr)) {
+          // This is a date not in cleanOpts and we proceed per longitud option
+          const dateOpt = retainLongitudinalTemporalInformationOptions
+          // datesToRetain implies retainDeviceIdentifiers option
+          if (dateOpt !== 'Full' && !datesToRetain.has(normalName)) {
+            if (dateOpt === 'Off') {
+              mapResults.mappings[tagPath] = [
+                _get(naturalData, tagPath),
+                'delete',
+                'removeTemporalOpt',
+                undefined,
+              ]
+            } else if (Array.isArray(dateOpt)) {
+              const [source, identifier, fromHeader, toHeader] = dateOpt
+              const sourceValue = parser.getFrom(source, identifier)
+              const duration = parser.getMapping(
+                sourceValue,
+                fromHeader,
+                toHeader,
+              )
+              if (typeof duration === 'string' && duration.match(iso8601)) {
+                const value = _get(naturalData, tagPath)
+                mapResults.mappings[tagPath] = [
+                  value,
+                  'replace',
+                  'offsetTemporalOpt',
+                  offsetDateTime(value, duration),
+                ]
+              }
+            }
           }
         } else if (vr === 'UI' && !retainUIDsOption) {
           // Convert UIDs mentioned in 3.15 anyway, and then additionally those
@@ -350,6 +374,24 @@ export default function collectMappings(
       }
     }
   }
+
+  //
+  // collect private tags and mark them for delete
+  // TODO: put this in recursive function to find nested private tags
+  // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
+  for (let hexTag in dicomData.dict) {
+    if (Number(hexTag[3]) % 2 === 1) {
+      if (!retainSafePrivateOption) {
+        mapResults.mappings['x' + hexTag] = [
+          String(dicomData.dict[hexTag].Value),
+          'delete',
+          'notRetainSafePrivate',
+          undefined,
+        ]
+      }
+    }
+  }
+
   collectMappingsInData(naturalData)
 
   Object.entries(getDcmOrganizeStamp(mappingOptions.ps315Options)).forEach(

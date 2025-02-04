@@ -3,7 +3,15 @@ import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
-  retainLongitudinalTemporalInformationOptions: 'Off' | 'Modified' | 'Full'
+  retainLongitudinalTemporalInformationOptions:
+    | 'Full'
+    | 'Off'
+    | [
+        'dicom' | 'filePath',
+        identifier: string,
+        fromHeader: string,
+        toHeader: string,
+      ]
   retainPatientCharacteristicsOption: boolean
   retainDeviceIdentityOption: boolean
   retainUIDsOption: boolean
