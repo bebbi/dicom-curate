@@ -12,7 +12,7 @@ export type TPs315Options = {
         fromHeader: string,
         toHeader: string,
       ]
-  retainPatientCharacteristicsOption: boolean
+  retainPatientCharacteristicsOption: false | string[]
   retainDeviceIdentityOption: boolean
   retainUIDsOption: boolean
   retainSafePrivateOption: boolean

@@ -63,6 +63,7 @@ export default function collectMappings(
     retainSafePrivateOption,
     retainInstitutionIdentityOption,
   } = mappingOptions.ps315Options
+  let { inputPathPattern } = mappingOptions
 
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
@@ -91,22 +92,23 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
+  // run the mapping functions that set the following two variables
+  let dicomModifications: { [keyword: string]: () => string } = {}
+  let outputFilePathComponents: () => string[] = () => []
+  let cleanDescriptorsExceptions: string[] = []
+
+  // TODO: try/except with useful error hinting at mappingScripts
+  eval(mappingOptions.mappingScript)
+
   // create a parser object to be used in the eval'ed mappingFunctions
   const parser = getParser(
-    mappingOptions.inputPathPattern,
+    inputPathPattern,
     inputFilePath,
     naturalData,
     mappingOptions.fieldMappings,
   )
 
-  // run the mapping functions that set the following two variables
-  let dicomModifications: { [keyword: string]: () => string } = {}
-  let outputFilePathComponents: string[] = []
-  let cleanDescriptorsExceptions: string[] = []
-  let retainPatientCharacteristicsSubset: string[] = []
-  // TODO: try/except with useful error hinting at mappingFns
-  eval(mappingOptions.mappingScript)
-  mapResults.outputFilePath = outputFilePathComponents.join('/')
+  mapResults.outputFilePath = outputFilePathComponents().join('/')
 
   const [taggedps315EEls, wildcardEls] = ps315EElements.reduce(
     (acc: [TPs315EElement[], TPs315EElement[]], item: TPs315EElement) => {
@@ -149,7 +151,7 @@ export default function collectMappings(
   })
 
   if (retainPatientCharacteristicsOption) {
-    retainPatientCharacteristicsSubset.forEach((keyword) => {
+    retainPatientCharacteristicsOption.forEach((keyword) => {
       // Filter out elements from policy if they match subset
       // but only if they are eligible.
       // If matches an element but is not eligible, keep in filter.
