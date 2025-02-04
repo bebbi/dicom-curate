@@ -299,7 +299,7 @@ export default function collectMappings(
           const uid = data[name]
           if (
             // UID explicitly mentioned in PS3.15.
-            instanceUids.indexOf(normalName) !== -1 ||
+            instanceUids.indexOf(normalName) !== -1 &&
             // UID is not a known class UID.
             !(uid in ps36TableA1)
           ) {
