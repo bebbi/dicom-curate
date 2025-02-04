@@ -200,7 +200,7 @@ export default function collectMappings(
       if (/_.*/.test(name)) {
         continue // ignore tags marked internal with leading underscore
       }
-      const tagPath = path + name
+      const attrPath = path + name
       if (name in nameMap) {
         // means it's a known name
         let vr = nameMap[name].vr
@@ -220,8 +220,8 @@ export default function collectMappings(
           const { rule } = cleanPolicyMap[normalName]
           switch (rule) {
             case 'Z': {
-              mapResults.mappings[tagPath] = [
-                _get(naturalData, tagPath),
+              mapResults.mappings[attrPath] = [
+                data[name],
                 'replace',
                 'PS3.15E',
                 vr === 'SQ' ? [] : '',
@@ -229,8 +229,8 @@ export default function collectMappings(
               break
             }
             case 'D': {
-              mapResults.mappings[tagPath] = [
-                _get(naturalData, tagPath),
+              mapResults.mappings[attrPath] = [
+                data[name],
                 'replace',
                 'PS3.15E',
                 dummyValues[vr],
@@ -243,7 +243,7 @@ export default function collectMappings(
                   `don't know how to handle PS3.15E rule ${rule} for ${normalName}.`,
                 )
               }
-              mapResults.mappings[tagPath] = [
+              mapResults.mappings[attrPath] = [
                 data[name],
                 'delete',
                 'PS3.15E',
@@ -264,8 +264,8 @@ export default function collectMappings(
           // datesToRetain implies retainDeviceIdentifiers option
           if (dateOpt !== 'Full' && !datesToRetain.has(normalName)) {
             if (dateOpt === 'Off') {
-              mapResults.mappings[tagPath] = [
-                _get(naturalData, tagPath),
+              mapResults.mappings[attrPath] = [
+                data[name],
                 'delete',
                 'removeTemporalOpt',
                 undefined,
@@ -279,12 +279,11 @@ export default function collectMappings(
                 toHeader,
               )
               if (typeof duration === 'string' && duration.match(iso8601)) {
-                const value = _get(naturalData, tagPath)
-                mapResults.mappings[tagPath] = [
-                  value,
+                mapResults.mappings[attrPath] = [
+                  data[name],
                   'replace',
                   'offsetTemporalOpt',
-                  offsetDateTime(value, duration),
+                  offsetDateTime(data[name], duration),
                 ]
               }
             }
@@ -306,7 +305,7 @@ export default function collectMappings(
           ) {
             // UIDs that need to be mapped
             const mappedUID = uidToV5BasedUID(uid)
-            mapResults.mappings[tagPath] = [
+            mapResults.mappings[attrPath] = [
               uid,
               'replace',
               'notRetainInstanceUID',
@@ -325,7 +324,7 @@ export default function collectMappings(
             normalName.endsWith('Description')) &&
           !cleanDescriptorsExceptions.includes(normalName)
         ) {
-          mapResults.mappings[tagPath] = [
+          mapResults.mappings[attrPath] = [
             data[name],
             'delete',
             'cleanDescriptors',
@@ -337,7 +336,7 @@ export default function collectMappings(
             !retainAdditionalIds[normalName] ||
             !retainAdditionalIds[normalName].rtnDevIdOpt)
         ) {
-          mapResults.mappings[tagPath] = [
+          mapResults.mappings[attrPath] = [
             data[name],
             'delete',
             'notInRtnAdditionalIds',
@@ -354,7 +353,7 @@ export default function collectMappings(
           mapResults.anomalies.push(
             `instance contains attribute ${normalName} that is not defined in elementNamesToAlwaysKeep.  Marking it for deletion.`,
           )
-          mapResults.mappings[tagPath] = [
+          mapResults.mappings[attrPath] = [
             data[name],
             'delete',
             'notInElmtsToKeep',
@@ -365,7 +364,7 @@ export default function collectMappings(
         mapResults.anomalies.push(
           `instance contains attribute ${name} that is not in dictionary.  Marking it for deletion.`,
         )
-        mapResults.mappings[tagPath] = [
+        mapResults.mappings[attrPath] = [
           data[name],
           'delete',
           'notInDcmjsDictionary',
@@ -395,10 +394,10 @@ export default function collectMappings(
   collectMappingsInData(naturalData)
 
   Object.entries(getDcmOrganizeStamp(mappingOptions.ps315Options)).forEach(
-    ([name, newValue]) => {
-      const oldValue = _get(naturalData, name)
+    ([attrPath, newValue]) => {
+      const oldValue = _get(naturalData, attrPath)
       if (oldValue !== newValue) {
-        mapResults.mappings[name] = [
+        mapResults.mappings[attrPath] = [
           oldValue,
           'replace',
           'dcm-organize',
@@ -412,13 +411,13 @@ export default function collectMappings(
   // collect the tag mappings before assigning them into dicomData
   // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
   //   for each tag they want to map
-  for (let tagPath in dicomModifications) {
-    // This overrides any default action if tagPath is the same
-    mapResults.mappings[tagPath] = [
-      _get(naturalData, tagPath),
+  for (let attrPath in dicomModifications) {
+    // This overrides any default action if attrPath is the same
+    mapResults.mappings[attrPath] = [
+      _get(naturalData, attrPath),
       'replace',
       'mappingFunction',
-      dicomModifications[tagPath](),
+      dicomModifications[attrPath](),
     ]
   }
 
