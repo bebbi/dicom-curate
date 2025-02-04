@@ -46,7 +46,7 @@ export function getDicomVR(value: string): 'DA' | 'DT' | 'TM' {
     return 'TM'
   }
 
-  throw new Error('Invalid DICOM date/time/datetime string')
+  throw new Error(`Invalid DICOM date/time/datetime string "${value}"`)
 }
 
 /**
@@ -101,7 +101,7 @@ export function dicomToCanonicalDT(dicomValue: string): string {
     }
     return base + '.' + frac
   }
-  throw new Error('Unsupported DICOM VR')
+  throw new Error(`Unsupported DICOM VR "${vr}"`)
 }
 
 /**
