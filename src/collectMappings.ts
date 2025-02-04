@@ -283,12 +283,17 @@ export default function collectMappings(
                   toHeader,
                 )
                 if (typeof duration === 'string' && duration.match(iso8601)) {
-                  mapResults.mappings[attrPath] = [
-                    data[name],
-                    'replace',
-                    'offsetTemporalOpt',
-                    offsetDateTime(data[name], duration),
-                  ]
+                  let newDateTime
+                  try {
+                    mapResults.mappings[attrPath] = [
+                      data[name],
+                      'replace',
+                      'offsetTemporalOpt',
+                      offsetDateTime(data[name], duration),
+                    ]
+                  } catch (e) {
+                    error = `Date mapping error: Date mapping failed for attribute ${attrPath}: "${data[name]}"`
+                  }
                 } else
                   error = `Date mapping error: An ISO-8601 compatible date offset was not found for value ${sourceValue} at columns ${fromHeader}, ${toHeader}.`
               } else {
