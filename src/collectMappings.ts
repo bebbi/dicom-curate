@@ -54,7 +54,7 @@ export default function collectMappings(
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
-  const {
+  let {
     cleanDescriptorsOption,
     retainLongitudinalTemporalInformationOptions,
     retainPatientCharacteristicsOption,
