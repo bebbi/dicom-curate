@@ -80,6 +80,7 @@ export default function collectMappings(
     outputFilePath: '',
     mappings: {},
     anomalies: [],
+    errors: [],
   }
 
   const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
@@ -273,18 +274,28 @@ export default function collectMappings(
             } else if (Array.isArray(dateOpt)) {
               const [source, identifier, fromHeader, toHeader] = dateOpt
               const sourceValue = parser.getFrom(source, identifier)
-              const duration = parser.getMapping(
-                sourceValue,
-                fromHeader,
-                toHeader,
-              )
-              if (typeof duration === 'string' && duration.match(iso8601)) {
-                mapResults.mappings[attrPath] = [
-                  data[name],
-                  'replace',
-                  'offsetTemporalOpt',
-                  offsetDateTime(data[name], duration),
-                ]
+              let error = ''
+              if (sourceValue) {
+                const duration = parser.getMapping(
+                  sourceValue,
+                  fromHeader,
+                  toHeader,
+                )
+                if (typeof duration === 'string' && duration.match(iso8601)) {
+                  mapResults.mappings[attrPath] = [
+                    data[name],
+                    'replace',
+                    'offsetTemporalOpt',
+                    offsetDateTime(data[name], duration),
+                  ]
+                } else
+                  error = `An ISO-8601 compatible date offset was not found for value ${sourceValue} at columns ${fromHeader}, ${toHeader}.`
+              } else {
+                error = `Did not find up a value in ${source} for ${identifier}.`
+              }
+
+              if (error) {
+                mapResults.errors.push(error)
               }
             }
           }

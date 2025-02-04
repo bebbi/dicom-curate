@@ -56,6 +56,7 @@ export type TMapResults = {
       | [string, 'delete', string, undefined]
   }
   anomalies: string[]
+  errors: string[]
 }
 
 export type TPs315EElement = {
