@@ -216,7 +216,8 @@ export default function collectMappings(
           (!cleanDescriptorsOption ||
             !cleanDescriptorsExceptions.includes(normalName)) &&
           // No condition for an exception applies
-          !cleanPolicyMap[normalName].exceptCondition?.(data)
+          !cleanPolicyMap[normalName].exceptCondition?.(data) &&
+          data[name] !== ''
         ) {
           const { rule } = cleanPolicyMap[normalName]
           switch (rule) {
@@ -259,7 +260,7 @@ export default function collectMappings(
             collectMappingsInData(subData, subPath)
             subDataIndex += 1
           }
-        } else if (temporalVr(vr)) {
+        } else if (temporalVr(vr) && data[name] !== '') {
           // This is a date not in cleanOpts and we proceed per longitud option
           const dateOpt = retainLongitudinalTemporalInformationOptions
           // datesToRetain implies retainDeviceIdentifiers option
@@ -299,7 +300,7 @@ export default function collectMappings(
               }
             }
           }
-        } else if (vr === 'UI' && !retainUIDsOption) {
+        } else if (vr === 'UI' && !retainUIDsOption && data[name] !== '') {
           // Convert UIDs mentioned in 3.15 anyway, and then additionally those
           // that are not well-known class UIDs. The reason for latter is that
           // after subtracting PS3.15 from PS6, we still see instance UIDs such
@@ -333,7 +334,8 @@ export default function collectMappings(
           cleanDescriptorsOption &&
           (normalName.endsWith('Comment') ||
             normalName.endsWith('Description')) &&
-          !cleanDescriptorsExceptions.includes(normalName)
+          !cleanDescriptorsExceptions.includes(normalName) &&
+          data[name] !== ''
         ) {
           mapResults.mappings[attrPath] = [
             data[name],
@@ -345,7 +347,8 @@ export default function collectMappings(
           normalName in retainAdditionalIds &&
           (!retainDeviceIdentityOption ||
             !retainAdditionalIds[normalName] ||
-            !retainAdditionalIds[normalName].rtnDevIdOpt)
+            !retainAdditionalIds[normalName].rtnDevIdOpt) &&
+          data[name] !== ''
         ) {
           mapResults.mappings[attrPath] = [
             data[name],
@@ -359,7 +362,8 @@ export default function collectMappings(
           // elements from the cleanProfile.
           // Therefore, after the specific options are applied, elements to keep could be
           // in the taggedps315EElSet.
-          !taggedps315EElSet.has(normalName)
+          !taggedps315EElSet.has(normalName) &&
+          data[name] !== ''
         ) {
           mapResults.anomalies.push(
             `instance contains attribute ${normalName} that is not defined in elementNamesToAlwaysKeep.  Marking it for deletion.`,
