@@ -289,9 +289,9 @@ export default function collectMappings(
                     offsetDateTime(data[name], duration),
                   ]
                 } else
-                  error = `An ISO-8601 compatible date offset was not found for value ${sourceValue} at columns ${fromHeader}, ${toHeader}.`
+                  error = `Date mapping error: An ISO-8601 compatible date offset was not found for value ${sourceValue} at columns ${fromHeader}, ${toHeader}.`
               } else {
-                error = `Did not find up a value in ${source} for ${identifier}.`
+                error = `Date mapping error: Did not find a value in ${source} for ${identifier}.`
               }
 
               if (error) {
