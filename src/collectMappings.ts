@@ -110,18 +110,12 @@ export default function collectMappings(
 
   mapResults.outputFilePath = outputFilePathComponents().join('/')
 
-  const [taggedps315EEls, wildcardEls] = ps315EElements.reduce(
-    (acc: [TPs315EElement[], TPs315EElement[]], item: TPs315EElement) => {
-      let idx = item.tag.includes('X') ? 1 : 0
-
-      acc[idx].push(item)
+  const taggedps315EEls = ps315EElements.reduce(
+    (acc: TPs315EElement[], item: TPs315EElement) => {
+      acc.push(item)
       return acc
     },
-    [[], []],
-  )
-
-  console.log(
-    'TODO: Handle wildcardEls - convert tags into regex and separate if clause',
+    [],
   )
 
   let cleanPolicy = taggedps315EEls.map(({ basicProfile, ...rest }) => {
