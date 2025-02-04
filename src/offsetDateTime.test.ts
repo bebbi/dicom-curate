@@ -88,6 +88,10 @@ describe('Offset DICOM value by ISO8601 duration', () => {
     expect(offsetDateTime('20230415', 'P7D')).toEqual('20230422')
   })
 
+  it('offsets DA negative', () => {
+    expect(offsetDateTime('20230415', '-P7D')).toEqual('20230408')
+  })
+
   it('offsets DA via time', () => {
     expect(offsetDateTime('20230415', 'PT24H')).toEqual('20230416')
   })
@@ -102,6 +106,12 @@ describe('Offset DICOM value by ISO8601 duration', () => {
     expect(offsetDateTime('99990101123456.123456-0500', 'P7DT17M')).toEqual(
       '99990108125156.123456-0500',
     )
+  })
+
+  it('offsets DT with timezone, negative', () => {
+    expect(
+      offsetDateTime('99990101123456.123456-0500', '-P1DT1.123456S'),
+    ).toEqual('99981231123455.000000-0500')
   })
 
   it('offsets TM', () => {

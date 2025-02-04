@@ -49,20 +49,18 @@ export function getDicomVR(value: string): 'DA' | 'DT' | 'TM' {
   throw new Error('Invalid DICOM date/time/datetime string')
 }
 
+/**
+ * Converts any DICOM date/time string (DA, TM, or DT) into a canonical DT string
+ * of the form "YYYYMMDDHHMMSS.FFFFFF" (timezone information is dropped).
+ */
 export function dicomToCanonicalDT(dicomValue: string): string {
-  // Helper to pad or truncate a string to a desired length.
   const pad = (s: string, length: number): string =>
     s.padEnd(length, '0').slice(0, length)
-
   const vr = getDicomVR(dicomValue)
 
   if (vr === 'DA') {
-    // DA is in the format YYYYMMDD.
-    // Append default time and fraction.
     return dicomValue + '000000.000000'
   } else if (vr === 'TM') {
-    // TM is in the format HH[MM[SS[.FFFFFF]]].
-    // Use a default date of 19700101.
     let hh = '00',
       mm = '00',
       ss = '00',
@@ -75,7 +73,6 @@ export function dicomToCanonicalDT(dicomValue: string): string {
       mm = dicomValue.slice(2, 4)
     }
     if (len >= 6) {
-      // The rest may contain seconds and an optional fractional part.
       const rest = dicomValue.slice(4)
       const dotIndex = rest.indexOf('.')
       if (dotIndex === -1) {
@@ -87,8 +84,6 @@ export function dicomToCanonicalDT(dicomValue: string): string {
     }
     return '19700101' + hh + mm + ss + '.' + frac
   } else if (vr === 'DT') {
-    // DT is in the format YYYYMMDDHHMMSS[.FFFFFF][(+|-)ZZZZ].
-    // Extract the base date/time (first 14 digits).
     let base = dicomValue.slice(0, 14)
     if (base.length < 14) {
       base = base.padEnd(14, '0')
@@ -96,9 +91,6 @@ export function dicomToCanonicalDT(dicomValue: string): string {
     let frac = '000000'
     const dotIndex = dicomValue.indexOf('.')
     if (dotIndex !== -1) {
-      // If a fractional part exists, it runs from the dot until a timezone indicator or end of string.
-      // We ignore any timezone information.
-      // Look for '+' or '-' after the dot.
       const afterDot = dicomValue.slice(dotIndex + 1)
       const tzPos = afterDot.search(/[+-]/)
       if (tzPos === -1) {
@@ -109,10 +101,13 @@ export function dicomToCanonicalDT(dicomValue: string): string {
     }
     return base + '.' + frac
   }
-
   throw new Error('Unsupported DICOM VR')
 }
 
+/**
+ * Converts a canonical DT string ("YYYYMMDDHHMMSS.FFFFFF") back to a DICOM string
+ * that matches the original formatting (including re‑adding any timezone information).
+ */
 export function canonicalDTToDicom(
   canonicalDT: string,
   original: string,
@@ -120,20 +115,15 @@ export function canonicalDTToDicom(
   const vr = getDicomVR(original)
 
   if (vr === 'DA') {
-    // For DA, return the first 8 digits (YYYYMMDD)
     return canonicalDT.slice(0, 8)
   }
-
   if (vr === 'TM') {
-    // For TM, canonicalDT is "19700101HHMMSS.FFFFFF".
-    // Remove the default date ("19700101") to get the time portion.
-    const timePortion = canonicalDT.slice(8) // yields "HHMMSS.FFFFFF"
+    const timePortion = canonicalDT.slice(8) // "HHMMSS.FFFFFF"
     const dotIndex = original.indexOf('.')
-    const baseLen = dotIndex !== -1 ? dotIndex : original.length // original base (e.g. "HHMMSS" or "HHMM")
+    const baseLen = dotIndex !== -1 ? dotIndex : original.length
     const baseTime = timePortion.slice(0, baseLen)
     let fraction = ''
     if (dotIndex !== -1) {
-      // Determine how many digits the original fractional part had.
       const fracDigits = original.length - dotIndex - 1
       let canonicalFrac = canonicalDT.slice(canonicalDT.indexOf('.') + 1)
       if (canonicalFrac.length > fracDigits) {
@@ -145,15 +135,12 @@ export function canonicalDTToDicom(
     }
     return baseTime + fraction
   }
-
   if (vr === 'DT') {
-    // For DT, canonicalDT is in the form "YYYYMMDDHHMMSS.FFFFFF"
-    const base = canonicalDT.slice(0, 14) // YYYYMMDDHHMMSS
+    const base = canonicalDT.slice(0, 14)
     let fraction = ''
     let tz = ''
     const dotIndex = original.indexOf('.')
     if (dotIndex !== -1) {
-      // Look for a timezone indicator after the fractional part.
       const plusIndex = original.indexOf('+', dotIndex)
       const minusIndex = original.indexOf('-', dotIndex)
       let tzIndex = -1
@@ -178,7 +165,6 @@ export function canonicalDTToDicom(
         tz = original.slice(tzIndex)
       }
     } else {
-      // No fractional part in the original; check for timezone info immediately after the base.
       if (original.length > 14) {
         const afterBase = original.slice(14)
         if (afterBase[0] === '+' || afterBase[0] === '-') {
@@ -188,46 +174,79 @@ export function canonicalDTToDicom(
     }
     return base + fraction + tz
   }
-
   throw new Error('Unsupported DICOM VR')
 }
 
+/**
+ * Extracts the fractional part from the seconds portion of an ISO8601 duration string,
+ * returning the value in microseconds (6-digit precision). If no fractional part is found,
+ * returns 0.
+ *
+ * For example, "PT1.111111S" yields 111111.
+ */
 function getDurationFractionMicroseconds(iso8601Duration: string): number {
   const match = iso8601Duration.match(/(\d+)\.(\d+)S/)
   if (match) {
     let fracStr = match[2]
-    // Ensure exactly 6 digits.
     fracStr = fracStr.padEnd(6, '0').slice(0, 6)
     return parseInt(fracStr, 10)
   }
   return 0
 }
 
+/**
+ * Offsets a DICOM date/time value by an ISO8601 duration.
+ *
+ * This function:
+ *   1. Converts the original DICOM string into a canonical DT string ("YYYYMMDDHHMMSS.FFFFFF").
+ *   2. Splits that canonical string into its integer base (14-digit) and 6-digit fractional part.
+ *   3. Checks if the duration is negative (by looking for a leading "-") and, if so, removes the minus and records the sign.
+ *   4. Parses the ISO8601 duration using the package for the integer seconds (and larger units)
+ *      and extracts the fractional part (in microseconds) manually.
+ *   5. Uses Math.trunc to split the (possibly negative) total seconds into integer and fractional parts.
+ *   6. Performs microsecond arithmetic to add the fractions, carrying whole seconds as needed.
+ *   7. Uses JavaScript Date arithmetic for the integer seconds.
+ *   8. Reassembles a new canonical DT string and converts it back to the original DICOM format.
+ *
+ * @param dicomValue - The original DICOM date/time string.
+ * @param iso8601Duration - An ISO8601 duration string (e.g., "PT1.111111S", "-P5D", "-PT1.111111S", etc.).
+ * @returns The offset DICOM string, formatted like the original.
+ */
 export function offsetDateTime(
   dicomValue: string,
   iso8601Duration: string,
 ): string {
-  // 1. Convert to canonical DT.
-  const canonical = dicomToCanonicalDT(dicomValue) // e.g., "123456" for TM becomes "19700101123456.123456"
+  // Step 0: Detect and handle a leading minus sign.
+  let sign = 1
+  let durationStr = iso8601Duration
+  if (iso8601Duration.startsWith('-')) {
+    sign = -1
+    durationStr = iso8601Duration.slice(1)
+  }
 
-  // 2. Split canonical DT.
-  const base = canonical.slice(0, 14) // "YYYYMMDDHHMMSS"
-  const fractionStr = canonical.slice(15, 21) // 6-digit fraction "FFFFFF"
-  const originalFractionMicro = parseInt(fractionStr, 10) // microseconds as integer
+  // Step 1: Convert the original DICOM string to a canonical DT string.
+  const canonical = dicomToCanonicalDT(dicomValue) // Format: "YYYYMMDDHHMMSS.FFFFFF"
 
-  // 3. Parse the ISO8601 duration.
-  const duration = parse(iso8601Duration)
-  const totalDurationSec = toSeconds(duration) // full offset in seconds (as a float)
-  const integerDurationSec = Math.floor(totalDurationSec)
-  // And extract the fractional part manually.
-  const durationFractionMicro = getDurationFractionMicroseconds(iso8601Duration)
+  // Step 2: Split the canonical DT string.
+  const base = canonical.slice(0, 14) // 14-digit base: YYYYMMDDHHMMSS
+  const fractionStr = canonical.slice(15, 21) // 6-digit fractional part: FFFFFF
+  const originalFractionMicro = parseInt(fractionStr, 10) // as an integer microseconds
 
-  // 4. Compute new fractional microseconds.
+  // Step 3: Parse the ISO8601 duration (without the sign).
+  const durationParsed = parse(durationStr)
+  const positiveDurationSec = toSeconds(durationParsed) // positive value
+  const totalDurationSec = sign * positiveDurationSec // apply the sign
+  const integerDurationSec = Math.trunc(totalDurationSec) // using trunc so that, e.g., -1.111111 becomes -1
+  // Step 4: Extract the fractional part (microseconds) from the duration string and apply the sign.
+  let durationFractionMicro = getDurationFractionMicroseconds(durationStr)
+  durationFractionMicro = sign * durationFractionMicro
+
+  // Step 5: Add the fractional parts (in microseconds) and compute any carry.
   const totalFractionMicro = originalFractionMicro + durationFractionMicro
   const carry = Math.floor(totalFractionMicro / 1_000_000)
-  const newFractionMicro = totalFractionMicro % 1_000_000
+  const newFractionMicro = totalFractionMicro - carry * 1_000_000
 
-  // 5. Parse the base into a JavaScript Date.
+  // Step 6: Parse the base into a JavaScript Date.
   const year = parseInt(base.slice(0, 4), 10)
   const month = parseInt(base.slice(4, 6), 10) - 1
   const day = parseInt(base.slice(6, 8), 10)
@@ -236,16 +255,16 @@ export function offsetDateTime(
   const second = parseInt(base.slice(12, 14), 10)
   const date = new Date(year, month, day, hour, minute, second)
 
-  // 6. Add the integer seconds and any carry from the fraction.
+  // Step 7: Add the integer seconds plus any carry from the fractional addition.
   date.setSeconds(date.getSeconds() + integerDurationSec + carry)
 
-  // 7. Reassemble the new canonical DT.
+  // Step 8: Reassemble a new canonical DT string.
   const pad = (n: number, width: number = 2) =>
     n.toString().padStart(width, '0')
   const newBase = `${date.getFullYear()}${pad(date.getMonth() + 1, 2)}${pad(date.getDate(), 2)}${pad(date.getHours(), 2)}${pad(date.getMinutes(), 2)}${pad(date.getSeconds(), 2)}`
   const newFractionStr = newFractionMicro.toString().padStart(6, '0')
   const newCanonical = newBase + '.' + newFractionStr
 
-  // 8. Convert canonical DT back to original DICOM format.
+  // Step 9: Convert the canonical DT back to the original DICOM format.
   return canonicalDTToDicom(newCanonical, dicomValue)
 }
