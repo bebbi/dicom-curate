@@ -1,6 +1,11 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
-import type { TMappingOptions, TMapResults, TPs315EElement } from './types'
+import type {
+  TMappingOptions,
+  TMapResults,
+  TPs315EElement,
+  TPs315Options,
+} from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
 import getParser from './getParser'
@@ -54,16 +59,7 @@ export default function collectMappings(
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
-  let {
-    cleanDescriptorsOption,
-    retainLongitudinalTemporalInformationOptions,
-    retainPatientCharacteristicsOption,
-    retainDeviceIdentityOption,
-    retainUIDsOption,
-    retainSafePrivateOption,
-    retainInstitutionIdentityOption,
-  } = mappingOptions.ps315Options
-  let { inputPathPattern } = mappingOptions
+  let { ps315Options, inputPathPattern } = mappingOptions
 
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
@@ -102,9 +98,36 @@ export default function collectMappings(
     dicomHeader: {},
     outputFilePathComponents: [],
   })
+  let DICOMPS315EOptions: Partial<TPs315Options> = {}
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
+
+  // A bit of TS dance to avoid type errors
+  function overrideOption<K extends keyof TPs315Options>(
+    key: K,
+    value: TPs315Options[K],
+  ) {
+    ps315Options[key] = value
+  }
+
+  for (const k of Object.keys(DICOMPS315EOptions)) {
+    const key = k as keyof TPs315Options
+    const value = DICOMPS315EOptions[key]
+    overrideOption(key, value as TPs315Options[typeof key])
+  }
+
+  // Final options
+  const {
+    cleanDescriptorsOption,
+    cleanDescriptorsExceptions,
+    retainLongitudinalTemporalInformationOptions,
+    retainPatientCharacteristicsOption,
+    retainDeviceIdentityOption,
+    retainUIDsOption,
+    retainSafePrivateOption,
+    retainInstitutionIdentityOption,
+  } = ps315Options
 
   // create a parser object to be used in the eval'ed mappingFunctions
   const parser = getParser(
@@ -417,7 +440,7 @@ export default function collectMappings(
 
   collectMappingsInData(naturalData)
 
-  Object.entries(getDcmOrganizeStamp(mappingOptions.ps315Options)).forEach(
+  Object.entries(getDcmOrganizeStamp(ps315Options)).forEach(
     ([attrPath, newValue]) => {
       const oldValue = _get(naturalData, attrPath)
       if (oldValue !== newValue) {

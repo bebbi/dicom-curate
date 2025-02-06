@@ -3,6 +3,7 @@ import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
+  cleanDescriptorsExceptions: string[]
   retainLongitudinalTemporalInformationOptions:
     | 'Full'
     | 'Off'
