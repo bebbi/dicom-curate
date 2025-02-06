@@ -29,6 +29,11 @@ export function getCid7050Codes(options: TPs315Options) {
   Object.entries(options).forEach(([_option, v]) => {
     const option = _option as keyof TPs315Options
 
+    if (option === 'cleanDescriptorsExceptions') {
+      // Nothing to do, this is an exception, not defined in PS3.15
+      return
+    }
+
     if (v === false || v === 'Off') {
       return
     }
