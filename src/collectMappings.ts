@@ -279,7 +279,6 @@ export default function collectMappings(
                   toHeader,
                 )
                 if (typeof duration === 'string' && duration.match(iso8601)) {
-                  let newDateTime
                   try {
                     mapResults.mappings[attrPath] = [
                       data[name],
