@@ -92,10 +92,16 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
+  type TMappingScriptParams = { [paramName: string]: string }
   // run the mapping functions that set the following two variables
-  let dicomModifications: { [keyword: string]: () => string } = {}
-  let outputFilePathComponents: () => string[] = () => []
+  let dicomModifications: (params: TMappingScriptParams) => {
+    [keyword: string]: string
+  } = () => ({})
+  let outputFilePathComponents: (
+    params: TMappingScriptParams,
+  ) => string[] = () => []
   let cleanDescriptorsExceptions: string[] = []
+  let createParams: () => TMappingScriptParams = () => ({})
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
@@ -108,7 +114,9 @@ export default function collectMappings(
     mappingOptions.fieldMappings,
   )
 
-  mapResults.outputFilePath = outputFilePathComponents().join('/')
+  let mapParams = createParams()
+
+  mapResults.outputFilePath = outputFilePathComponents(mapParams).join('/')
 
   const taggedps315EEls = ps315EElements.reduce(
     (acc: TPs315EElement[], item: TPs315EElement) => {
@@ -426,13 +434,14 @@ export default function collectMappings(
   // collect the tag mappings before assigning them into dicomData
   // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
   //   for each tag they want to map
-  for (let attrPath in dicomModifications) {
+  const dicomMap = dicomModifications(mapParams)
+  for (let attrPath in dicomMap) {
     // This overrides any default action if attrPath is the same
     mapResults.mappings[attrPath] = [
       _get(naturalData, attrPath),
       'replace',
       'mappingFunction',
-      dicomModifications[attrPath](),
+      dicomMap[attrPath],
     ]
   }
 
