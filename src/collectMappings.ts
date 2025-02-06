@@ -59,7 +59,7 @@ export default function collectMappings(
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
-  let { ps315Options, inputPathPattern } = mappingOptions
+  let { ps315Options: passedPs315Options, inputPathPattern } = mappingOptions
 
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
@@ -98,24 +98,13 @@ export default function collectMappings(
     dicomHeader: {},
     outputFilePathComponents: [],
   })
-  let DICOMPS315EOptions: Partial<TPs315Options> = {}
+  let DICOMPS315EOptions: TPs315Options = passedPs315Options
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
 
-  // A bit of TS dance to avoid type errors
-  function overrideOption<K extends keyof TPs315Options>(
-    key: K,
-    value: TPs315Options[K],
-  ) {
-    ps315Options[key] = value
-  }
-
-  for (const k of Object.keys(DICOMPS315EOptions)) {
-    const key = k as keyof TPs315Options
-    const value = DICOMPS315EOptions[key]
-    overrideOption(key, value as TPs315Options[typeof key])
-  }
+  // final options Either passed in or from script, but not a mix.
+  const ps315Options = DICOMPS315EOptions
 
   // Final options
   const {
