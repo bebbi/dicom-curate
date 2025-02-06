@@ -63,48 +63,72 @@ ACRIN-NSCLC-FDG-PET-003,patient_3,3
 
     with open(os.path.join(scenarioDir, "mappingConfig.js"), "w") as f:
       f.write("""
-dicomModifications = {
-// List DICOM Header tags for which you want to change values:
-// It's important to assign something to PatientName and PatientID as otherwise
-// they will just get emptied by the default behaviour
-    'PatientName': function() {
-        // set to a static value
-        // return 'myID';
-        // OR set to header value of same DICOM instance
-        // return parser.getDicom('PatientID')
-        // OR set to a component of the files directory path
-        return parser.getFilePathComp('centersubj');
-    },
-    // this example replaces the patient name per mapping table column labeled 'CURR_ID' (original)
-    // and 'NEW_ID' (target)
-    'PatientID': function() {
-        return parser.getMapping(parser.getDicom('PatientID'), 'CURR_ID', 'NEW_ID');
-    },
-    // this example finds the patientname in mapping table column 0 and offsets the CONTENTDATE by days per column 2
-    'ContentDate': function() {
-        return parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
-            parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET'));
-    },
-};
-// filePath lists the components of the new path to be written.
-// If taken from old path, component names must be available in filePathPattern,
-// and actual file path must be deep enough for getFilePathComp to find its match
-outputFilePathComponents = [
-    parser.getFilePathComp('trialname'),
-    parser.getFilePathComp('centersubj'),
-    parser.getDicom('StudyDate'),
-    parser.getDicom('SeriesDescription') + '=' + parser.getDicom('SeriesNumber'),
-    parser.getDicom('InstanceNumber') + '.dcm'
-];
+DICOMPS315EOptions = {
+  cleanDescriptorsOption: true,
+  cleanDescriptorsExceptions: [
+    'SeriesDescription',
+    'ClinicalTrialSeriesDescription',
+  ],
+  retainLongitudinalTemporalInformationOptions: [
+    'filePath',
+    'centersubj',
+    'CURR_ID',
+    'DATE_OFFSET',
+  ],
+  // Only works for those attributes that are part of the PS3.15 E1.1
+  // list under the retainPatientCharacteristicsOption.
+  retainPatientCharacteristicsOption: [
+    'PatientsWeight',
+    'PatientsSize',
+    'PatientsAge',
+    'SelectorASValue',
+  ],
+  // Calibration dates, scanner IDs, etc.
+  retainDeviceIdentityOption: true,
+  retainUIDsOption: false,
+  retainSafePrivateOption: true,
+  retainInstitutionIdentityOption: true,
+}
 
-// Exceptions when activating `cleanDescriptorsOption`
-cleanDescriptorsExceptions = ['SeriesDescription'];
-retainPatientCharacteristicsSubset = [
-  'PatientsWeight',
-  'PatientsSize',
-  'PatientsAge',
-  'SelectorASValue',
-]
+// This maps the input path to variables we can use in
+// createParams() and modifications()
+inputPathPattern = 'trialname/centersubj/dicomseriesid/'
+
+// Optional function to create `params` used below.
+createParams = function () {
+  return {
+    // Define where to find the reference site-subject id:
+    // in folder naming or in dicom header
+    centerSubjId: parser.getFilePathComp('centersubj'),
+  }
+}
+
+modifications = function (params) {
+  return {
+    dicomHeader: {
+      // List DICOM Header tags for which you want to change values:
+      // It's important to assign something to PatientName and PatientID as otherwise
+      // they will just get emptied by the default behaviour
+      PatientName: params.centerSubjId,
+      PatientID: params.centerSubjId,
+      // // this example finds the PatientID in mapping table column 0 and offsets the CONTENTDATE by days per column 2
+      // ContentDate:
+      //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
+      //     parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET')),
+    },
+    // outputFilePath lists the components of the new path to be written.
+    // If taken from old path, component names must be available in filePathPattern,
+    // and actual file path must be deep enough for getFilePathComp to find its match
+    outputFilePathComponents: [
+      parser.getFilePathComp('trialname'),
+      params.centerSubjId,
+      parser.getDicom('SeriesNumber') +
+        '=' +
+        parser.getDicom('SeriesDescription'),
+      parser.getDicom('InstanceNumber') + '.dcm',
+    ],
+  }
+}
 """)
 
   if args.verbose:
