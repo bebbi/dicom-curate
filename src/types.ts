@@ -34,7 +34,7 @@ export type TMappingOptions = {
   columnMappings: TColumnMappings
   mappingScript: string
   inputPathPattern: string
-  ps315Options: TPs315Options
+  ps315Options?: TPs315Options
 }
 
 export type TFileInfo = {
