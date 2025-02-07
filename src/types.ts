@@ -1,4 +1,4 @@
-import { TCsvMappings } from './csvMapping'
+import { TColumnMappings } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
@@ -31,7 +31,7 @@ export interface OrganizeOptions {
 }
 
 export type TMappingOptions = {
-  fieldMappings: TCsvMappings
+  columnMappings: TColumnMappings
   mappingScript: string
   inputPathPattern: string
   ps315Options: TPs315Options
