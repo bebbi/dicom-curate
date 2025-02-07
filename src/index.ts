@@ -10,6 +10,8 @@ type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory: FileSystemDirectoryHandle
 }
 
+export type { OrganizeOptions } from './types'
+
 //const mappingWorkerCount = 2;
 const mappingWorkerCount = navigator.hardwareConcurrency
 
@@ -118,21 +120,21 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const inputPathPattern = organizeOptions.filePathPattern
+  const inputPathPattern = organizeOptions.inputPathPattern
   const outputDirectory = organizeOptions.outputDirectory
 
   //
   // then, get the field mappings from the csv file
   //
   // assumes all fields are not repeated across rows
-  const csvFile = await organizeOptions.fieldMapping.getFile()
+  const csvFile = await organizeOptions.columnMapping.getFile()
   const columnMappings = await extractCsvMappings(csvFile)
 
   //
   // then, get the mapping functions
   //
-  const functionsFile = await organizeOptions.mappingFunctions.getFile()
-  const mappingScript = await functionsFile.text()
+  const mappingScriptFile = await organizeOptions.mappingScript.getFile()
+  const mappingScript = await mappingScriptFile.text()
 
   const ps315Options = organizeOptions.ps315Options
 

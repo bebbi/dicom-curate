@@ -22,12 +22,11 @@ export type TPs315Options = {
 
 export interface OrganizeOptions {
   inputDirectory: FileSystemDirectoryHandle
-  // identical to inputPathPattern.
-  filePathPattern: string
-  fieldMapping: FileSystemFileHandle
-  mappingFunctions: FileSystemFileHandle
+  inputPathPattern: string
+  columnMapping: FileSystemFileHandle
+  mappingScript: FileSystemFileHandle
   outputDirectory: FileSystemDirectoryHandle
-  ps315Options: TPs315Options
+  ps315Options?: TPs315Options
 }
 
 export type TMappingOptions = {
