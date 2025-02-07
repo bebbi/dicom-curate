@@ -54,12 +54,26 @@ function removeRetiredPrefix(name: string) {
   return name.startsWith('RETIRED_') ? name.slice(8) : name
 }
 
+const defaultPs315Options: TPs315Options = {
+  cleanDescriptorsOption: true,
+  cleanDescriptorsExceptions: [],
+  retainLongitudinalTemporalInformationOptions: 'Off',
+  retainPatientCharacteristicsOption: false,
+  retainDeviceIdentityOption: false,
+  retainUIDsOption: false,
+  retainSafePrivateOption: false,
+  retainInstitutionIdentityOption: false,
+}
+
 export default function collectMappings(
   inputFilePath: string,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
-  let { ps315Options: passedPs315Options, inputPathPattern } = mappingOptions
+  let {
+    ps315Options: passedPs315Options = defaultPs315Options,
+    inputPathPattern,
+  } = mappingOptions
 
   // Returns [naturalData, mapResults]
   // sourceInstanceUID : original UID for this dicomData
