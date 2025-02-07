@@ -36,7 +36,8 @@ export default function dcmOrganize(
   // apply a hard-coded mapping to the metaheader data since
   // it is of a highly constrained format
   const mappedDicomData = new dcmjs.data.DicomDict(
-    mapMetaheader(dicomData.meta),
+    // Depending on PS315E UID option, mapped uid or not.
+    mapMetaheader(dicomData.meta, naturalData.SOPInstanceUID),
   )
   mappedDicomData.dict =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalData)
