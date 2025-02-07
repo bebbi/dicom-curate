@@ -1,12 +1,12 @@
 import * as dcmjs from 'dcmjs'
-import { getCsvMapping, TCsvMappings } from './csvMapping'
+import { getCsvMapping, TColumnMappings } from './csvMapping'
 import type { TNaturalData } from 'dcmjs'
 
 export default function getParser(
   inputPathPattern: string,
   inputFilePath: string,
   naturalData: TNaturalData,
-  fieldMappings: TCsvMappings,
+  columnMappings: TColumnMappings,
 ) {
   function getDicom(tagName: string) {
     if (tagName in dcmjs.data.DicomMetaDictionary.dictionary) {
@@ -30,7 +30,7 @@ export default function getParser(
         : getFilePathComp(identifier)
     },
     getFilePathComp,
-    getMapping: getCsvMapping.bind(null, fieldMappings),
+    getMapping: getCsvMapping.bind(null, columnMappings),
     getDicom,
     addDays: (dicomDateString: string, offsetDays: number) => {
       const year = Number(dicomDateString.slice(0, 4))

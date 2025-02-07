@@ -1,6 +1,6 @@
 type TFieldValue = number | string
 
-export type TCsvMappings = {
+export type TColumnMappings = {
   headers: string[]
   rowValues: { [rowIdx: number]: TFieldValue[] }
   rowIndexByFieldValue: {
@@ -14,34 +14,34 @@ export async function extractCsvMappings(csvFile: File) {
   const csvText = await csvFile.text()
   const rows = csvText.trim().split('\n')
   const headers = rows.slice(0, 1)[0].split(',')
-  const fieldMappings: TCsvMappings = {
+  const columnMappings: TColumnMappings = {
     headers: headers,
     rowValues: {},
     rowIndexByFieldValue: {},
   }
   headers.forEach((header: string) => {
-    fieldMappings.rowIndexByFieldValue[header] = {}
+    columnMappings.rowIndexByFieldValue[header] = {}
   })
   rows.slice(1).forEach((row: string, rowIndex: number) => {
-    fieldMappings.rowValues[rowIndex] = row.split(',')
-    fieldMappings.rowValues[rowIndex].forEach(
+    columnMappings.rowValues[rowIndex] = row.split(',')
+    columnMappings.rowValues[rowIndex].forEach(
       (fieldValue: TFieldValue, columnIndex: number) => {
-        fieldMappings.rowIndexByFieldValue[headers[columnIndex]][fieldValue] =
+        columnMappings.rowIndexByFieldValue[headers[columnIndex]][fieldValue] =
           rowIndex
       },
     )
   })
 
-  return fieldMappings
+  return columnMappings
 }
 
 export function getCsvMapping(
-  fieldMappings: TCsvMappings,
+  columnMappings: TColumnMappings,
   value: TFieldValue,
   fromColumn: string,
   toColumn: string,
 ) {
-  const rowIndex = fieldMappings.rowIndexByFieldValue[fromColumn][value]
-  const columnIndex = fieldMappings.headers.indexOf(toColumn)
-  return fieldMappings.rowValues[rowIndex][columnIndex]
+  const rowIndex = columnMappings.rowIndexByFieldValue[fromColumn][value]
+  const columnIndex = columnMappings.headers.indexOf(toColumn)
+  return columnMappings.rowValues[rowIndex][columnIndex]
 }

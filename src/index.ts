@@ -126,7 +126,7 @@ async function collectMappingOptions(
   //
   // assumes all fields are not repeated across rows
   const csvFile = await organizeOptions.fieldMapping.getFile()
-  const fieldMappings = await extractCsvMappings(csvFile)
+  const columnMappings = await extractCsvMappings(csvFile)
 
   //
   // then, get the mapping functions
@@ -139,7 +139,7 @@ async function collectMappingOptions(
   return {
     inputPathPattern,
     outputDirectory,
-    fieldMappings,
+    columnMappings,
     mappingScript,
     ps315Options,
   }

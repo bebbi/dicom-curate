@@ -123,7 +123,7 @@ export default function collectMappings(
     inputPathPattern,
     inputFilePath,
     naturalData,
-    mappingOptions.fieldMappings,
+    mappingOptions.columnMappings,
   )
 
   let mapParams = createParams()
