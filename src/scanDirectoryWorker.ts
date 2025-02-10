@@ -1,4 +1,8 @@
-declare var self: Window & typeof globalThis
+// For editor linter to treat the file as an es module, avoiding the error on
+// keepScanning being redeclared
+export {}
+
+declare const self: Window & typeof globalThis
 
 let keepScanning = true
 
