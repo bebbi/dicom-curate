@@ -114,6 +114,7 @@ dcm-organize
   'MediaStorageSOPClassUID', as well as setting the 'TransferSyntaxUID' to 'Explit little Endian', and 'MediaStorageSOPInstanceUID' to the correct SOP instance UID.
 - cleans sequences ('SQ') by recursively applying the de-identification rules to each Dataset in each Item of the Sequence.
 - uses an allow-list approach, by removing everything not defined in PS3.06 or handled in PS3.15E1.1.
+- identifies and removes additional ID attributes by parsing PS3.06 and finding all attributes ending on "ID(s)" and not defined in PS3.15E. This ID list is defined in "src/config/dicom/retainAdditionalIds.ts", and a few of them are manually annotated to be retained if the "retain device identifier option" is activated.
 - keeps the 'EncapsulatedDocument' attribute if modality is "DOC", unless overridden
 - keeps the 'VerifyingObserverSequence' if modality is SR, unless overridden
 - allows the users to describe all cleaning configurations in the mappingScripts file
@@ -125,6 +126,7 @@ dcm-organize
     for the patient id defined in the folder path, replace dates per a per-subject csv 'DATE_OFFSET' column: `['filePath', 'centersubj', 'SUBJECT_ID', 'DATE_OFFSET']`
   - 'retainDeviceIdentityOption': true or false. If true, overrides `retainLongitudinalTemporalInformationOptions` for the respective attributes to keep.
   - 'retainUIDsOption': true or false, if true, creates a new UID using a decentrally repeable, hash-based method
+    - As there are more instance UIDs in part PS3.06 than described in PS3.15E for protection, this option identifies the following uids for protection: 1. All instance UIDs per PS3.15E, 2. Any additional UIDs with a value not well-known in DICOM, per table PS3.06A (Registry of DICOM Unique Identifiers). This protects instance UIDs but also private class UIDs, which is intentional.
   - 'retainSafePrivateOption': true or false, if true, keeps the private tags but marks them for quarantine and manual review
   - 'retainInstitutionIdentityOption': true or false
 - does not currently clean structured content
