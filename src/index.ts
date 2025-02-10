@@ -36,9 +36,10 @@ fileListWorker.addEventListener('message', (event) => {
   switch (event.data.response) {
     case 'file':
       filesToProcess.push(event.data.fileInfo)
-      if (filesToProcess.length > 10) {
-        fileListWorker.postMessage({ request: 'stop' })
-      }
+      // Could do some throttling:
+      // if (filesToProcess.length > 10) {
+      //   fileListWorker.postMessage({ request: 'stop' })
+      // }
       dispatchMappingJobs()
       break
     case 'done':
