@@ -29,6 +29,7 @@ const mappingWorkerCount = navigator.hardwareConcurrency
 const filesToProcess: TFileInfo[] = []
 const fileListWorker = new Worker(
   new URL('./scanDirectoryWorker.js', import.meta.url),
+  { type: 'module' },
 )
 let directoryScanFinished = false
 fileListWorker.addEventListener('message', (event) => {
