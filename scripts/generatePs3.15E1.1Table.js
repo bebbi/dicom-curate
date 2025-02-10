@@ -44,6 +44,8 @@ async function main() {
       return el
     })
 
+    // Some tags that *could* occur in DICOM headers even though they
+    // should be file meta header.
     // Workaround: We add Affected SOP Instance UID because we need it
     // for the name mapping. It occurs in PS3.15E. It is PS3.07, not PS3.06
     allElements.push(
