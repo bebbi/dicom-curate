@@ -26,7 +26,7 @@ self.addEventListener('message', (event) => {
 async function scanDirectory(dir: FileSystemDirectoryHandle) {
   async function traverse(dir: FileSystemDirectoryHandle, prefix: string) {
     for await (const entry of dir.values()) {
-      if (entry.kind === 'file') {
+      if (entry.kind === 'file' && keepScanning) {
         const file = await (entry as FileSystemFileHandle).getFile()
         self.postMessage({
           response: 'file',
@@ -37,13 +37,11 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
             fileHandle: entry,
           },
         })
-      } else if (entry.kind === 'directory') {
-        if (keepScanning) {
-          await traverse(
-            entry as FileSystemDirectoryHandle,
-            prefix + '/' + entry.name,
-          )
-        }
+      } else if (entry.kind === 'directory' && keepScanning) {
+        await traverse(
+          entry as FileSystemDirectoryHandle,
+          prefix + '/' + entry.name,
+        )
       }
     }
   }
