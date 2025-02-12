@@ -12,45 +12,53 @@ type TMappingWorkerOptions = TMappingOptions & {
 
 export type { OrganizeOptions } from './types'
 
-//const mappingWorkerCount = 2;
 const mappingWorkerCount = navigator.hardwareConcurrency
 
-//
-// Directory scanner web worker management
-//
-// worker accepts these messages:
-//   command: 'scan', directoryHandle
-//   command: 'stop'
-// worker sends these messages:
-//   response: 'file', file info (path, name, size, fileHandle)
-//   response: 'done'
-//
-// TODO: implement a buffering stream to request fileHandles in batches
-const filesToProcess: TFileInfo[] = []
-const fileListWorker = new Worker(
-  new URL('./scanDirectoryWorker.js', import.meta.url),
-  { type: 'module' },
-)
+let filesToProcess: TFileInfo[] = []
 let directoryScanFinished = false
-fileListWorker.addEventListener('message', (event) => {
-  switch (event.data.response) {
-    case 'file':
-      filesToProcess.push(event.data.fileInfo)
-      // Could do some throttling:
-      // if (filesToProcess.length > 10) {
-      //   fileListWorker.postMessage({ request: 'stop' })
-      // }
-      dispatchMappingJobs()
-      break
-    case 'done':
-      console.log('directoryScanFinished')
-      directoryScanFinished = true
-      break
-    default:
-      console.error(`Unknown response from worker ${event.data.response}`)
-  }
-  dispatchMappingJobs()
-})
+
+/*
+ * Directory scanner web worker management
+ *
+ * worker accepts these messages:
+ *   command: 'scan', directoryHandle
+ *   command: 'stop'
+ * worker sends these messages:
+ *   response: 'file', file info (TFileInfo)
+ *   response: 'done'
+ */
+// TODO: implement a buffering stream to request fileHandles in batches
+function initializeFileListWorker() {
+  filesToProcess = []
+  directoryScanFinished = false
+
+  const fileListWorker = new Worker(
+    new URL('./scanDirectoryWorker.js', import.meta.url),
+    { type: 'module' },
+  )
+
+  fileListWorker.addEventListener('message', (event) => {
+    switch (event.data.response) {
+      case 'file':
+        filesToProcess.push(event.data.fileInfo)
+        // Could do some throttling:
+        // if (filesToProcess.length > 10) {
+        //   fileListWorker.postMessage({ request: 'stop' })
+        // }
+        dispatchMappingJobs()
+        break
+      case 'done':
+        console.log('directoryScanFinished')
+        directoryScanFinished = true
+        break
+      default:
+        console.error(`Unknown response from worker ${event.data.response}`)
+    }
+    dispatchMappingJobs()
+  })
+
+  return fileListWorker
+}
 
 //
 // Apply mappings web worker management
@@ -63,34 +71,40 @@ fileListWorker.addEventListener('message', (event) => {
 let mappingWorkerOptions: Partial<TMappingWorkerOptions> = {} // TODO: only send to worker once
 const availableMappingWorkers: Worker[] = []
 let workersActive = 0
-const mapResultsList: TMapResults[] = []
+let mapResultsList: TMapResults[] = []
 
-for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
-  let mappingWorker = new Worker(
-    new URL('./applyMappingsWorker.js', import.meta.url),
-    { type: 'module' },
-  )
-  mappingWorker.onerror = console.error
+function initializeMappingWorkers() {
+  mappingWorkerOptions = {}
+  workersActive = 0
+  mapResultsList = []
 
-  /* eslint-disable no-loop-func */
-  mappingWorker.addEventListener('message', (event) => {
-    switch (event.data.response) {
-      case 'finished':
-        availableMappingWorkers.push(mappingWorker)
-        mapResultsList.push(event.data.mapResults)
-        workersActive -= 1
-        dispatchMappingJobs()
-        if ((mapResultsList.length - 1) % 100 === 0) {
-          console.log(`Finished mapping ${mapResultsList.length} files`)
-        }
-        break
-      default:
-        console.error(`Unknown response from worker ${event.data.response}`)
-    }
-  })
-  /* eslint-enable no-loop-func */
+  for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
+    let mappingWorker = new Worker(
+      new URL('./applyMappingsWorker.js', import.meta.url),
+      { type: 'module' },
+    )
+    mappingWorker.onerror = console.error
 
-  availableMappingWorkers.push(mappingWorker)
+    /* eslint-disable no-loop-func */
+    mappingWorker.addEventListener('message', (event) => {
+      switch (event.data.response) {
+        case 'finished':
+          availableMappingWorkers.push(mappingWorker)
+          mapResultsList.push(event.data.mapResults)
+          workersActive -= 1
+          dispatchMappingJobs()
+          if ((mapResultsList.length - 1) % 100 === 0) {
+            console.log(`Finished mapping ${mapResultsList.length} files`)
+          }
+          break
+        default:
+          console.error(`Unknown response from worker ${event.data.response}`)
+      }
+    })
+    /* eslint-enable no-loop-func */
+
+    availableMappingWorkers.push(mappingWorker)
+  }
 }
 
 function dispatchMappingJobs() {
@@ -155,6 +169,8 @@ async function collectMappingOptions(
 }
 
 async function apply(organizeOptions: OrganizeOptions) {
+  const fileListWorker = initializeFileListWorker()
+  initializeMappingWorkers()
   // Set global mappingWorkerOptions
   mappingWorkerOptions = (await collectMappingOptions(
     organizeOptions,
