@@ -102,10 +102,7 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  type TMappingScriptParams = { [paramName: string]: string }
-  // Definitions found in mappingScript
-  let createParams: () => TMappingScriptParams = () => ({})
-  let modifications: (params: TMappingScriptParams) => {
+  let modifications: () => {
     dicomHeader: { [keyword: string]: string }
     outputFilePathComponents: string[]
   } = () => ({
@@ -140,8 +137,7 @@ export default function collectMappings(
     mappingOptions.columnMappings,
   )
 
-  let mapParams = createParams()
-  let modificationMap = modifications(mapParams)
+  let modificationMap = modifications()
 
   mapResults.outputFilePath = modificationMap.outputFilePathComponents.join('/')
 
