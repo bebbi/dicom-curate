@@ -111,6 +111,10 @@ function dispatchMappingJobs() {
     directoryScanFinished &&
     filesToProcess.length === 0
   ) {
+    // End and remove all workers
+    while (availableMappingWorkers.length) {
+      availableMappingWorkers.pop()!.terminate()
+    }
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
     console.log(mapResultsList)
