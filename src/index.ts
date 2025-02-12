@@ -111,6 +111,7 @@ function dispatchMappingJobs() {
     directoryScanFinished &&
     filesToProcess.length === 0
   ) {
+    console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
     console.log(mapResultsList)
   }
