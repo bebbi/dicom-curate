@@ -4,7 +4,7 @@
 // Columns: 0 => UID Value, 2 => UID Keyword
 // Source: https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml
 
-export const ps36TableA1 = {
+export const uidRegistryPS3_06_A1 = {
   '1.2.840.10008.1.​1': 'Verification',
   '1.2.840.10008.1.​2': 'Implicit​VR​Little​Endian',
   '1.2.840.10008.1.​2.​1': 'Explicit​VR​Little​Endian',
