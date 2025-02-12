@@ -178,13 +178,13 @@ async function main() {
 // Columns: 0 => UID Value, 2 => UID Keyword
 // Source: https://dicom.nema.org/medical/dicom/current/source/docbook/part06/part06.xml
 
-export const ps36TableA1 = {
+export const uidRegistryPS3_06_A1 = {
 ${itemsString}
 };
 `
 
     // 6) Write the TS file
-    const outputFile = join(configDir, 'ps36TableA1.ts')
+    const outputFile = join(configDir, 'uidRegistryPS3_06_A1.ts')
     await writeFile(outputFile, tsContent, 'utf8')
 
     console.log(`Successfully generated: ${outputFile}`)

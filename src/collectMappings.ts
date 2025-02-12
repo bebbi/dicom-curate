@@ -12,7 +12,7 @@ import getParser from './getParser'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
-import { ps36TableA1 } from './config/dicom/ps36TableA1'
+import { uidRegistryPS3_06_A1 } from './config/dicom/uidRegistryPS3_06_A1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
 import { offsetDateTime, iso8601 } from './offsetDateTime'
 import dummyValues from './config/dicom/dummyValues'
@@ -344,7 +344,7 @@ export default function collectMappings(
             // UID explicitly mentioned in PS3.15.
             instanceUids.indexOf(normalName) !== -1 &&
             // UID is not a known class UID.
-            !(uid in ps36TableA1)
+            !(uid in uidRegistryPS3_06_A1)
           ) {
             // UIDs that need to be mapped
             const mappedUID = uidToV5BasedUID(uid)
