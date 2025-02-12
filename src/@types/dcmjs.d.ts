@@ -1,12 +1,23 @@
 declare module 'dcmjs' {
   export type TDicomDataValue = any[]
-  export type TDicomDataEntry = { Value: TDicomDataValue; vr: string }
-  export type TDicomDataDict = { [hex: string]: TDicomDataEntry }
+  /**/
+  /* prettier-ignore */
+  export type TVR = string
+  export interface DicomJsonElement {
+    vr: TVR
+    Value?: Array<string | number | DicomDataset>
+    BulkDataURI?: string
+  }
+
+  export interface DicomDataset {
+    [tag: string]: DicomJsonElement
+  }
+  /**/
 
   export type TNaturalData = { [keyword: string]: any }
   export type TDicomData = {
-    meta: TDicomDataDict
-    dict: TDicomDataDict
+    meta: DicomDataset
+    dict: DicomDataset
   }
   export type TDicomDictionaryEntry = {
     tag: string // e.g., "00100010"
@@ -21,9 +32,9 @@ declare module 'dcmjs' {
 
   export namespace data {
     class DicomDict {
-      constructor(meta: TDicomDataDict)
-      meta: TDicomDataDict
-      dict: TDicomDataDict
+      constructor(meta: DicomDataset)
+      meta: DicomDataset
+      dict: DicomDataset
       write(): ArrayBuffer
       merge(other: DicomDict): void
     }
@@ -51,14 +62,14 @@ declare module 'dcmjs' {
       static getVM(tag: string): string
       static getKeyword(tag: string): string
       static naturalizeDataset(
-        dataset: Record<string, TDicomDataEntry>,
+        dataset: Record<string, DicomJsonElement>,
       ): TNaturalData
       static denaturalizeDataset(
         dataset: TNaturalData,
-      ): Record<string, TDicomDataEntry>
+      ): Record<string, DicomJsonElement>
     }
 
-    function datasetToDict(dataset: Dataset): Record<string, TDicomDataEntry>
+    function datasetToDict(dataset: Dataset): Record<string, DicomJsonElement>
     function datasetToBuffer(dataset: Dataset): ArrayBuffer
     function datasetToBlob(dataset: Dataset): Blob
   }

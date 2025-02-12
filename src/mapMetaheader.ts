@@ -1,11 +1,11 @@
 import * as dcmjs from 'dcmjs'
-import type { TDicomDataDict } from 'dcmjs'
+import type { DicomDataset } from 'dcmjs'
 import { metaheaderTagsToKeep } from './config/dicom/metaheaderTagsToKeep'
 
 const EXPLICIT_LITTLE_ENDIAN = '1.2.840.10008.1.2.1'
 
 export default function mapMetaheader(
-  metaHeader: TDicomDataDict,
+  metaHeader: DicomDataset,
   // mapped UID or original depending on activated PS3.15E option
   newInstanceUid: string,
 ) {
