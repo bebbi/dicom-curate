@@ -1,5 +1,6 @@
 import * as dcmjs from 'dcmjs'
 import uidToV5BasedUID from './uidToV5BasedUID'
+import replaceUid from './replaceUid'
 import type {
   TMappingOptions,
   TMapResults,
@@ -60,7 +61,7 @@ const defaultPs315Options: TPs315Options = {
   retainLongitudinalTemporalInformationOptions: 'Off',
   retainPatientCharacteristicsOption: false,
   retainDeviceIdentityOption: false,
-  retainUIDsOption: false,
+  retainUIDsOption: 'Off',
   retainSafePrivateOption: false,
   retainInstitutionIdentityOption: false,
 }
@@ -331,7 +332,11 @@ export default function collectMappings(
               }
             }
           }
-        } else if (vr === 'UI' && !retainUIDsOption && data[name] !== '') {
+        } else if (
+          vr === 'UI' &&
+          retainUIDsOption !== 'On' &&
+          data[name] !== ''
+        ) {
           // Convert UIDs mentioned in 3.15 anyway, and then additionally those
           // that are not well-known class UIDs. The reason for latter is that
           // after subtracting PS3.15 from PS6, we still see instance UIDs such
@@ -347,7 +352,10 @@ export default function collectMappings(
             !(uid in uidRegistryPS3_06_A1)
           ) {
             // UIDs that need to be mapped
-            const mappedUID = uidToV5BasedUID(uid)
+            const mappedUID =
+              retainUIDsOption === 'Hashed'
+                ? uidToV5BasedUID(uid)
+                : replaceUid(uid)
             mapResults.mappings[attrPath] = [
               uid,
               'replace',
