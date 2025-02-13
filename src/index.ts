@@ -1,4 +1,5 @@
 import { extractCsvMappings } from './csvMapping'
+import { clearReplaceUidCache } from './replaceUid'
 import type {
   TMappingOptions,
   TMapResults,
@@ -129,6 +130,7 @@ function dispatchMappingJobs() {
     while (availableMappingWorkers.length) {
       availableMappingWorkers.pop()!.terminate()
     }
+    clearReplaceUidCache()
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
     console.log(mapResultsList)

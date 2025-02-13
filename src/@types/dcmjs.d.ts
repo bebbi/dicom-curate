@@ -54,6 +54,7 @@ declare module 'dcmjs' {
           version: string
         }
       }
+      static uid(): string
       static dictionary: TDicomDictionary
       static getTagFromName(name: string): string
       static getNameFromTag(tag: string): string

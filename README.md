@@ -125,8 +125,17 @@ dcm-organize
     Possible values are 'Full' (keep all temporal info intact), 'Off' (remove all temporal attributes or add defaults per PS3.15E), or accepts a list to offset all temporal information consistently by ISO-8601 compliant durations. Example:
     for the patient id defined in the folder path, replace dates per a per-subject csv 'DATE_OFFSET' column: `['filePath', 'centersubj', 'SUBJECT_ID', 'DATE_OFFSET']`
   - 'retainDeviceIdentityOption': true or false. If true, overrides `retainLongitudinalTemporalInformationOptions` for the respective attributes to keep.
-  - 'retainUIDsOption': true or false, if true, creates a new UID using a decentrally repeable, hash-based method
-    - As there are more instance UIDs in part PS3.06 than described in PS3.15E for protection, this option identifies the following uids for protection: 1. All instance UIDs per PS3.15E, 2. Any additional UIDs with a value not well-known in DICOM, per table PS3.06A (Registry of DICOM Unique Identifiers). This protects instance UIDs but also private class UIDs, which is intentional.
+  - 'retainUIDsOption': 'On', 'Off', or 'Hashed'.
+    - If 'On', maintain all UIDs.
+    - If 'Off', replaces instance UIDs with arbitrary new UIDs, maintaining referential integrity within a single run.
+      - maximum protection
+      - only maintains referential integrity within a run
+      - do not use for de-identifying data in multiple batches
+    - If 'Hashed', creates a new UID using an using a decentrally repeatable, hash-based method.
+      - maintains referential integrity even if de-identifying data in separate, or decentralized, batches
+      - use if the risk of re-identifying by UID is not bigger than the risk of re-identifying by PixelData
+      - do not use if you want to specifically protect UIDs from an auxiliary knowledge attack, e.g. an attacker that knows possible input UIDs
+    - There are more instance UIDs in part PS3.06 than described in PS3.15E for protection, therefore this option identifies the following uids for protection: 1. All instance UIDs per PS3.15E, 2. Any additional UIDs with a value not well-known in DICOM, per table PS3.06A (Registry of DICOM Unique Identifiers). This protects instance UIDs but also private class UIDs, which is intentional.
   - 'retainSafePrivateOption': true or false, if true, keeps the private tags but marks them for quarantine and manual review
   - 'retainInstitutionIdentityOption': true or false
 - does not currently clean structured content

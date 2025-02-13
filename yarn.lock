@@ -3966,7 +3966,9 @@ __metadata:
     dcmjs: "npm:^0.37.0"
     husky: "npm:^8.0.3"
     iso8601-duration: "npm:^2.1.2"
+    js-sha256: "npm:^0.11.0"
     lodash: "npm:^4.17.21"
+    memize: "npm:^2.1.0"
     node-fetch: "npm:^3.3.2"
     prettier: "npm:^3.4.2"
     uuid: "npm:^11.0.5"
@@ -6686,6 +6688,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-sha256@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "js-sha256@npm:0.11.0"
+  checksum: 10/3adc208452302838136f1464ea331bae3b4d4c95afa9314fa6446d755059ff37114cb209fe9ed166c460ffe720d4875aa955e4f4c7aacab2d99858dd3e008b93
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -7279,6 +7288,13 @@ __metadata:
   version: 2.0.0
   resolution: "mdast-util-to-string@npm:2.0.0"
   checksum: 10/0b2113ada10e002fbccb014170506dabe2f2ddacaacbe4bc1045c33f986652c5a162732a2c057c5335cdb58419e2ad23e368e5be226855d4d4e280b81c4e9ec2
+  languageName: node
+  linkType: hard
+
+"memize@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "memize@npm:2.1.0"
+  checksum: 10/ba5e6ac63c811d5c787ea5ebb362474978ea20640d2f96cba3f13a0109ba7977e874796ed16ef68edffedeefad66483aba1d049f2335824083aa1dd5aa3a2c98
   languageName: node
   linkType: hard
 
