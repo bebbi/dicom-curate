@@ -73,7 +73,7 @@ export default function collectMappings(
 ): [TNaturalData, TMapResults] {
   let {
     ps315Options: passedPs315Options = defaultPs315Options,
-    inputPathPattern,
+    inputPathPattern = '',
   } = mappingOptions
 
   // Returns [naturalData, mapResults]
