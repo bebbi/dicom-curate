@@ -1,5 +1,5 @@
 import * as dcmjs from 'dcmjs'
-import uidToV5BasedUID from './uidToV5BasedUID'
+import hashUid from './hashUid'
 import replaceUid from './replaceUid'
 import type {
   TMappingOptions,
@@ -353,9 +353,7 @@ export default function collectMappings(
           ) {
             // UIDs that need to be mapped
             const mappedUID =
-              retainUIDsOption === 'Hashed'
-                ? uidToV5BasedUID(uid)
-                : replaceUid(uid)
+              retainUIDsOption === 'Hashed' ? hashUid(uid) : replaceUid(uid)
             mapResults.mappings[attrPath] = [
               uid,
               'replace',
