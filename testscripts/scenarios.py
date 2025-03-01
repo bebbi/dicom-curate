@@ -94,23 +94,16 @@ DICOMPS315EOptions = {
 // createParams() and modifications()
 inputPathPattern = 'trialname/centersubj/dicomseriesid/'
 
-// Optional function to create `params` used below.
-createParams = function () {
-  return {
-    // Define where to find the reference site-subject id:
-    // in folder naming or in dicom header
-    centerSubjId: parser.getFilePathComp('centersubj'),
-  }
-}
+modifications = function () {
+  const centerSubjId = parser.getFilePathComp('centersubj')
 
-modifications = function (params) {
   return {
     dicomHeader: {
       // List DICOM Header tags for which you want to change values:
       // It's important to assign something to PatientName and PatientID as otherwise
       // they will just get emptied by the default behaviour
-      PatientName: params.centerSubjId,
-      PatientID: params.centerSubjId,
+      PatientName: centerSubjId,
+      PatientID: centerSubjId,
       // // this example finds the PatientID in mapping table column 0 and offsets the CONTENTDATE by days per column 2
       // ContentDate:
       //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
@@ -121,7 +114,7 @@ modifications = function (params) {
     // and actual file path must be deep enough for getFilePathComp to find its match
     outputFilePathComponents: [
       parser.getFilePathComp('trialname'),
-      params.centerSubjId,
+      centerSubjId,
       parser.getDicom('SeriesNumber') +
         '=' +
         parser.getDicom('SeriesDescription'),
