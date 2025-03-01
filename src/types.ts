@@ -57,6 +57,7 @@ export type TMapResults = {
   }
   anomalies: string[]
   errors: string[]
+  quarantine: { [objectPath: string]: string }
 }
 
 export type TPs315EElement = {

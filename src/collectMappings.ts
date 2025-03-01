@@ -93,6 +93,7 @@ export default function collectMappings(
     mappings: {},
     anomalies: [],
     errors: [],
+    quarantine: {},
   }
 
   const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
@@ -438,6 +439,9 @@ export default function collectMappings(
               'notRetainSafePrivate',
               undefined,
             ]
+          } else {
+            // We keep the private tag but register its value for checking.
+            mapResults.quarantine[attrPath] = data[name]
           }
         } else {
           mapResults.anomalies.push(

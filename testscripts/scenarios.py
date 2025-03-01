@@ -185,8 +185,6 @@ validation = function () {
           ['NM', 'PT', 'CT'].includes(modality),
       ],
     ],
-    // We check and fix if needed
-    quarantine: [],
   }
 }
 """)
