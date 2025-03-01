@@ -370,6 +370,7 @@ export default function collectMappings(
           // protocols, though it still could be cleaned as described in Note 2"
           cleanDescriptorsOption &&
           (normalName.endsWith('Comment') ||
+            normalName.endsWith('Comments') ||
             normalName.endsWith('Description')) &&
           !cleanDescriptorsExceptions.includes(normalName) &&
           data[name] !== ''
