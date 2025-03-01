@@ -122,6 +122,67 @@ modifications = function () {
     ],
   }
 }
+
+validation = function () {
+  const modality = parser.getDicom('Modality')
+
+  return {
+    // Data provider/CRO has to fix.
+    errors: [
+      ['Missing Modality', parser.missingDicom('Modality')],
+      ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
+      ['Missing Series Instance UID', parser.missingDicom('SeriesInstanceUID')],
+      ['Missing Study Instance UID', parser.missingDicom('StudyInstanceUID')],
+      ['Missing SOP Instance UID', parser.missingDicom('SOPInstanceUID')],
+      ['Missing Instance Number(s)', parser.missingDicom('InstanceNumber')],
+      ['Missing Study Date', parser.missingDicom('StudyDate')],
+      ['Missing Series Date', parser.missingDicom('SeriesDate')],
+      ['Missing Acquisition Date', parser.missingDicom('AcquisitionDate')],
+      ['Missing Study Time', parser.missingDicom('StudyTime')],
+      ['Missing Series Time', parser.missingDicom('SeriesTime')],
+      ['Missing Patient Weight', parser.missingDicom('PatientWeight')],
+      ['Missing Patient Size', parser.missingDicom('PatientSize')],
+      ['Missing Patient Age', parser.missingDicom('PatientAge')],
+      ['Missing Patient Sex', parser.missingDicom('PatientSex')],
+      ['Missing Acquisition Time', parser.missingDicom('AcquisitionTime')],
+      [
+        'Missing Image Position (Patient)',
+        parser.missingDicom('ImagePositionPatient'),
+      ],
+      [
+        'Missing Number of Energy Windows on NM',
+        parser.missingDicom('NumberOfEnergyWindows') && modality === 'NM',
+      ],
+      [
+        'Missing Energy Window Information Sequence on NM',
+        parser.missingDicom('EnergyWindowInformationSequence') &&
+          modality === 'NM',
+      ],
+      [
+        'Missing Energy Window Range Sequence on NM',
+        parser.missingDicom(
+          'EnergyWindowInformationSequence[0].EnergyWindowRangeSequence',
+        ) && modality === 'NM',
+      ],
+      [
+        'Missing Radiopharmaceutical Information Sequence on NM',
+        parser.missingDicom('RadiopharmaceuticalInformationSequence') &&
+          modality === 'NM',
+      ],
+      [
+        'Missing Series Type on PET',
+        parser.missingDicom('SeriesType') && modality === 'PT',
+      ],
+      [
+        'Missing Pixel Spacing on NM or PT or CT',
+        parser.missingDicom('PixelSpacing') &&
+          ['NM', 'PT', 'CT'].includes(modality),
+      ],
+    ],
+    // We check and fix if needed
+    quarantine: [],
+  }
+}
 """)
 
   if args.verbose:
