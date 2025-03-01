@@ -125,6 +125,8 @@ modifications = function () {
 
 validation = function () {
   const modality = parser.getDicom('Modality')
+  const instanceNumber = parser.getDicom('InstanceNumber')
+  const seriesUid = parser.getDicom('SeriesInstanceUID')
 
   return {
     // Data provider/CRO has to fix.
@@ -135,6 +137,10 @@ validation = function () {
       ['Missing Study Instance UID', parser.missingDicom('StudyInstanceUID')],
       ['Missing SOP Instance UID', parser.missingDicom('SOPInstanceUID')],
       ['Missing Instance Number(s)', parser.missingDicom('InstanceNumber')],
+      [
+        'Duplicate Instance Number(s)',
+        !parser.isUniqueInGroup(instanceNumber, seriesUid),
+      ],
       ['Missing Study Date', parser.missingDicom('StudyDate')],
       ['Missing Series Date', parser.missingDicom('SeriesDate')],
       ['Missing Acquisition Date', parser.missingDicom('AcquisitionDate')],

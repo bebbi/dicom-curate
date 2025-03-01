@@ -2,6 +2,24 @@ import * as dcmjs from 'dcmjs'
 import { getCsvMapping, TColumnMappings } from './csvMapping'
 import type { TNaturalData } from 'dcmjs'
 
+const isUniqueInGroup = (function () {
+  let cache = new Set()
+  let lastGroupId: string = ''
+  return function (value: string | number, groupId: string) {
+    if (groupId !== lastGroupId) {
+      cache = new Set()
+      lastGroupId = groupId
+    }
+
+    if (cache.has(value)) {
+      return false
+    }
+
+    cache.add(value)
+    return true
+  }
+})()
+
 export default function getParser(
   inputPathPattern: string,
   inputFilePath: string,
@@ -29,6 +47,7 @@ export default function getParser(
   }
 
   return {
+    isUniqueInGroup,
     getFrom(source: string, identifier: string) {
       return source === 'dicom'
         ? getDicom(identifier)
