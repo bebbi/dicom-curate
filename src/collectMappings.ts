@@ -233,6 +233,7 @@ export default function collectMappings(
       if (name in nameMap) {
         // means it's a known name
         let vr = nameMap[name].vr
+
         // Remove optional RETIRED_ prefix as below we check against
         // dictionaries that don't work this way.
         const normalName = removeRetiredPrefix(name)
@@ -414,32 +415,35 @@ export default function collectMappings(
           ]
         }
       } else {
-        mapResults.anomalies.push(
-          `instance contains attribute ${name} that is not in dictionary.  Marking it for deletion.`,
-        )
-        mapResults.mappings[attrPath] = [
-          data[name],
-          'delete',
-          'notInDcmjsDictionary',
-          undefined,
-        ]
-      }
-    }
-  }
-
-  //
-  // collect private tags and mark them for delete
-  // TODO: put this in recursive function to find nested private tags
-  // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
-  for (let hexTag in dicomData.dict) {
-    if (Number(hexTag[3]) % 2 === 1) {
-      if (!retainSafePrivateOption) {
-        mapResults.mappings['x' + hexTag] = [
-          String(dicomData.dict[hexTag].Value),
-          'delete',
-          'notRetainSafePrivate',
-          undefined,
-        ]
+        const isUnknownPrivateTag =
+          /^[0-9A-Fa-f]{8}$/.test(name) &&
+          (Number(name[3]) % 2 === 1 ||
+            name[3] === 'B' ||
+            name[3] === 'D' ||
+            name[3] === 'F')
+        // We have no dictionary entry for this.
+        if (isUnknownPrivateTag) {
+          // Private tag handling.
+          // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
+          if (!retainSafePrivateOption) {
+            mapResults.mappings[attrPath] = [
+              data[name],
+              'delete',
+              'notRetainSafePrivate',
+              undefined,
+            ]
+          }
+        } else {
+          mapResults.anomalies.push(
+            `instance contains attribute ${name} that is not in dictionary.  Marking it for deletion.`,
+          )
+          mapResults.mappings[attrPath] = [
+            data[name],
+            'delete',
+            'notInDcmjsDictionary',
+            undefined,
+          ]
+        }
       }
     }
   }
