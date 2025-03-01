@@ -50,6 +50,7 @@ export type TMapResults = {
   sourceInstanceUID: string
   outputFilePath: string
   mappings: {
+    // objectpath: deep object access string compatible with lodash get/set
     // TAttr[]: exclude individual { key: value } objects
     [objectPath: string]:
       | [string, 'replace', string, string | TAttr[]]

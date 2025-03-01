@@ -76,21 +76,13 @@ export default function collectMappings(
     inputPathPattern = '',
   } = mappingOptions
 
-  // Returns [naturalData, mapResults]
-  // sourceInstanceUID : original UID for this dicomData
-  // filePath : assembled string of path components
-  // mappings are object of the form:
-  // key:
-  //   "path" : string compatible with lodash get/set
-  // value list elements:
-  //   "originalValue" : value from the dicomData
-  //   "mapOperation" : one of "replace", "delete"
-  //   "mappedValue" : replacement for "replace" operation
-  // "anomalies" : a list of text strings describing any unexpected contents of the data
   const mapResults: TMapResults = {
+    // original UID for this dicomData
     sourceInstanceUID: '',
+    // assembled string of path components
     outputFilePath: '',
     mappings: {},
+    // a list of text strings describing any unexpected contents of the data
     anomalies: [],
     errors: [],
     quarantine: {},
