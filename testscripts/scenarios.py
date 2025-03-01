@@ -69,12 +69,12 @@ DICOMPS315EOptions = {
     'SeriesDescription',
     'ClinicalTrialSeriesDescription',
   ],
-  retainLongitudinalTemporalInformationOptions: [
+  retainLongitudinalTemporalInformationOptions: 'Off' /* [
     'filePath',
     'centersubj',
     'CURR_ID',
     'DATE_OFFSET',
-  ],
+  ] */,
   // Only works for those attributes that are part of the PS3.15 E1.1
   // list under the retainPatientCharacteristicsOption.
   retainPatientCharacteristicsOption: [
