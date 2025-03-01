@@ -111,6 +111,9 @@ export default function collectMappings(
     outputFilePathComponents: [],
   })
   let DICOMPS315EOptions: TPs315Options = passedPs315Options
+  let validation: () => {
+    errors: [message: string, failure: boolean][]
+  } = () => ({ errors: [] })
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
@@ -139,6 +142,9 @@ export default function collectMappings(
   )
 
   let modificationMap = modifications()
+  mapResults.errors = validation()
+    .errors.filter(([, failure]) => failure)
+    .map(([message]) => message)
 
   mapResults.outputFilePath = modificationMap.outputFilePathComponents.join('/')
 

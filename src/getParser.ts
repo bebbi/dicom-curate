@@ -8,12 +8,12 @@ export default function getParser(
   naturalData: TNaturalData,
   columnMappings: TColumnMappings,
 ) {
-  function getDicom(tagName: string) {
-    if (tagName in dcmjs.data.DicomMetaDictionary.dictionary) {
+  function getDicom(attrName: string) {
+    if (attrName in dcmjs.data.DicomMetaDictionary.dictionary) {
       // if in hex like "(0008,0100)", convert to text key
-      tagName = dcmjs.data.DicomMetaDictionary.dictionary[tagName].name
+      attrName = dcmjs.data.DicomMetaDictionary.dictionary[attrName].name
     }
-    return naturalData[tagName]
+    return naturalData[attrName]
   }
 
   function getFilePathComp(component: string) {
@@ -21,6 +21,11 @@ export default function getParser(
     const componentIndex = pathComponents.indexOf(component)
     const filePathComponents = inputFilePath.split('/')
     return filePathComponents[componentIndex]
+  }
+
+  function missingDicom(attrName: string) {
+    const value = getDicom(attrName)
+    return typeof value === 'undefined' || value === ''
   }
 
   return {
@@ -32,6 +37,7 @@ export default function getParser(
     getFilePathComp,
     getMapping: getCsvMapping.bind(null, columnMappings),
     getDicom,
+    missingDicom,
     addDays: (dicomDateString: string, offsetDays: number) => {
       const year = Number(dicomDateString.slice(0, 4))
       const monthIndex = Number(dicomDateString.slice(4, 6)) - 1
