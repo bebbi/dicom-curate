@@ -362,16 +362,17 @@ export default function collectMappings(
             ]
           }
         } else if (
+          // PS3.15 E1.1.1, Clean Descriptors:
           // "For example, one approach is to remove all description and
           // comment Attributes except Series Description (0008,103E), since
           // this Attribute rarely contains identifying or diagnosis information
           // yet is typically a reliable source of useful information about the
           // acquisition technique populated automatically from modality device
           // protocols, though it still could be cleaned as described in Note 2"
+          // Note: Removes tags which contain Comment|Desciprion at any location
+          // inside the string.
           cleanDescriptorsOption &&
-          (normalName.endsWith('Comment') ||
-            normalName.endsWith('Comments') ||
-            normalName.endsWith('Description')) &&
+          normalName.match(/Comment|Description/) &&
           !cleanDescriptorsExceptions.includes(normalName) &&
           data[name] !== ''
         ) {
