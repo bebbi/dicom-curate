@@ -4,6 +4,7 @@ const dummyValues: Record<string, any> = {
   DA: '99991231',
   DT: '99991231235959.999999',
   LT: 'REDACTED',
+  LO: 'REDACTED',
   OB: '00',
   PN: 'REDACTED^REDACTED',
   SH: 'REDACTED',
