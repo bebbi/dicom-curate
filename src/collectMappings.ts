@@ -210,6 +210,11 @@ export default function collectMappings(
     })
   }
 
+  // Now that we know the dates to maintain, we can apply retainDeviceInfoOption
+  if (retainDeviceIdentityOption) {
+    cleanPolicy = cleanPolicy.filter((p) => p.rtnDevIdOpt !== 'K')
+  }
+
   // Any level of keeping or offsetting longitudinal info, remove them from cleanPolicy
   if (retainLongitudinalTemporalInformationOptions !== 'Off') {
     // Just remove all temporal VRs from cleanPolicy, that's it.
