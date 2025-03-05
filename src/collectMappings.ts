@@ -225,7 +225,7 @@ export default function collectMappings(
   // Calls modify mapResults in the outer function scope.
   function collectMappingsInData(data: TNaturalData, path = '') {
     for (let name in data) {
-      if (/_.*/.test(name)) {
+      if (/^_.*/.test(name)) {
         continue // ignore tags marked internal with leading underscore
       }
       const attrPath = path + name
