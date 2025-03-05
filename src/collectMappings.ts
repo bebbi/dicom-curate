@@ -20,6 +20,15 @@ import dummyValues from './config/dicom/dummyValues'
 
 import { get as _get } from 'lodash'
 
+const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
+
+// Deal with dcmjs quirk of labeling retired tags with a
+// "RETIRED_" prefix
+function getVr(keyword: string) {
+  const element = nameMap[keyword] || nameMap[`RETIRED_${keyword}`]
+  return element?.vr
+}
+
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
 
 // Special conditions for some PS3.15 E1.1 elements.
@@ -87,8 +96,6 @@ export default function collectMappings(
     errors: [],
     quarantine: {},
   }
-
-  const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
 
   // Make make the naturalized data so parser code operates on with tags not hex
   const naturalData = dcmjs.data.DicomMetaDictionary.naturalizeDataset(
@@ -161,7 +168,7 @@ export default function collectMappings(
 
   // We handle UIs separately
   cleanPolicy = cleanPolicy.filter((p) => {
-    let vr = nameMap[p.keyword]?.vr
+    let vr = getVr(p.keyword)
 
     if (vr === 'UI') {
       instanceUids.push(p.keyword)
@@ -203,7 +210,7 @@ export default function collectMappings(
         'rtnDevIdOpt' in p &&
         // We still remove the 'C's which are mostly AETitles
         p.rtnDevIdOpt === 'K' &&
-        temporalVr(nameMap[p.keyword]?.vr)
+        temporalVr(getVr(p.keyword))
       ) {
         datesToRetain.add(p.keyword)
       }
@@ -218,7 +225,7 @@ export default function collectMappings(
   // Any level of keeping or offsetting longitudinal info, remove them from cleanPolicy
   if (retainLongitudinalTemporalInformationOptions !== 'Off') {
     // Just remove all temporal VRs from cleanPolicy, that's it.
-    cleanPolicy = cleanPolicy.filter((p) => !temporalVr(nameMap[p.keyword]?.vr))
+    cleanPolicy = cleanPolicy.filter((p) => !temporalVr(getVr(p.keyword)))
   }
 
   const cleanPolicyMap = Object.fromEntries(
@@ -229,6 +236,7 @@ export default function collectMappings(
   // recursive function to handle sequences (naturalData is a top-level instance of data).
   // Calls modify mapResults in the outer function scope.
   function collectMappingsInData(data: TNaturalData, path = '') {
+    // names here can have a 'RETIRED_' prefix!
     for (let name in data) {
       if (/^_.*/.test(name)) {
         continue // ignore tags marked internal with leading underscore
