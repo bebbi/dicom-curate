@@ -1,3 +1,6 @@
+// Auto-generated file containing DICOM non-UID IDs beyond PS3.15E.1 to handle
+// Generated on: 2025-03-06T14:21:16.170Z
+
 /*
  * A value of `false` means, don't retain.
  * A value of { rtnDevIdOpt: true } means retain if the corresponding option is
@@ -8,12 +11,14 @@ export const retainAdditionalIds: {
 } = {
   CodingSchemeExternalID: false,
   TypeOfPatientID: false,
+  ComponentWelderIDs: false,
   RepairID: { rtnDevIdOpt: true },
   DeviceID: { rtnDevIdOpt: true },
   GridID: false,
   SecondaryCaptureDeviceID: false,
   HardcopyCreationDeviceID: false,
   RespiratorySignalSourceID: false,
+  SourceImageIDs: false,
   ModifiedImageID: false,
   StackID: false,
   DataPathID: false,
@@ -29,7 +34,6 @@ export const retainAdditionalIds: {
   VisitStatusID: false,
   LocalNamespaceEntityID: false,
   UniversalEntityID: false,
-  HomeCommunityID: false,
   SubstanceAdministrationDeviceID: false,
   ImageID: false,
   TrackingID: false,
@@ -95,7 +99,5 @@ export const retainAdditionalIds: {
   CarrierID: false,
   FileSetID: false,
   FileSetDescriptorFileID: false,
-  ReferencedFileID: false,
-  ComponentWelderIDs: false,
-  SourceImageIDs: false,
+  ReferencedFileID: false
 }
