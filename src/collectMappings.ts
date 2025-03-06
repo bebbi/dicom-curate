@@ -294,13 +294,6 @@ export default function collectMappings(
               ]
             }
           }
-        } else if (vr === 'SQ') {
-          let subDataIndex = 0
-          for (let subData of Object.values(data[name]) as TNaturalData[]) {
-            let subPath = `${path}${name}[${subDataIndex}].`
-            collectMappingsInData(subData, subPath)
-            subDataIndex += 1
-          }
         } else if (temporalVr(vr) && data[name] !== '') {
           // This is a date not in cleanOpts and we proceed per longitud option
           const dateOpt = retainLongitudinalTemporalInformationOptions
@@ -426,6 +419,18 @@ export default function collectMappings(
             'notInElmtsToKeep',
             undefined,
           ]
+        }
+
+        // Sequences can also be descriptors, so recurse into them outside the
+        // if/else conditions, as there is no need to recurse if the SQ has been
+        // marked for (full) replace or deletion before.
+        if (vr === 'SQ' && !mapResults.mappings[attrPath]) {
+          let subDataIndex = 0
+          for (let subData of Object.values(data[name]) as TNaturalData[]) {
+            let subPath = `${path}${name}[${subDataIndex}].`
+            collectMappingsInData(subData, subPath)
+            subDataIndex += 1
+          }
         }
       } else {
         const isUnknownPrivateTag =
