@@ -24,7 +24,7 @@ export interface OrganizeOptions {
   inputDirectory: FileSystemDirectoryHandle
   inputPathPattern?: string
   columnMapping: FileSystemFileHandle
-  mappingScript: FileSystemFileHandle
+  mappingScript: string
   outputDirectory: FileSystemDirectoryHandle
   ps315Options?: TPs315Options
 }

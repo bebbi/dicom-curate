@@ -156,8 +156,7 @@ async function collectMappingOptions(
   //
   // then, get the mapping functions
   //
-  const mappingScriptFile = await organizeOptions.mappingScript.getFile()
-  const mappingScript = await mappingScriptFile.text()
+  const mappingScript = organizeOptions.mappingScript
 
   const ps315Options = organizeOptions.ps315Options
 
