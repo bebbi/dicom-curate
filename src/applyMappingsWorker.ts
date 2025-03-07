@@ -14,6 +14,14 @@ self.addEventListener('message', (event) => {
           event.data.outputDirectory,
           event.data.mappingOptions,
         ).then((mapResults) => {
+          // Send progress message
+          self.postMessage({
+            response: 'progress',
+            mapResults: mapResults,
+            processedFiles: 0,
+          })
+
+          // Send finished message for completion
           self.postMessage({
             response: 'finished',
             mapResults: mapResults,

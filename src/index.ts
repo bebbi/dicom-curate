@@ -5,11 +5,14 @@ import type {
   TMapResults,
   TFileInfo,
   OrganizeOptions,
+  TWorkerMessage,
 } from './types'
 
 type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory: FileSystemDirectoryHandle
 }
+
+export type ProgressCallback = (message: TWorkerMessage) => void
 
 export type { OrganizeOptions } from './types'
 
@@ -89,6 +92,17 @@ function initializeMappingWorkers() {
     /* eslint-disable no-loop-func */
     mappingWorker.addEventListener('message', (event) => {
       switch (event.data.response) {
+        case 'progress':
+          if (progressCallback) {
+            progressCallback({
+              response: 'progress',
+              mapResults: event.data.mapResults,
+              processedFiles: mapResultsList.length,
+              totalFiles:
+                filesToProcess.length + mapResultsList.length + workersActive,
+            })
+          }
+          break
         case 'finished':
           availableMappingWorkers.push(mappingWorker)
           mapResultsList.push(event.data.mapResults)
@@ -170,7 +184,14 @@ async function collectMappingOptions(
   }
 }
 
-async function apply(organizeOptions: OrganizeOptions) {
+let progressCallback: ProgressCallback | undefined
+
+async function apply(
+  organizeOptions: OrganizeOptions,
+  onProgress?: ProgressCallback,
+) {
+  progressCallback = onProgress
+
   const fileListWorker = initializeFileListWorker()
   initializeMappingWorkers()
   // Set global mappingWorkerOptions
