@@ -24,7 +24,7 @@ export default function getParser(
   inputPathPattern: string,
   inputFilePath: string,
   naturalData: TNaturalData,
-  columnMappings: TColumnMappings,
+  columnMappings?: TColumnMappings,
 ) {
   function getDicom(attrName: string) {
     if (attrName in dcmjs.data.DicomMetaDictionary.dictionary) {
@@ -54,7 +54,9 @@ export default function getParser(
         : getFilePathComp(identifier)
     },
     getFilePathComp,
-    getMapping: getCsvMapping.bind(null, columnMappings),
+    getMapping: columnMappings
+      ? getCsvMapping.bind(null, columnMappings)
+      : undefined,
     getDicom,
     missingDicom,
     addDays: (dicomDateString: string, offsetDays: number) => {

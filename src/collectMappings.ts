@@ -311,11 +311,17 @@ export default function collectMappings(
                 undefined,
               ]
             } else if (Array.isArray(dateOpt)) {
+              if (!mappingOptions.columnMappings) {
+                throw new Error(
+                  'retainLongitudinalTemporalInformationOptions is array but no mapping table provided',
+                )
+              }
               const [source, identifier, fromHeader, toHeader] = dateOpt
               const sourceValue = parser.getFrom(source, identifier)
               let error = ''
               if (sourceValue) {
-                const duration = parser.getMapping(
+                // The ! because of the mappingOptions.columnMappings check before.
+                const duration = parser.getMapping!(
                   sourceValue,
                   fromHeader,
                   toHeader,
