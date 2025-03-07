@@ -63,61 +63,77 @@ ACRIN-NSCLC-FDG-PET-003,patient_3,3
 
     with open(os.path.join(scenarioDir, "mappingConfig.js"), "w") as f:
       f.write("""
+/*
+ * Adjust per transfer.
+ */
+
+// Input folder naming convention
+Identifiers = {
+  protocolNumber: 'UNCONFIGURED',
+  activityProviderName: 'UNCONFIGURED',
+  centerSubjectId: /^\d{4}_\d{5}$/,
+  timepointNames: ['UNCONFIGURED'],
+  dscanNames: ['UNCONFIGURED'],
+}
+
+// If list not empty, then ask for a mapping csv.
+MappingCsvHeaders = [] // per below e.g. ['CURR_ID', 'DATE_OFFSET']
+
+/*
+ * Do not modify below here.
+ *******************************************************************************
+ */
+
 DICOMPS315EOptions = {
   cleanDescriptorsOption: true,
-  cleanDescriptorsExceptions: [
-    'SeriesDescription',
-    'ClinicalTrialSeriesDescription',
-  ],
+  cleanDescriptorsExceptions: ['SeriesDescription'],
   retainLongitudinalTemporalInformationOptions: 'Off' /* [
     'filePath',
     'centersubj',
     'CURR_ID',
     'DATE_OFFSET',
   ] */,
-  // Only works for those attributes that are part of the PS3.15 E1.1
-  // list under the retainPatientCharacteristicsOption.
   retainPatientCharacteristicsOption: [
     'PatientsWeight',
     'PatientsSize',
     'PatientsAge',
+    'PatientsSex',
     'SelectorASValue',
   ],
-  // Calibration dates, scanner IDs, etc.
   retainDeviceIdentityOption: true,
-  retainUIDsOption: false,
+  retainUIDsOption: 'Hashed',
   retainSafePrivateOption: true,
   retainInstitutionIdentityOption: true,
 }
 
-// This maps the input path to variables we can use in
-// createParams() and modifications()
-inputPathPattern = 'trialname/centersubj/dicomseriesid/'
+// Define how to interpret the input path (all DICOMs need minimally this folder depth)
+inputPathPattern =
+  'protocolNumber/activityProvider/centerSubjectId/timepoint/scan'
 
+// Required modifications function
 modifications = function () {
-  const centerSubjId = parser.getFilePathComp('centersubj')
+  // Dicom "SeriesDescription" is the regular DICOM tag.
+  // Folder "scan" is the trial-specific/provider-assigned series name
+  const scan = parser.getFilePathComp('scan')
+  const centerSubjectId = parser.getFilePathComp('centerSubjectId')
 
   return {
     dicomHeader: {
-      // List DICOM Header tags for which you want to change values:
-      // It's important to assign something to PatientName and PatientID as otherwise
-      // they will just get emptied by the default behaviour
-      PatientName: centerSubjId,
-      PatientID: centerSubjId,
+      PatientID: centerSubjectId,
       // // this example finds the PatientID in mapping table column 0 and offsets the CONTENTDATE by days per column 2
       // ContentDate:
       //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
       //     parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET')),
+      PatientName: centerSubjectId,
+      StudyDescription: parser.getFilePathComp('timepoint'),
+      ClinicalTrialSeriesDescription: scan,
     },
-    // outputFilePath lists the components of the new path to be written.
-    // If taken from old path, component names must be available in filePathPattern,
-    // and actual file path must be deep enough for getFilePathComp to find its match
     outputFilePathComponents: [
-      parser.getFilePathComp('trialname'),
-      centerSubjId,
-      parser.getDicom('SeriesNumber') +
-        '=' +
-        parser.getDicom('SeriesDescription'),
+      parser.getFilePathComp('protocolNumber'),
+      parser.getFilePathComp('activityProvider'),
+      centerSubjectId,
+      parser.getFilePathComp('timepoint'),
+      parser.getFilePathComp('scan'),
       parser.getDicom('InstanceNumber') + '.dcm',
     ],
   }
@@ -125,12 +141,35 @@ modifications = function () {
 
 validation = function () {
   const modality = parser.getDicom('Modality')
-  const instanceNumber = parser.getDicom('InstanceNumber')
-  const seriesUid = parser.getDicom('SeriesInstanceUID')
 
   return {
     // Data provider/CRO has to fix.
     errors: [
+      // Folder naming convention
+      [
+        'Invalid study folder name',
+        parser.getFilePathComp('protocolNumber') !== Identifiers.protocolNumber,
+      ],
+      [
+        'Invalid provider name',
+        parser.getFilePathComp('activityProvider') !==
+          Identifiers.activityProviderName,
+      ],
+      [
+        'Invalid site-subject format',
+        !parser
+          .getFilePathComp('centerSubjectId')
+          .match(Identifiers.centerSubjectIdPattern),
+      ],
+      [
+        'Invalid timepoint descriptor',
+        !Identifiers.timePointNames.includes(parser.getFilePathComp('timepoint')),
+      ],
+      [
+        'Invalid scan descriptor',
+        !Identifiers.scanNames.includes(parser.getFilePathComp('scan')),
+      ],
+      // DICOM header
       ['Missing Modality', parser.missingDicom('Modality')],
       ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
       ['Missing Series Instance UID', parser.missingDicom('SeriesInstanceUID')],

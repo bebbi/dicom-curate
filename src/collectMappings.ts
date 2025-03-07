@@ -114,6 +114,10 @@ export default function collectMappings(
   let validation: () => {
     errors: [message: string, failure: boolean][]
   } = () => ({ errors: [] })
+  // These 2 are not used in code but added to maintain consistency in
+  // mapping.config file (no const keywords)
+  let Identifiers: Record<string, any> = {}
+  let MappingCsvHeaders: string[] = []
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
