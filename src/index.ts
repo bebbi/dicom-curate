@@ -1,4 +1,4 @@
-import { extractCsvMappings } from './csvMapping'
+import { extractCsvMappings, TColumnMappings } from './csvMapping'
 import { clearReplaceUidCache } from './replaceUid'
 import type {
   TMappingOptions,
@@ -164,8 +164,11 @@ async function collectMappingOptions(
   // then, get the field mappings from the csv file
   //
   // assumes all fields are not repeated across rows
-  const csvFile = await organizeOptions.columnMapping.getFile()
-  const columnMappings = await extractCsvMappings(csvFile)
+  let columnMappings: TColumnMappings | undefined
+  if (organizeOptions.columnMapping) {
+    const csvFile = await organizeOptions.columnMapping.getFile()
+    columnMappings = await extractCsvMappings(csvFile)
+  }
 
   //
   // then, get the mapping functions
