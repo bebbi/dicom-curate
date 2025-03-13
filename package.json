@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "description": "Organize and de-identify DICOM header data ",
   "type": "module",
-  "main": "dist/esm/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "dist/esm/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/esm/src/index.js",
+      "default": "./dist/esm/src/index.js"
     }
   },
   "files": [
