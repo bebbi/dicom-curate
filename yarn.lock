@@ -3479,9 +3479,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bebbi-scripts@npm:^0.7.4":
-  version: 0.7.4
-  resolution: "bebbi-scripts@npm:0.7.4"
+"bebbi-scripts@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "bebbi-scripts@npm:0.7.7"
   dependencies:
     "@swc/jest": "npm:^0.2.37"
     "@types/eslint": "npm:^8.56.2"
@@ -3518,7 +3518,7 @@ __metadata:
     yargs-parser: "npm:^21.1.1"
   bin:
     bebbi-scripts: dist/cjs/bin.js
-  checksum: 10/fbb3aadc0d698ed5302e8b7643926a80fccd845f65b617892cd55320bae75f122ad4d6ffad992f8fd07a233849e550c859f53cff39969ba4bbb7d73ef31d66f4
+  checksum: 10/5532f7c7acaa11c276e686602f79f5068bcde33617fe590d6b63a9b359b0a8301cfb9073b48723b5a72dbffc63cd6de1644844bbbcab9b02437553650ff39ddc
   languageName: node
   linkType: hard
 
@@ -4147,7 +4147,7 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:^4"
     "@types/xml2js": "npm:^0"
-    bebbi-scripts: "npm:^0.7.4"
+    bebbi-scripts: "npm:^0.7.7"
     dcmjs: "npm:^0.37.0"
     husky: "npm:^8.0.3"
     iso8601-duration: "npm:^2.1.2"

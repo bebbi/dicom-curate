@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/xml2js": "^0",
-    "bebbi-scripts": "^0.7.4",
+    "bebbi-scripts": "^0.7.7",
     "husky": "^8.0.3",
     "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
