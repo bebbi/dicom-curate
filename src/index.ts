@@ -14,7 +14,9 @@ type TMappingWorkerOptions = TMappingOptions & {
 
 export type ProgressCallback = (message: TWorkerMessage) => void
 
-export type { OrganizeOptions } from './types'
+export type { OrganizeOptions, TMappingSpecification } from './types'
+
+export { specVersion } from './config/specVersion'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 

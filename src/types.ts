@@ -82,6 +82,23 @@ export type TPs315EElement = {
   exceptCondition?: (attrs: TNaturalData) => boolean
 }
 
+export type TMappingSpecification = {
+  version: string
+  modifications: () => {
+    dicomHeader: { [keyword: string]: string }
+    outputFilePathComponents: string[]
+  }
+  validation: () => {
+    errors: [message: string, failure: boolean][]
+  }
+  dicomPS315EOptions: TPs315Options
+  inputPathPattern: string
+  // These 2 are not used in code but added to maintain consistency in
+  // mappingSpec file (no const keywords)
+  identifiers: Record<string, any>
+  mappingCsvHeaders: Record<string, any>
+}
+
 export type TWorkerMessage = {
   response: 'start' | 'progress' | 'finished' | 'error'
   totalFiles?: number
