@@ -6,6 +6,7 @@ import type {
   TMapResults,
   TPs315EElement,
   TPs315Options,
+  TMappingSpecification,
 } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
@@ -17,6 +18,7 @@ import { uidRegistryPS3_06_A1 } from './config/dicom/uidRegistryPS3_06_A1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
 import { offsetDateTime, iso8601 } from './offsetDateTime'
 import dummyValues from './config/dicom/dummyValues'
+import { specVersion } from './config/specVersion'
 
 import { get as _get } from 'lodash'
 
@@ -103,27 +105,36 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  let modifications: () => {
-    dicomHeader: { [keyword: string]: string }
-    outputFilePathComponents: string[]
-  } = () => ({
-    dicomHeader: {},
-    outputFilePathComponents: [],
-  })
-  let DICOMPS315EOptions: TPs315Options = passedPs315Options
-  let validation: () => {
-    errors: [message: string, failure: boolean][]
-  } = () => ({ errors: [] })
-  // These 2 are not used in code but added to maintain consistency in
-  // mapping.config file (no const keywords)
-  let Identifiers: Record<string, any> = {}
-  let MappingCsvHeaders: string[] = []
+  let mappingSpecification: () => Partial<TMappingSpecification> = () => ({})
+  let finalSpec: Omit<
+    TMappingSpecification,
+    'identifiers' | 'mappingCsvHeaders' | 'version'
+  > = {
+    dicomPS315EOptions: passedPs315Options,
+    inputPathPattern,
+    modifications: () => ({
+      dicomHeader: {},
+      outputFilePathComponents: [],
+    }),
+    validation: () => ({ errors: [] }),
+  }
 
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.mappingScript)
 
+  const spec = mappingSpecification()
+
+  if (spec.version !== specVersion) {
+    throw new Error(
+      `Only version ${specVersion} supported in mappingSpecification`,
+    )
+  }
+
+  // mappingSpecification was populated by eval, load it into mappingSpec
+  Object.assign(finalSpec, spec)
+
   // final options Either passed in or from script, but not a mix.
-  const ps315Options = DICOMPS315EOptions
+  const ps315Options = finalSpec.dicomPS315EOptions
 
   // Final options
   const {
@@ -139,14 +150,15 @@ export default function collectMappings(
 
   // create a parser object to be used in the eval'ed mappingFunctions
   const parser = getParser(
-    inputPathPattern,
+    finalSpec.inputPathPattern,
     inputFilePath,
     naturalData,
     mappingOptions.columnMappings,
   )
 
-  let modificationMap = modifications()
-  mapResults.errors = validation()
+  let modificationMap = finalSpec.modifications()
+  mapResults.errors = finalSpec
+    .validation()
     .errors.filter(([, failure]) => failure)
     .map(([message]) => message)
 
@@ -301,7 +313,7 @@ export default function collectMappings(
         } else if (temporalVr(vr) && data[name] !== '') {
           // This is a date not in cleanOpts and we proceed per longitud option
           const dateOpt = retainLongitudinalTemporalInformationOptions
-          // datesToRetain implies retainDeviceIdentifiers option
+          // datesToRetain implies retainDeviceidentifiers option
           if (dateOpt !== 'Full' && !datesToRetain.has(normalName)) {
             if (dateOpt === 'Off') {
               mapResults.mappings[attrPath] = [

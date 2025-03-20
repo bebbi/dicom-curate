@@ -1,0 +1,1 @@
+export const specVersion = '1.0'
