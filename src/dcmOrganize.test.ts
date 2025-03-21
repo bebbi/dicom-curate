@@ -2,15 +2,63 @@ import dcmOrganize from './dcmOrganize'
 import { sample } from '../testdata/sample'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
-import type { TMappingOptions } from './types'
-import { clearReplaceUidCache } from './replaceUid'
+import type { TMappingOptions, TMappingSpecification } from './types'
+import { clearCaches } from './clearCaches'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { allElements } from '../testdata/allElements'
+import * as fs from 'fs'
+import * as path from 'path'
+
+const specPath = path.resolve(
+  __dirname,
+  '../testdata/sampleMappingSpecification.js',
+)
+const specString = fs.readFileSync(specPath, 'utf8')
+
+// Like default mappingSpec, but custom options, please no dicomHeader!
+function specWithOptions(options: Partial<TMappingSpecification>) {
+  return `mappingSpecification = () => {
+    let mappingSpecification
+    eval(\`${specString}\`)
+    const spec = {
+      ...mappingSpecification(),
+      ...${JSON.stringify(options, (key, value) => {
+        if (typeof value === 'function') {
+          return value.toString()
+        }
+        return value
+      })}
+    }
+    // Avoid any dicom header changes
+    const mods = spec.modifications
+    spec.modifications = function(parser) { return {...mods(parser), dicomHeader: {}} }
+    return spec
+  }`
+}
+
+function specXWithOptions(options: Partial<TMappingSpecification>) {
+  let mappingSpecification: () => Partial<TMappingSpecification> = () => ({})
+  eval(specString)
+  const finalSpec = {
+    ...mappingSpecification(),
+    ...options,
+  } as TMappingSpecification
+
+  return `mappingSpecification = () => (${JSON.stringify(
+    finalSpec,
+    (key, value) => {
+      if (typeof value === 'function') {
+        return value.toString()
+      }
+      return value
+    },
+  )})`
+}
 
 describe('dcmOrganize basic functionality', () => {
   // Clear UID cache after each test
   afterEach(() => {
-    clearReplaceUidCache()
+    clearCaches()
   })
 
   // Base test options
@@ -20,90 +68,18 @@ describe('dcmOrganize basic functionality', () => {
       rowValues: {},
       rowIndexByFieldValue: {},
     },
-    mappingScript: `
-      mappingSpecification = function () {
-        const identifiers = {
-          protocolNumber: 'UNCONFIGURED',
-          activityProviderName: 'UNCONFIGURED',
-          centerSubjectId: /^\\d{4}_\\d{5}$/,
-          timepointNames: ['UNCONFIGURED'],
-          scanNames: ['UNCONFIGURED'],
-        }
-
-        return {
-          version: '1.0',
-          
-          // Naming convention
-          identifiers,
-
-          // If object has own props, then ask for a mapping csv.
-          mappingCsvHeaders: {},
-
-          // Define how to interpret the input path
-          inputPathPattern: 'protocolNumber/activityProvider/centerSubjectId/timepoint/scan',
-
-          // Required modifications function
-          modifications: function (parser) {
-            const scan = parser.getFilePathComp ? parser.getFilePathComp('scan') : '';
-            const centerSubjectId = parser.getFilePathComp ? parser.getFilePathComp('centerSubjectId') : '';
-
-            return {
-              dicomHeader: {
-                PatientID: centerSubjectId,
-                PatientName: centerSubjectId,
-                StudyDescription: parser.getFilePathComp ? parser.getFilePathComp('timepoint') : '',
-                ClinicalTrialSeriesDescription: scan,
-              },
-              outputFilePathComponents: ['output', 'test.dcm']
-            }
-          },
-
-          validation: function (parser) {
-            const modality = parser.getDicom ? parser.getDicom('Modality') : '';
-            const instanceNumber = parser.getDicom ? parser.getDicom('InstanceNumber') : '';
-            const seriesUid = parser.getDicom ? parser.getDicom('SeriesInstanceUID') : '';
-          
-            return {
-              errors: [
-                ['Missing Modality', parser.missingDicom ? parser.missingDicom('Modality') : false],
-                ['Missing SOP Class UID', parser.missingDicom ? parser.missingDicom('SOPClassUID') : false],
-                ['Missing Series Instance UID', parser.missingDicom ? parser.missingDicom('SeriesInstanceUID') : false],
-                ['Missing Study Instance UID', parser.missingDicom ? parser.missingDicom('StudyInstanceUID') : false],
-                ['Missing SOP Instance UID', parser.missingDicom ? parser.missingDicom('SOPInstanceUID') : false],
-                ['Missing Instance Number(s)', parser.missingDicom ? parser.missingDicom('InstanceNumber') : false],
-                ['Missing Study Date', parser.missingDicom ? parser.missingDicom('StudyDate') : false],
-                ['Missing Series Date', parser.missingDicom ? parser.missingDicom('SeriesDate') : false],
-                ['Missing Acquisition Date', parser.missingDicom ? parser.missingDicom('AcquisitionDate') : false],
-                ['Missing Study Time', parser.missingDicom ? parser.missingDicom('StudyTime') : false],
-                ['Missing Series Time', parser.missingDicom ? parser.missingDicom('SeriesTime') : false],
-                ['Missing Patient Weight', parser.missingDicom ? parser.missingDicom('PatientWeight') : false],
-                ['Missing Patient Size', parser.missingDicom ? parser.missingDicom('PatientSize') : false],
-                ['Missing Patient Age', parser.missingDicom ? parser.missingDicom('PatientAge') : false],
-                ['Missing Patient Sex', parser.missingDicom ? parser.missingDicom('PatientSex') : false],
-                ['Missing Acquisition Time', parser.missingDicom ? parser.missingDicom('AcquisitionTime') : false],
-                ['Missing Image Position (Patient)', parser.missingDicom ? parser.missingDicom('ImagePositionPatient') : false],
-                ['Missing Number of Energy Windows on NM', parser.missingDicom ? parser.missingDicom('NumberOfEnergyWindows') && modality === 'NM' : false],
-                ['Missing Energy Window Information Sequence on NM', parser.missingDicom ? parser.missingDicom('EnergyWindowInformationSequence') && modality === 'NM' : false],
-                ['Missing Energy Window Range Sequence on NM', parser.missingDicom ? parser.missingDicom('EnergyWindowInformationSequence[0].EnergyWindowRangeSequence') && modality === 'NM' : false],
-                ['Missing Radiopharmaceutical Information Sequence on NM', parser.missingDicom ? parser.missingDicom('RadiopharmaceuticalInformationSequence') && modality === 'NM' : false],
-                ['Missing Series Type on PET', parser.missingDicom ? parser.missingDicom('SeriesType') && modality === 'PT' : false],
-                ['Missing Pixel Spacing on NM or PT or CT', parser.missingDicom ? parser.missingDicom('PixelSpacing') && ['NM', 'PT', 'CT'].includes(modality) : false]
-              ]
-            }
-          }
-        }
-      }
-    `,
-    ps315Options: {
-      cleanDescriptorsOption: true,
-      cleanDescriptorsExceptions: [],
-      retainLongitudinalTemporalInformationOptions: 'Off',
-      retainPatientCharacteristicsOption: [],
-      retainDeviceIdentityOption: true,
-      retainUIDsOption: 'Hashed',
-      retainSafePrivateOption: true,
-      retainInstitutionIdentityOption: true,
-    },
+    mappingScript: specWithOptions({
+      dicomPS315EOptions: {
+        cleanDescriptorsOption: true,
+        cleanDescriptorsExceptions: [],
+        retainLongitudinalTemporalInformationOptions: 'Off',
+        retainPatientCharacteristicsOption: [],
+        retainDeviceIdentityOption: true,
+        retainUIDsOption: 'Hashed',
+        retainSafePrivateOption: true,
+        retainInstitutionIdentityOption: true,
+      },
+    }),
   } as const
 
   // To be used if we want to save test output
@@ -263,7 +239,11 @@ describe('dcmOrganize basic functionality', () => {
 
   // TODO: Fix bug, quarantine tags are being removed from the final dicom data
   it('captures private tags to be quarantined when retainSafePrivateOption is true', () => {
-    const result = dcmOrganize('test.dcm', sample, defaultTestOptions)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      defaultTestOptions,
+    )
     verifyNoErrors(result)
 
     // Verify private tags are quarantined
@@ -276,19 +256,25 @@ describe('dcmOrganize basic functionality', () => {
   it('removes private tags when retainSafePrivateOption is false', () => {
     const withPrivateTagsRemoved = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: true,
-        cleanDescriptorsExceptions: ['SeriesDescription'],
-        retainLongitudinalTemporalInformationOptions: 'Full' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: true,
-        retainUIDsOption: 'Hashed' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: true,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: true,
+          cleanDescriptorsExceptions: ['SeriesDescription'],
+          retainLongitudinalTemporalInformationOptions: 'Full' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: true,
+          retainUIDsOption: 'Hashed' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: true,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withPrivateTagsRemoved)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withPrivateTagsRemoved,
+    )
     verifyNoErrors(result)
 
     // Verify private tags are not quarantined
@@ -310,19 +296,25 @@ describe('dcmOrganize basic functionality', () => {
   it('retains UIDs when retainUIDsOption is On', () => {
     const withRetainedUIDs = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Full' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: true,
-        retainUIDsOption: 'On' as const,
-        retainSafePrivateOption: true,
-        retainInstitutionIdentityOption: true,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Full' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: true,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: true,
+          retainInstitutionIdentityOption: true,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withRetainedUIDs)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withRetainedUIDs,
+    )
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -343,19 +335,25 @@ describe('dcmOrganize basic functionality', () => {
   it('hashes UIDs when retainUIDsOption is Hashed', () => {
     const optionsWithHashedUIDs = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Full' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: true,
-        retainUIDsOption: 'Hashed' as const,
-        retainSafePrivateOption: true,
-        retainInstitutionIdentityOption: true,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Full' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: true,
+          retainUIDsOption: 'Hashed' as const,
+          retainSafePrivateOption: true,
+          retainInstitutionIdentityOption: true,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, optionsWithHashedUIDs)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      optionsWithHashedUIDs,
+    )
     verifyNoErrors(result)
 
     // Only known UID found in sample data and its hashed value
@@ -386,19 +384,25 @@ describe('dcmOrganize basic functionality', () => {
   it('replaces UIDs with arbitrary values when retainUIDsOption is Off', () => {
     const withArbitraryUIDs = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Full' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: true,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: true,
-        retainInstitutionIdentityOption: true,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Full' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: true,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: true,
+          retainInstitutionIdentityOption: true,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withArbitraryUIDs)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withArbitraryUIDs,
+    )
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -443,20 +447,22 @@ describe('dcmOrganize basic functionality', () => {
   it('removes all descriptors when cleanDescriptorsOption is true with no exceptions', () => {
     const optionsWithAllDescriptorsRemoved = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: true,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: true,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
     const result = dcmOrganize(
-      'test.dcm',
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
       sample,
       optionsWithAllDescriptorsRemoved,
     )
@@ -521,19 +527,25 @@ describe('dcmOrganize basic functionality', () => {
   it('applies PS3.15 rules to descriptors when cleanDescriptorsOption is false', () => {
     const withoutCleanDescriptors = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withoutCleanDescriptors)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withoutCleanDescriptors,
+    )
     verifyNoErrors(result)
 
     // Find all mappings related to descriptors (ending with Comment, Comments, or Description)
@@ -572,21 +584,27 @@ describe('dcmOrganize basic functionality', () => {
 
     const withDescriptorExceptions = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: true,
-        cleanDescriptorsExceptions: descriptorsToPreserve.map(
-          (desc) => desc.keyword,
-        ),
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: true,
+          cleanDescriptorsExceptions: descriptorsToPreserve.map(
+            (desc) => desc.keyword,
+          ),
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withDescriptorExceptions)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withDescriptorExceptions,
+    )
     verifyNoErrors(result)
 
     // Verify that excepted descriptors are preserved in the dicomData
@@ -622,22 +640,28 @@ describe('dcmOrganize basic functionality', () => {
 
     const withPatientCharacteristics = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [
-          ...patientCharacteristics.map((pc) => pc.keyword),
-          ...nonPatientCharacteristics.map((npc) => npc.keyword),
-        ],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [
+            ...patientCharacteristics.map((pc) => pc.keyword),
+            ...nonPatientCharacteristics.map((npc) => npc.keyword),
+          ],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withPatientCharacteristics)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withPatientCharacteristics,
+    )
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -723,19 +747,25 @@ describe('dcmOrganize basic functionality', () => {
   it('preserves institution identity elements when retainInstitutionIdentityOption is true', () => {
     const withRtnInstitutionIdentity = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: true,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: true,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withRtnInstitutionIdentity)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withRtnInstitutionIdentity,
+    )
     verifyNoErrors(result)
 
     // Verify all institution-related elements are preserved when option is true
@@ -756,19 +786,25 @@ describe('dcmOrganize basic functionality', () => {
   it('anonymizes institution identity elements when retainInstitutionIdentityOption is false', () => {
     const withRtnInstitutionIdentity = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'Off' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'Off' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withRtnInstitutionIdentity)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withRtnInstitutionIdentity,
+    )
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -836,19 +872,25 @@ describe('dcmOrganize basic functionality', () => {
   it('preserves all "rtnDevIdOpt": "K" device identity elements when retainDeviceIdentityOption overrides temporal settings', () => {
     const withRtnDeviceIdentity = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: true,
-        retainUIDsOption: 'On' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: true,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withRtnDeviceIdentity)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withRtnDeviceIdentity,
+    )
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -881,19 +923,25 @@ describe('dcmOrganize basic functionality', () => {
   it('cleans all device identity elements when retainDeviceIdentityOption is false', () => {
     const withoutRtnDeviceIdentity = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const, // Removes CalibrationDate as expected
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'On' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const, // Removes CalibrationDate as expected
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withoutRtnDeviceIdentity)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withoutRtnDeviceIdentity,
+    )
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -924,19 +972,25 @@ describe('dcmOrganize basic functionality', () => {
 
     const withoutTemporalData = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Off' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'On' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Off' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withoutTemporalData)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withoutTemporalData,
+    )
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
@@ -994,19 +1048,25 @@ describe('dcmOrganize basic functionality', () => {
 
     const withTemporalData = {
       ...defaultTestOptions,
-      ps315Options: {
-        cleanDescriptorsOption: false,
-        cleanDescriptorsExceptions: [],
-        retainLongitudinalTemporalInformationOptions: 'Full' as const,
-        retainPatientCharacteristicsOption: [],
-        retainDeviceIdentityOption: false,
-        retainUIDsOption: 'On' as const,
-        retainSafePrivateOption: false,
-        retainInstitutionIdentityOption: false,
-      },
+      mappingScript: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Full' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: false,
+          retainInstitutionIdentityOption: false,
+        },
+      }),
     }
 
-    const result = dcmOrganize('test.dcm', sample, withTemporalData)
+    const result = dcmOrganize(
+      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      sample,
+      withTemporalData,
+    )
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
