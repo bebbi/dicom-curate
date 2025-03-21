@@ -1,7 +1,8 @@
 import { clearReplaceUidCache } from './replaceUid'
-import { clearUniqueNumberCache } from './getParser'
+import { clearUniqueNumberCache, clearUniqueInGroupCache } from './getParser'
 
 export function clearCaches() {
   clearReplaceUidCache()
   clearUniqueNumberCache()
+  clearUniqueInGroupCache()
 }
