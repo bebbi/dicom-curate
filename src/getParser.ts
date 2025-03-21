@@ -6,25 +6,31 @@ import type { TParser } from './types'
 
 const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
 
-export { clearUniqueNumberCache }
-
-const isUniqueInGroup = (function () {
+const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
   let cache = new Set()
   let lastGroupId: string = ''
-  return function (value: string | number, groupId: string) {
-    if (groupId !== lastGroupId) {
+  return {
+    isUniqueInGroup(value: string | number, groupId: string) {
+      if (groupId !== lastGroupId) {
+        cache = new Set()
+        lastGroupId = groupId
+      }
+
+      if (cache.has(value)) {
+        return false
+      }
+
+      cache.add(value)
+      return true
+    },
+    clearUniqueInGroupCache() {
       cache = new Set()
-      lastGroupId = groupId
     }
-
-    if (cache.has(value)) {
-      return false
-    }
-
-    cache.add(value)
-    return true
   }
 })()
+
+export { clearUniqueNumberCache, clearUniqueInGroupCache }
+
 
 export default function getParser(
   inputPathPattern: string,
