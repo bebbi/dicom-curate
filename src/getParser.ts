@@ -39,7 +39,7 @@ export default function getParser(
     const pathComponents = inputPathPattern.split('/')
     const componentIndex = pathComponents.indexOf(component)
     const filePathComponents = inputFilePath.split('/')
-    return filePathComponents[componentIndex]
+    return filePathComponents[componentIndex] ?? ''
   }
 
   function missingDicom(attrName: string) {
