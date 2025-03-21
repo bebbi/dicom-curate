@@ -47,7 +47,7 @@
     "generate:unitTestSample": "tsx scripts/generateSampleDicomData.ts"
   },
   "dependencies": {
-    "dcmjs": "^0.37.0",
+    "dcmjs": "^0.38.3",
     "iso8601-duration": "^2.1.2",
     "js-sha256": "^0.11.0",
     "lodash": "^4.17.21",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/xml2js": "^0",
-    "bebbi-scripts": "^0.7.7",
+    "bebbi-scripts": "^0.7.8",
     "husky": "^8.0.3",
     "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
