@@ -1,7 +1,12 @@
 import * as dcmjs from 'dcmjs'
 import { getCsvMapping, TColumnMappings } from './csvMapping'
+import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
 import type { TParser } from './types'
+
+const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
+
+export { clearUniqueNumberCache }
 
 const isUniqueInGroup = (function () {
   let cache = new Set()
@@ -49,6 +54,7 @@ export default function getParser(
 
   return {
     isUniqueInGroup,
+    getUniqueNumberInGroup,
     getFrom(source: string, identifier: string) {
       return source === 'dicom'
         ? getDicom(identifier)
