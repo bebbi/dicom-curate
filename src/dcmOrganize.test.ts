@@ -21,42 +21,76 @@ describe('dcmOrganize basic functionality', () => {
       rowIndexByFieldValue: {},
     },
     mappingScript: `
-      modifications = function () {
-        return {
-          dicomHeader: {},
-          outputFilePathComponents: ['output', 'test.dcm']
+      mappingSpecification = function () {
+        const identifiers = {
+          protocolNumber: 'UNCONFIGURED',
+          activityProviderName: 'UNCONFIGURED',
+          centerSubjectId: /^\\d{4}_\\d{5}$/,
+          timepointNames: ['UNCONFIGURED'],
+          scanNames: ['UNCONFIGURED'],
         }
-      }
 
-      validation = function () {
-        const modality = parser.getDicom('Modality')
-      
         return {
-          errors: [
-            ['Missing Modality', parser.missingDicom('Modality')],
-            ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
-            ['Missing Series Instance UID', parser.missingDicom('SeriesInstanceUID')],
-            ['Missing Study Instance UID', parser.missingDicom('StudyInstanceUID')],
-            ['Missing SOP Instance UID', parser.missingDicom('SOPInstanceUID')],
-            ['Missing Instance Number(s)', parser.missingDicom('InstanceNumber')],
-            ['Missing Study Date', parser.missingDicom('StudyDate')],
-            ['Missing Series Date', parser.missingDicom('SeriesDate')],
-            ['Missing Acquisition Date', parser.missingDicom('AcquisitionDate')],
-            ['Missing Study Time', parser.missingDicom('StudyTime')],
-            ['Missing Series Time', parser.missingDicom('SeriesTime')],
-            ['Missing Patient Weight', parser.missingDicom('PatientWeight')],
-            ['Missing Patient Size', parser.missingDicom('PatientSize')],
-            ['Missing Patient Age', parser.missingDicom('PatientAge')],
-            ['Missing Patient Sex', parser.missingDicom('PatientSex')],
-            ['Missing Acquisition Time', parser.missingDicom('AcquisitionTime')],
-            ['Missing Image Position (Patient)', parser.missingDicom('ImagePositionPatient')],
-            ['Missing Number of Energy Windows on NM', parser.missingDicom('NumberOfEnergyWindows') && modality === 'NM'],
-            ['Missing Energy Window Information Sequence on NM', parser.missingDicom('EnergyWindowInformationSequence') && modality === 'NM'],
-            ['Missing Energy Window Range Sequence on NM', parser.missingDicom('EnergyWindowInformationSequence[0].EnergyWindowRangeSequence') && modality === 'NM'],
-            ['Missing Radiopharmaceutical Information Sequence on NM', parser.missingDicom('RadiopharmaceuticalInformationSequence') && modality === 'NM'],
-            ['Missing Series Type on PET', parser.missingDicom('SeriesType') && modality === 'PT'],
-            ['Missing Pixel Spacing on NM or PT or CT', parser.missingDicom('PixelSpacing') && ['NM', 'PT', 'CT'].includes(modality)]
-          ]
+          version: '1.0',
+          
+          // Naming convention
+          identifiers,
+
+          // If object has own props, then ask for a mapping csv.
+          mappingCsvHeaders: {},
+
+          // Define how to interpret the input path
+          inputPathPattern: 'protocolNumber/activityProvider/centerSubjectId/timepoint/scan',
+
+          // Required modifications function
+          modifications: function (parser) {
+            const scan = parser.getFilePathComp ? parser.getFilePathComp('scan') : '';
+            const centerSubjectId = parser.getFilePathComp ? parser.getFilePathComp('centerSubjectId') : '';
+
+            return {
+              dicomHeader: {
+                PatientID: centerSubjectId,
+                PatientName: centerSubjectId,
+                StudyDescription: parser.getFilePathComp ? parser.getFilePathComp('timepoint') : '',
+                ClinicalTrialSeriesDescription: scan,
+              },
+              outputFilePathComponents: ['output', 'test.dcm']
+            }
+          },
+
+          validation: function (parser) {
+            const modality = parser.getDicom ? parser.getDicom('Modality') : '';
+            const instanceNumber = parser.getDicom ? parser.getDicom('InstanceNumber') : '';
+            const seriesUid = parser.getDicom ? parser.getDicom('SeriesInstanceUID') : '';
+          
+            return {
+              errors: [
+                ['Missing Modality', parser.missingDicom ? parser.missingDicom('Modality') : false],
+                ['Missing SOP Class UID', parser.missingDicom ? parser.missingDicom('SOPClassUID') : false],
+                ['Missing Series Instance UID', parser.missingDicom ? parser.missingDicom('SeriesInstanceUID') : false],
+                ['Missing Study Instance UID', parser.missingDicom ? parser.missingDicom('StudyInstanceUID') : false],
+                ['Missing SOP Instance UID', parser.missingDicom ? parser.missingDicom('SOPInstanceUID') : false],
+                ['Missing Instance Number(s)', parser.missingDicom ? parser.missingDicom('InstanceNumber') : false],
+                ['Missing Study Date', parser.missingDicom ? parser.missingDicom('StudyDate') : false],
+                ['Missing Series Date', parser.missingDicom ? parser.missingDicom('SeriesDate') : false],
+                ['Missing Acquisition Date', parser.missingDicom ? parser.missingDicom('AcquisitionDate') : false],
+                ['Missing Study Time', parser.missingDicom ? parser.missingDicom('StudyTime') : false],
+                ['Missing Series Time', parser.missingDicom ? parser.missingDicom('SeriesTime') : false],
+                ['Missing Patient Weight', parser.missingDicom ? parser.missingDicom('PatientWeight') : false],
+                ['Missing Patient Size', parser.missingDicom ? parser.missingDicom('PatientSize') : false],
+                ['Missing Patient Age', parser.missingDicom ? parser.missingDicom('PatientAge') : false],
+                ['Missing Patient Sex', parser.missingDicom ? parser.missingDicom('PatientSex') : false],
+                ['Missing Acquisition Time', parser.missingDicom ? parser.missingDicom('AcquisitionTime') : false],
+                ['Missing Image Position (Patient)', parser.missingDicom ? parser.missingDicom('ImagePositionPatient') : false],
+                ['Missing Number of Energy Windows on NM', parser.missingDicom ? parser.missingDicom('NumberOfEnergyWindows') && modality === 'NM' : false],
+                ['Missing Energy Window Information Sequence on NM', parser.missingDicom ? parser.missingDicom('EnergyWindowInformationSequence') && modality === 'NM' : false],
+                ['Missing Energy Window Range Sequence on NM', parser.missingDicom ? parser.missingDicom('EnergyWindowInformationSequence[0].EnergyWindowRangeSequence') && modality === 'NM' : false],
+                ['Missing Radiopharmaceutical Information Sequence on NM', parser.missingDicom ? parser.missingDicom('RadiopharmaceuticalInformationSequence') && modality === 'NM' : false],
+                ['Missing Series Type on PET', parser.missingDicom ? parser.missingDicom('SeriesType') && modality === 'PT' : false],
+                ['Missing Pixel Spacing on NM or PT or CT', parser.missingDicom ? parser.missingDicom('PixelSpacing') && ['NM', 'PT', 'CT'].includes(modality) : false]
+              ]
+            }
+          }
         }
       }
     `,
@@ -473,7 +507,9 @@ describe('dcmOrganize basic functionality', () => {
     // Verify all descriptor tags are marked for deletion or replacement with reason 'cleanDescriptors' or 'PS3.15E'
     descriptorMappings.forEach(([path, mapping]) => {
       expect(['delete', 'replace']).toContain(mapping[1])
-      expect(['cleanDescriptors', 'PS3.15E']).toContain(mapping[2])
+      expect(['cleanDescriptors', 'PS3.15E', 'mappingFunction']).toContain(
+        mapping[2],
+      )
       // Expect mapping[3] to be one of the following:
       // - undefined (for null values on the json file),
       // - 'REDACTED' (from `dummyValues.ts`),

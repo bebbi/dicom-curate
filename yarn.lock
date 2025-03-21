@@ -2258,6 +2258,122 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-darwin-arm64@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-darwin-arm64@npm:1.11.11"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-x64@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-darwin-x64@npm:1.11.11"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm-gnueabihf@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.11.11"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-gnu@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.11.11"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-musl@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-linux-arm64-musl@npm:1.11.11"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-gnu@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-linux-x64-gnu@npm:1.11.11"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-musl@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-linux-x64-musl@npm:1.11.11"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-arm64-msvc@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.11.11"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-ia32-msvc@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.11.11"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-x64-msvc@npm:1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core-win32-x64-msvc@npm:1.11.11"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core@npm:^1.11.11":
+  version: 1.11.11
+  resolution: "@swc/core@npm:1.11.11"
+  dependencies:
+    "@swc/core-darwin-arm64": "npm:1.11.11"
+    "@swc/core-darwin-x64": "npm:1.11.11"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.11.11"
+    "@swc/core-linux-arm64-gnu": "npm:1.11.11"
+    "@swc/core-linux-arm64-musl": "npm:1.11.11"
+    "@swc/core-linux-x64-gnu": "npm:1.11.11"
+    "@swc/core-linux-x64-musl": "npm:1.11.11"
+    "@swc/core-win32-arm64-msvc": "npm:1.11.11"
+    "@swc/core-win32-ia32-msvc": "npm:1.11.11"
+    "@swc/core-win32-x64-msvc": "npm:1.11.11"
+    "@swc/counter": "npm:^0.1.3"
+    "@swc/types": "npm:^0.1.19"
+  peerDependencies:
+    "@swc/helpers": "*"
+  dependenciesMeta:
+    "@swc/core-darwin-arm64":
+      optional: true
+    "@swc/core-darwin-x64":
+      optional: true
+    "@swc/core-linux-arm-gnueabihf":
+      optional: true
+    "@swc/core-linux-arm64-gnu":
+      optional: true
+    "@swc/core-linux-arm64-musl":
+      optional: true
+    "@swc/core-linux-x64-gnu":
+      optional: true
+    "@swc/core-linux-x64-musl":
+      optional: true
+    "@swc/core-win32-arm64-msvc":
+      optional: true
+    "@swc/core-win32-ia32-msvc":
+      optional: true
+    "@swc/core-win32-x64-msvc":
+      optional: true
+  peerDependenciesMeta:
+    "@swc/helpers":
+      optional: true
+  checksum: 10/35c005637c8f3dac8c9718852057f81d39541b848d36a9b46b9aa5300b5d11e3e7911704da2eb025d36b0e334caf646af37ff98a3dee8d4f0fcc5f21e60f551a
+  languageName: node
+  linkType: hard
+
 "@swc/counter@npm:^0.1.3":
   version: 0.1.3
   resolution: "@swc/counter@npm:0.1.3"
@@ -2275,6 +2391,15 @@ __metadata:
   peerDependencies:
     "@swc/core": "*"
   checksum: 10/bbec37079b4f5c1ff1c95aeec07d08277c646a0c5e16e057ea3a8fe5c6e2bd59bbfc4312e53ddd05d25fa4de20a03607be274f560f28bb5e229dd08124780e16
+  languageName: node
+  linkType: hard
+
+"@swc/types@npm:^0.1.19":
+  version: 0.1.19
+  resolution: "@swc/types@npm:0.1.19"
+  dependencies:
+    "@swc/counter": "npm:^0.1.3"
+  checksum: 10/693147cc9b23147164ddff9cb89477c369fbeb103319584779352a9ff1c72e0a70b97a89dfd97629040db8956d668d7b7a8fed328ffea46a3e8c18577e396994
   languageName: node
   linkType: hard
 
@@ -3479,10 +3604,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bebbi-scripts@npm:^0.7.7":
-  version: 0.7.7
-  resolution: "bebbi-scripts@npm:0.7.7"
+"bebbi-scripts@npm:^0.7.8":
+  version: 0.7.8
+  resolution: "bebbi-scripts@npm:0.7.8"
   dependencies:
+    "@swc/core": "npm:^1.11.11"
     "@swc/jest": "npm:^0.2.37"
     "@types/eslint": "npm:^8.56.2"
     "@types/jest": "npm:^29.5.11"
@@ -3518,7 +3644,7 @@ __metadata:
     yargs-parser: "npm:^21.1.1"
   bin:
     bebbi-scripts: dist/cjs/bin.js
-  checksum: 10/5532f7c7acaa11c276e686602f79f5068bcde33617fe590d6b63a9b359b0a8301cfb9073b48723b5a72dbffc63cd6de1644844bbbcab9b02437553650ff39ddc
+  checksum: 10/10a94866474fde41ec0ef6cf3f9e81e41529375a7ee4cef013dfe8e77fe48866e69fccda37139f00e3d6184deff2ec28e4a4cf3784eb47d20b3fdab935efc01a
   languageName: node
   linkType: hard
 
@@ -4147,8 +4273,8 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:^4"
     "@types/xml2js": "npm:^0"
-    bebbi-scripts: "npm:^0.7.7"
-    dcmjs: "npm:^0.37.0"
+    bebbi-scripts: "npm:^0.7.8"
+    dcmjs: "npm:^0.38.3"
     husky: "npm:^8.0.3"
     iso8601-duration: "npm:^2.1.2"
     js-sha256: "npm:^0.11.0"
@@ -4162,9 +4288,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"dcmjs@npm:^0.37.0":
-  version: 0.37.0
-  resolution: "dcmjs@npm:0.37.0"
+"dcmjs@npm:^0.38.3":
+  version: 0.38.3
+  resolution: "dcmjs@npm:0.38.3"
   dependencies:
     "@babel/runtime-corejs3": "npm:^7.22.5"
     adm-zip: "npm:^0.5.10"
@@ -4173,7 +4299,7 @@ __metadata:
     loglevel: "npm:^1.8.1"
     ndarray: "npm:^1.0.19"
     pako: "npm:^2.0.4"
-  checksum: 10/a1c9cc843b0c149ef79713809406de71e1a83a4dd7743489089ce8ec7e79d0d24c61fb6c3861a354d70c32d8d602e50d3a816782fb44ff2c23349b832b26b8ab
+  checksum: 10/808c4f79f6146399ef0054a58307f0122963dd5833b23229c8709cc214e6e7145a3446d11c6e4eec165b5fc231de64790830d562df08f48064a07ed2b5e30239
   languageName: node
   linkType: hard
 
