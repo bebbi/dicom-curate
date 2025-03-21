@@ -54,6 +54,10 @@ mappingSpecification = () => {
       // Folder "scan" is the trial-specific/provider-assigned series name
       const scan = parser.getFilePathComp('scan')
       const centerSubjectId = parser.getFilePathComp('centerSubjectId')
+      const instanceNumber = String(parser.getDicom('InstanceNumber')).padStart(
+        5,
+        '0',
+      )
 
       return {
         dicomHeader: {
@@ -73,14 +77,15 @@ mappingSpecification = () => {
           parser.getFilePathComp('timepoint'),
           parser.getFilePathComp('scan'),
           // Sort by file name order since InstanceNumber is not guaranteed
-          parser.getUniqueNumberInGroup(parser.getDicom('SeriesInstanceUID')) +
-            '.dcm',
+          instanceNumber + '.dcm',
         ],
       }
     },
 
     validation(parser) {
       const modality = parser.getDicom('Modality')
+      const instanceNumber = parser.getDicom('InstanceNumber')
+      const seriesUid = parser.getDicom('SeriesInstanceUID')
 
       return {
         // Data provider/CRO has to fix.
@@ -115,6 +120,11 @@ mappingSpecification = () => {
           // DICOM header
           ['Missing Modality', parser.missingDicom('Modality')],
           ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
+          ['Missing Instance Number(s)', parser.missingDicom('InstanceNumber')],
+          [
+            'Duplicate Instance Number(s)',
+            !parser.isUniqueInGroup(instanceNumber, seriesUid),
+          ],
           [
             'Missing Series Instance UID',
             parser.missingDicom('SeriesInstanceUID'),
