@@ -82,13 +82,29 @@ export type TPs315EElement = {
   exceptCondition?: (attrs: TNaturalData) => boolean
 }
 
+export type TParser = {
+  isUniqueInGroup: (value: string | number, groupId: string) => boolean
+  getFrom(source: string, identifier: string): string | number
+  getFilePathComp: (component: string) => string
+  getMapping:
+    | ((
+        value: string | number,
+        fromColumn: string,
+        toColumn: string,
+      ) => string | number)
+    | undefined
+  getDicom: (attrName: string) => any
+  missingDicom: (attrName: string) => boolean
+  addDays: (dicomDateString: string, offsetDays: number) => string
+}
+
 export type TMappingSpecification = {
   version: string
-  modifications: () => {
+  modifications: (parser: TParser) => {
     dicomHeader: { [keyword: string]: string }
     outputFilePathComponents: string[]
   }
-  validation: () => {
+  validation: (parser: TParser) => {
     errors: [message: string, failure: boolean][]
   }
   dicomPS315EOptions: TPs315Options

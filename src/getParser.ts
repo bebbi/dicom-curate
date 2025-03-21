@@ -1,6 +1,7 @@
 import * as dcmjs from 'dcmjs'
 import { getCsvMapping, TColumnMappings } from './csvMapping'
 import type { TNaturalData } from 'dcmjs'
+import type { TParser } from './types'
 
 const isUniqueInGroup = (function () {
   let cache = new Set()
@@ -25,7 +26,7 @@ export default function getParser(
   inputFilePath: string,
   naturalData: TNaturalData,
   columnMappings?: TColumnMappings,
-) {
+): TParser {
   function getDicom(attrName: string) {
     if (attrName in dcmjs.data.DicomMetaDictionary.dictionary) {
       // if in hex like "(0008,0100)", convert to text key

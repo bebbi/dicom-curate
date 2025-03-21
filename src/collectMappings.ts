@@ -156,9 +156,9 @@ export default function collectMappings(
     mappingOptions.columnMappings,
   )
 
-  let modificationMap = finalSpec.modifications()
+  let modificationMap = finalSpec.modifications(parser)
   mapResults.errors = finalSpec
-    .validation()
+    .validation(parser)
     .errors.filter(([, failure]) => failure)
     .map(([message]) => message)
 
