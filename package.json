@@ -45,6 +45,7 @@
     "lint": "bebbi-scripts lint",
     "validate": "bebbi-scripts validate",
     "prepare": "husky install",
+    "generate:sampleSpec": "tsx scripts/generateSampleSpec.ts",
     "generate:unitTestSample": "tsx scripts/generateSampleDicomData.ts"
   },
   "dependencies": {
