@@ -14,7 +14,13 @@ type TMappingWorkerOptions = TMappingOptions & {
 
 export type ProgressCallback = (message: TProgressMessage) => void
 
-export type { OrganizeOptions, TMappingSpecification } from './types'
+export type {
+  TPs315Options,
+  TMapResults,
+  TProgressMessage,
+  OrganizeOptions,
+  TMappingSpecification,
+} from './types'
 
 export { specVersion } from './config/specVersion'
 
