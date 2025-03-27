@@ -75,7 +75,9 @@ mappingSpecification = () => {
           centerSubjectId,
           parser.getFilePathComp('timepoint'),
           parser.getFilePathComp('scan'),
-          `${parser.getDicom('SeriesDescription')}=${parser.getDicom('SeriesID')}`,
+          parser.getDicom('SeriesDescription') +
+            '=' +
+            parser.getDicom('SeriesID'),
           instanceNumber + '.dcm',
         ],
       }
