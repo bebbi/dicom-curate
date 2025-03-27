@@ -77,7 +77,7 @@ mappingSpecification = () => {
           parser.getFilePathComp('scan'),
           parser.getDicom('SeriesDescription') +
             '=' +
-            parser.getDicom('SeriesID'),
+            parser.getDicom('SeriesNumber'),
           instanceNumber + '.dcm',
         ],
       }
