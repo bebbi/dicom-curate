@@ -23,6 +23,7 @@ export type {
 } from './types'
 
 export { specVersion } from './config/specVersion'
+export { sampleSpecification } from './config/sampleSpecification'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 
