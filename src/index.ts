@@ -100,7 +100,12 @@ function initializeMappingWorkers() {
     /* eslint-disable no-loop-func */
     mappingWorker.addEventListener('message', (event) => {
       switch (event.data.response) {
-        case 'progress':
+        case 'finished':
+          availableMappingWorkers.push(mappingWorker)
+          mapResultsList.push(event.data.mapResults)
+          workersActive -= 1
+
+          // Report progress
           if (progressCallback) {
             progressCallback({
               response: 'progress',
@@ -110,13 +115,9 @@ function initializeMappingWorkers() {
                 filesToProcess.length + mapResultsList.length + workersActive,
             })
           }
-          break
-        case 'finished':
-          availableMappingWorkers.push(mappingWorker)
-          mapResultsList.push(event.data.mapResults)
-          workersActive -= 1
+
           dispatchMappingJobs()
-          if ((mapResultsList.length - 1) % 100 === 0) {
+          if (mapResultsList.length % 100 === 0) {
             console.log(`Finished mapping ${mapResultsList.length} files`)
           }
           break
