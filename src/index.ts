@@ -5,14 +5,14 @@ import type {
   TMapResults,
   TFileInfo,
   OrganizeOptions,
-  TWorkerMessage,
+  TProgressMessage,
 } from './types'
 
 type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory: FileSystemDirectoryHandle
 }
 
-export type ProgressCallback = (message: TWorkerMessage) => void
+export type ProgressCallback = (message: TProgressMessage) => void
 
 export type { OrganizeOptions, TMappingSpecification } from './types'
 

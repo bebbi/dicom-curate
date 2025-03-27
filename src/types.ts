@@ -116,12 +116,10 @@ export type TMappingSpecification = {
   mappingCsvHeaders: Record<string, any>
 }
 
-export type TWorkerMessage = {
+export type TProgressMessage = {
   response: 'start' | 'progress' | 'finished' | 'error'
   totalFiles?: number
   processedFiles?: number
   mapResults?: TMapResults
   error?: Error
 }
-
-export type ProgressCallback = (message: TWorkerMessage) => void
