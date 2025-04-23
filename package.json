@@ -38,7 +38,7 @@
   },
   "scripts": {
     "clean": "bebbi-scripts clean",
-    "build": "bebbi-scripts build esm types",
+    "build": "yarn generate:sampleSpec && bebbi-scripts build esm types",
     "watch": "bebbi-scripts build --watch",
     "test": "bebbi-scripts test",
     "format": "bebbi-scripts format",
