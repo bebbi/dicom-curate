@@ -39,7 +39,7 @@ mappingSpecification = () => {
       ],
       retainDeviceIdentityOption: true,
       retainUIDsOption: 'Hashed',
-      retainSafePrivateOption: true,
+      retainSafePrivateOption: 'Quarantine',
       retainInstitutionIdentityOption: true,
     },
 

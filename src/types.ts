@@ -16,7 +16,7 @@ export type TPs315Options = {
   retainPatientCharacteristicsOption: false | string[]
   retainDeviceIdentityOption: boolean
   retainUIDsOption: 'On' | 'Off' | 'Hashed'
-  retainSafePrivateOption: boolean
+  retainSafePrivateOption: 'Off' | 'Quarantine'
   retainInstitutionIdentityOption: boolean
 }
 
