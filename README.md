@@ -57,7 +57,7 @@ DICOMPS315EOptions = {
   // Change instance UIDs
   retainUIDsOption: false,
   // retain private tags
-  retainSafePrivateOption: true,
+  retainSafePrivateOption: 'Quarantine',
   // retain institution-related information per PS3.15 E1.1
   retainInstitutionIdentityOption: true,
 }
@@ -136,6 +136,6 @@ dcm-organize
       - use if the risk of re-identifying by UID is not bigger than the risk of re-identifying by PixelData
       - do not use if you want to specifically protect UIDs from an auxiliary knowledge attack, e.g. an attacker that knows possible input UIDs
     - There are more instance UIDs in part PS3.06 than described in PS3.15E for protection, therefore this option identifies the following uids for protection: 1. All instance UIDs per PS3.15E, 2. Any additional UIDs with a value not well-known in DICOM, per table PS3.06A (Registry of DICOM Unique Identifiers). This protects instance UIDs but also private class UIDs, which is intentional.
-  - 'retainSafePrivateOption': true or false, if true, keeps the private tags but marks them for quarantine and manual review
+  - 'retainSafePrivateOption': 'Quarantine' or 'Off'. If 'Quarantine', keeps all private tags but creates a quarantine log for manual review
   - 'retainInstitutionIdentityOption': true or false
 - does not currently clean structured content

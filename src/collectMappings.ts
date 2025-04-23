@@ -73,7 +73,7 @@ const defaultPs315Options: TPs315Options = {
   retainPatientCharacteristicsOption: false,
   retainDeviceIdentityOption: false,
   retainUIDsOption: 'Off',
-  retainSafePrivateOption: false,
+  retainSafePrivateOption: 'Off',
   retainInstitutionIdentityOption: false,
 }
 
@@ -465,7 +465,7 @@ export default function collectMappings(
         if (isUnknownPrivateTag) {
           // Private tag handling.
           // TODO: add option for `allowlist` of private tags taken from 3.15E and TCIA table
-          if (!retainSafePrivateOption) {
+          if (retainSafePrivateOption === 'Off') {
             mapResults.mappings[attrPath] = [
               data[name],
               'delete',
