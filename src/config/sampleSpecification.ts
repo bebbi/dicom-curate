@@ -9,8 +9,7 @@ export const sampleSpecification = `mappingSpecification = () => {
     centerSubjectId: /^[A-Z]{3}\d{2}-\d{4}$/,
     timepointNames: ['Visit 1', 'Visit 2', 'Visit 3'],
     // Folder "scan": the trial-specific/provider-assigned series name
-    // Each can contain one or more DICOM series.
-    scanNames: ['Sample_Scan'],
+    scanNames: ['Sample_Series_Desciption'],
   }
 
   return {
@@ -78,9 +77,6 @@ export const sampleSpecification = `mappingSpecification = () => {
           centerSubjectId,
           parser.getFilePathComp('timepoint'),
           parser.getFilePathComp('scan'),
-          parser.getDicom('SeriesDescription') +
-            '=' +
-            parser.getDicom('SeriesNumber'),
           instanceNumber + '.dcm',
         ],
       }
