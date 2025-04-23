@@ -36,25 +36,6 @@ function specWithOptions(options: Partial<TMappingSpecification>) {
   }`
 }
 
-function specXWithOptions(options: Partial<TMappingSpecification>) {
-  let mappingSpecification: () => Partial<TMappingSpecification> = () => ({})
-  eval(specString)
-  const finalSpec = {
-    ...mappingSpecification(),
-    ...options,
-  } as TMappingSpecification
-
-  return `mappingSpecification = () => (${JSON.stringify(
-    finalSpec,
-    (key, value) => {
-      if (typeof value === 'function') {
-        return value.toString()
-      }
-      return value
-    },
-  )})`
-}
-
 describe('dcmOrganize basic functionality', () => {
   // Clear UID cache after each test
   afterEach(() => {
