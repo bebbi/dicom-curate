@@ -107,7 +107,7 @@ export type TMappingSpecification = {
   validation: (parser: TParser) => {
     errors: [message: string, failure: boolean][]
   }
-  dicomPS315EOptions: TPs315Options
+  dicomPS315EOptions: TPs315Options | 'Off'
   inputPathPattern: string
   // These 2 are not used in code but added to maintain consistency in
   // mappingSpec file (no const keywords)
