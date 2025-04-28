@@ -1,4 +1,4 @@
-// Auto-generated file from ../testdata/sampleMappingSpecification.js
+// Auto-generated from ../testdata/sampleMappingSpecification.js
 // Run `yarn generate:sampleSpec` to update
 
 export const sampleSpecification = `mappingSpecification = () => {
@@ -182,5 +182,4 @@ export const sampleSpecification = `mappingSpecification = () => {
       }
     },
   }
-}
-`;
+}`
