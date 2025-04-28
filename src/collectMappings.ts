@@ -109,7 +109,10 @@ export default function collectMappings(
     inputPathPattern: '',
     modifications: () => ({
       dicomHeader: {},
-      outputFilePathComponents: [],
+      outputFilePathComponents: [
+        parser.getDicom('SeriesInstanceUID'),
+        parser.getFilePathComp(parser.FILENAME),
+      ],
     }),
     validation: () => ({ errors: [] }),
   }
@@ -152,6 +155,7 @@ export default function collectMappings(
   )
 
   let modificationMap = finalSpec.modifications(parser)
+
   mapResults.errors = finalSpec
     .validation(parser)
     .errors.filter(([, failure]) => failure)
