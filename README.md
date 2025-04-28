@@ -29,7 +29,6 @@ apply(options)
 An example mapping script file:
 
 <!-- Snippet auto-generated from ../testdata/sampleMappingSpecification.js -->
-
 ```js
 mappingSpecification = () => {
   // Confirm allowed identifiers for this transfer.
@@ -119,6 +118,7 @@ mappingSpecification = () => {
 
       return {
         errors: [
+          // File path
           [
             'Invalid study folder name',
             parser.getFilePathComp('protocolNumber') !==
