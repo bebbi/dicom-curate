@@ -25,12 +25,11 @@ const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
     },
     clearUniqueInGroupCache() {
       cache = new Set()
-    }
+    },
   }
 })()
 
 export { clearUniqueNumberCache, clearUniqueInGroupCache }
-
 
 export default function getParser(
   inputPathPattern: string,
@@ -72,6 +71,11 @@ export default function getParser(
       : undefined,
     getDicom,
     missingDicom,
+    // TODO: Phase this out in favor of ISO8601 duration handling.
+    // Example of this logic:
+    // ContentDate:
+    //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
+    //     parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET')),
     addDays: (dicomDateString: string, offsetDays: number) => {
       const year = Number(dicomDateString.slice(0, 4))
       const monthIndex = Number(dicomDateString.slice(4, 6)) - 1

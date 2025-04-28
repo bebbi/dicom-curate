@@ -18,7 +18,7 @@ mappingSpecification = () => {
     // A CSV file is required if mappingCsvHeaders is not empty.
     mappingCsvHeaders: {
       //   CURR_ID: identifiers.centerSubjectId,
-      //   DATE_OFFSET: /\d+/,
+      //   NEW_ID: /\d+/,
     },
 
     version: '1.0',
@@ -56,10 +56,8 @@ mappingSpecification = () => {
         dicomHeader: {
           // Align the PatientID DICOM header with the centerSubjectId folder name.
           PatientID: centerSubjectId,
-          // // this example finds the PatientID in mapping table column 0 and offsets the CONTENTDATE by days per column 2
-          // ContentDate:
-          //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
-          //     parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET')),
+          // This example maps PatientIDs based on the mapping CSV file.
+          // PatientID: parser.getMapping(parser.getDicom('PatientID'), 'CURR_ID', 'MAPPED_ID'),
           PatientName: centerSubjectId,
           // Align the StudyDescription DICOM header with the timepoint folder name.
           StudyDescription: parser.getFilePathComp('timepoint'),
