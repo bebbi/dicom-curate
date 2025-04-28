@@ -36,6 +36,9 @@ function specWithOptions(options: Partial<TMappingSpecification>) {
   }`
 }
 
+const passingFilename =
+  'Sample_Protocol_Number/Sample_CRO/ABC12-1234/Visit 1/Sample_Series_Desciption/0/test.dcm'
+
 describe('dcmOrganize basic functionality', () => {
   // Clear UID cache after each test
   afterEach(() => {
@@ -220,11 +223,7 @@ describe('dcmOrganize basic functionality', () => {
 
   // TODO: Fix bug, quarantine tags are being removed from the final dicom data
   it('captures private tags to be quarantined when retainSafePrivateOption is true', () => {
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      defaultTestOptions,
-    )
+    const result = dcmOrganize(passingFilename, sample, defaultTestOptions)
     verifyNoErrors(result)
 
     // Verify private tags are quarantined
@@ -251,11 +250,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withPrivateTagsRemoved,
-    )
+    const result = dcmOrganize(passingFilename, sample, withPrivateTagsRemoved)
     verifyNoErrors(result)
 
     // Verify private tags are not quarantined
@@ -291,11 +286,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withRetainedUIDs,
-    )
+    const result = dcmOrganize(passingFilename, sample, withRetainedUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -330,11 +321,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      optionsWithHashedUIDs,
-    )
+    const result = dcmOrganize(passingFilename, sample, optionsWithHashedUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data and its hashed value
@@ -379,11 +366,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withArbitraryUIDs,
-    )
+    const result = dcmOrganize(passingFilename, sample, withArbitraryUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -443,7 +426,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       optionsWithAllDescriptorsRemoved,
     )
@@ -522,11 +505,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withoutCleanDescriptors,
-    )
+    const result = dcmOrganize(passingFilename, sample, withoutCleanDescriptors)
     verifyNoErrors(result)
 
     // Find all mappings related to descriptors (ending with Comment, Comments, or Description)
@@ -582,7 +561,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       withDescriptorExceptions,
     )
@@ -639,7 +618,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       withPatientCharacteristics,
     )
@@ -743,7 +722,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       withRtnInstitutionIdentity,
     )
@@ -782,7 +761,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       withRtnInstitutionIdentity,
     )
@@ -867,11 +846,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withRtnDeviceIdentity,
-    )
+    const result = dcmOrganize(passingFilename, sample, withRtnDeviceIdentity)
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -919,7 +894,7 @@ describe('dcmOrganize basic functionality', () => {
     }
 
     const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
+      passingFilename,
       sample,
       withoutRtnDeviceIdentity,
     )
@@ -967,11 +942,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withoutTemporalData,
-    )
+    const result = dcmOrganize(passingFilename, sample, withoutTemporalData)
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
@@ -1043,11 +1014,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      'UNCONFIGURED/UNCONFIGURED/0000_00000/UNCONFIGURED/UNCONFIGURED/test.dcm',
-      sample,
-      withTemporalData,
-    )
+    const result = dcmOrganize(passingFilename, sample, withTemporalData)
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
