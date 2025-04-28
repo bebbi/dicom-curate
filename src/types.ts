@@ -83,7 +83,7 @@ export type TParser = {
   isUniqueInGroup: (value: string | number, groupId: string) => boolean
   getUniqueNumberInGroup: (groupingId: string) => string
   getFrom(source: string, identifier: string): string | number
-  getFilePathComp: (component: string) => string
+  getFilePathComp: (component: string | number | symbol) => string
   getMapping:
     | ((
         value: string | number,
@@ -94,6 +94,8 @@ export type TParser = {
   getDicom: (attrName: string) => any
   missingDicom: (attrName: string) => boolean
   addDays: (dicomDateString: string, offsetDays: number) => string
+  FILENAME: symbol
+  FILEBASENAME: symbol
 }
 
 export type TMappingSpecification = {

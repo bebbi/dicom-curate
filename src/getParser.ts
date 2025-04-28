@@ -4,6 +4,9 @@ import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
 import type { TParser } from './types'
 
+export const FILEBASENAME = Symbol('fileBasename')
+export const FILENAME = Symbol('filename')
+
 const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
 
 const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
@@ -45,11 +48,36 @@ export default function getParser(
     return naturalData[attrName]
   }
 
-  function getFilePathComp(component: string) {
-    const pathComponents = inputPathPattern.split('/')
-    const componentIndex = pathComponents.indexOf(component)
-    const filePathComponents = inputFilePath.split('/')
-    return filePathComponents[componentIndex] ?? ''
+  function getFilePathComp(
+    component: string | number | typeof FILENAME | typeof FILEBASENAME,
+  ) {
+    const patternParts = inputPathPattern.split('/')
+    const fileParts = inputFilePath.split('/')
+
+    let idx
+    if (typeof component === 'number') {
+      // numeric indexing (supports negatives)
+      idx =
+        component < 0
+          ? fileParts.length + component // -1 → last, -2 → second-to-last, etc.
+          : component
+    } else if (typeof component === 'symbol') {
+      // force last‐segment lookup on FILENAME or FILEBASENAME
+      idx = fileParts.length - 1
+    } else {
+      // string lookup against pattern
+      idx = patternParts.indexOf(component)
+    }
+
+    // return the segment if in range, else empty string
+    const segment = fileParts[idx] ?? ''
+
+    // Return last component without a suffix
+    if (component === FILEBASENAME) {
+      return segment.replace(/\.[^/.]+$/, '')
+    }
+
+    return segment
   }
 
   function missingDicom(attrName: string) {
@@ -58,6 +86,11 @@ export default function getParser(
   }
 
   return {
+    // Sample error:
+    // [
+    //   'Duplicate Instance Number(s)',
+    //   !parser.isUniqueInGroup(instanceNumber, seriesUid),
+    // ],
     isUniqueInGroup,
     getUniqueNumberInGroup,
     getFrom(source: string, identifier: string) {
@@ -90,5 +123,7 @@ export default function getParser(
       const dayString = date.getDate().toString().padStart(2, '0')
       return yearString + monthString + dayString
     },
+    FILENAME,
+    FILEBASENAME,
   }
 }
