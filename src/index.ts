@@ -167,7 +167,6 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const inputPathPattern = organizeOptions.inputPathPattern
   const outputDirectory = organizeOptions.outputDirectory
 
   //
@@ -185,15 +184,7 @@ async function collectMappingOptions(
   //
   const mappingScript = organizeOptions.mappingScript
 
-  const ps315Options = organizeOptions.ps315Options
-
-  return {
-    inputPathPattern,
-    outputDirectory,
-    columnMappings,
-    mappingScript,
-    ps315Options,
-  }
+  return { outputDirectory, columnMappings, mappingScript }
 }
 
 let progressCallback: ProgressCallback | undefined

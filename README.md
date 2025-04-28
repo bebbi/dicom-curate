@@ -18,9 +18,7 @@ import apply, { OrganizeOptions } from 'dcm-organize'
 const options: OrganizeOptions = {
   inputDirectory, // input folder directory handle
   outputDirectory, // output folder directory handle
-  inputPathPattern, // map input structure to variable names to use in the mapping
   mappingScript, // Image Transfer Agreement file handle
-  ps315Options, // optional, normally provided as part of mappingScript
   columnMapping, // csv file handle to add csv-based mapping
 }
 
