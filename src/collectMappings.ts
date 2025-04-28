@@ -82,11 +82,6 @@ export default function collectMappings(
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
-  let {
-    ps315Options: passedPs315Options = defaultPs315Options,
-    inputPathPattern = '',
-  } = mappingOptions
-
   const mapResults: TMapResults = {
     // original UID for this dicomData
     sourceInstanceUID: '',
@@ -110,8 +105,8 @@ export default function collectMappings(
     TMappingSpecification,
     'identifiers' | 'mappingCsvHeaders' | 'version'
   > = {
-    dicomPS315EOptions: passedPs315Options,
-    inputPathPattern,
+    dicomPS315EOptions: defaultPs315Options,
+    inputPathPattern: '',
     modifications: () => ({
       dicomHeader: {},
       outputFilePathComponents: [],
