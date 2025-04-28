@@ -89,6 +89,7 @@ export const sampleSpecification = `mappingSpecification = () => {
 
       return {
         errors: [
+          // File path
           [
             'Invalid study folder name',
             parser.getFilePathComp('protocolNumber') !==
