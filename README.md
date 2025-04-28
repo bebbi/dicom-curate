@@ -30,71 +30,109 @@ apply(options)
 
 An example mapping script file:
 
+<!-- Snippet auto-generated from ../testdata/sampleMappingSpecification.js -->
 ```js
-DICOMPS315EOptions = {
-  cleanDescriptorsOption: true,
-  cleanDescriptorsExceptions: [
-    'SeriesDescription',
-    'ClinicalTrialSeriesDescription',
-  ],
-  // Offset dates per subject based on a CSV with individual offset durations.
-  retainLongitudinalTemporalInformationOptions: [
-    'filePath',
-    'centersubj',
-    'CURR_ID',
-    'DATE_OFFSET_ISO8601',
-  ],
-  // Only considers listed attributes that are defined in PS3.15 E1.1
-  // under the "retainPatientCharacteristicsOption".
-  retainPatientCharacteristicsOption: [
-    'PatientsWeight',
-    'PatientsSize',
-    'PatientsAge',
-    'SelectorASValue',
-  ],
-  // Calibration dates, scanner IDs, etc.
-  retainDeviceIdentityOption: true,
-  // Change instance UIDs
-  retainUIDsOption: false,
-  // retain private tags
-  retainSafePrivateOption: 'Quarantine',
-  // retain institution-related information per PS3.15 E1.1
-  retainInstitutionIdentityOption: true,
-}
-
-// This maps the actual input file path name to variables we can use in
-// the mapping, specifically createParams() and modifications()
-inputPathPattern = 'trialname/centersubj/dicomseriesid/'
-
-// An optional function to create `params` used in modifications(params) function.
-createParams = function () {
-  return {
-    // Define where to find the reference site-subject id:
-    // The reference could be in folder names or in dicom header
-    subjectId: parser.getFilePathComp('centersubj'),
+mappingSpecification = () => {
+  // Confirm allowed identifiers for this transfer.
+  const identifiers = {
+    protocolNumber: 'Sample_Protocol_Number',
+    activityProviderName: 'Sample_CRO',
+    centerSubjectId: /^[A-Z]{3}\d{2}-\d{4}$/,
+    timepointNames: ['Visit 1', 'Visit 2', 'Visit 3'],
+    // Folder "scan": the trial-specific/provider-assigned series name
+    scanNames: ['Sample_Series_Desciption'],
   }
-}
 
-modifications = function (params) {
   return {
-    // List DICOM Header tags for which you want to change values:
-    // It's important to assign something to PatientName and PatientID as otherwise
-    // they will just get emptied by the default behaviour
-    dicomHeader: {
-      PatientName: params.subjectId,
-      PatientID: params.subjectId,
+    // Review the required input folder structure (all DICOM files need minimally this folder depth)
+    // This configuration depends on correct centerSubjectId, timepoint, scan folder names.
+    inputPathPattern:
+      'protocolNumber/activityProvider/centerSubjectId/timepoint/scan',
+
+    // A CSV file is required if mappingCsvHeaders is not empty.
+    mappingCsvHeaders: {
+      //   CURR_ID: identifiers.centerSubjectId,
+      //   DATE_OFFSET: /\d+/,
     },
-    // outputFilePath lists the components of the new path to be written to the output
-    // directory.
-    // This example builds the output path from a mix of input path and DICOM headers.
-    outputFilePathComponents: [
-      parser.getFilePathComp('trialname'),
-      params.subjectId,
-      parser.getDicom('SeriesNumber') +
-        '=' +
-        parser.getDicom('SeriesDescription'),
-      parser.getDicom('InstanceNumber') + '.dcm',
-    ],
+
+    version: '1.0',
+    identifiers,
+
+    // This specifies the standardized DICOM de-identification
+    dicomPS315EOptions: {
+      cleanDescriptorsOption: true,
+      cleanDescriptorsExceptions: ['SeriesDescription'],
+      retainLongitudinalTemporalInformationOptions: 'Full',
+      retainPatientCharacteristicsOption: [
+        'PatientsWeight',
+        'PatientsSize',
+        'PatientsAge',
+        'PatientsSex',
+        'SelectorASValue',
+      ],
+      retainDeviceIdentityOption: true,
+      retainUIDsOption: 'Hashed',
+      retainSafePrivateOption: 'Quarantine',
+      retainInstitutionIdentityOption: true,
+    },
+
+    // This section defines the output folder structure and alignment of DICOM headers
+    modifications(parser) {
+      const scan = parser.getFilePathComp('scan')
+      const centerSubjectId = parser.getFilePathComp('centerSubjectId')
+      // This specification requires instance numbers to be present.
+      const instanceNumber = String(parser.getDicom('InstanceNumber')).padStart(
+        5,
+        '0',
+      )
+
+      return {
+        dicomHeader: {
+          // Align the PatientID DICOM header with the centerSubjectId folder name.
+          PatientID: centerSubjectId,
+          // // this example finds the PatientID in mapping table column 0 and offsets the CONTENTDATE by days per column 2
+          // ContentDate:
+          //   parser.addDays(parser.getDicom('StudyDate'), parser.getMapping(
+          //     parser.getDicom('PatientID'), 'CURR_ID', 'DATE_OFFSET')),
+          PatientName: centerSubjectId,
+          // Align the StudyDescription DICOM header with the timepoint folder name.
+          StudyDescription: parser.getFilePathComp('timepoint'),
+          // Align the ClinicalTrialSeriesDescription DICOM header with the scan folder name.
+          ClinicalTrialSeriesDescription: scan,
+        },
+
+        // This defines the output folder structure.
+        outputFilePathComponents: [
+          parser.getFilePathComp('protocolNumber'),
+          parser.getFilePathComp('activityProvider'),
+          centerSubjectId,
+          parser.getFilePathComp('timepoint'),
+          parser.getFilePathComp('scan'),
+          instanceNumber + '.dcm',
+        ],
+      }
+    },
+
+    // This section defines the validation rules for the input DICOMs.
+    // The processing continues on errors, but errors will have to be fixed
+    // or reviewed between the parties.
+    validation(parser) {
+      const modality = parser.getDicom('Modality')
+      const instanceNumber = parser.getDicom('InstanceNumber')
+      const seriesUid = parser.getDicom('SeriesInstanceUID')
+
+      return {
+        errors: [
+          [
+            'Invalid study folder name',
+            parser.getFilePathComp('protocolNumber') !==
+              identifiers.protocolNumber,
+          ],
+          // DICOM header
+          ['Missing Modality', parser.missingDicom('Modality')],
+        ],
+      }
+    },
   }
 }
 ```
