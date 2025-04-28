@@ -46,11 +46,6 @@ mappingSpecification = () => {
     modifications(parser) {
       const scan = parser.getFilePathComp('scan')
       const centerSubjectId = parser.getFilePathComp('centerSubjectId')
-      // This specification requires instance numbers to be present.
-      const instanceNumber = String(parser.getDicom('InstanceNumber')).padStart(
-        5,
-        '0',
-      )
 
       return {
         dicomHeader: {
@@ -61,6 +56,8 @@ mappingSpecification = () => {
           PatientName: centerSubjectId,
           // Align the StudyDescription DICOM header with the timepoint folder name.
           StudyDescription: parser.getFilePathComp('timepoint'),
+          // The party responsible for assigning a standard ClinicalTrialSeriesDescription
+          ClinicalTrialCoordinatingCenterName: identifiers.activityProviderName,
           // Align the ClinicalTrialSeriesDescription DICOM header with the scan folder name.
           ClinicalTrialSeriesDescription: scan,
         },
@@ -71,8 +68,10 @@ mappingSpecification = () => {
           parser.getFilePathComp('activityProvider'),
           centerSubjectId,
           parser.getFilePathComp('timepoint'),
-          parser.getFilePathComp('scan'),
-          instanceNumber + '.dcm',
+          parser.getFilePathComp('scan') +
+            '=' +
+            parser.getDicom('SeriesNumber'),
+          parser.getFilePathComp(parser.FILEBASENAME) + '.dcm',
         ],
       }
     },
@@ -82,7 +81,7 @@ mappingSpecification = () => {
     // or reviewed between the parties.
     validation(parser) {
       const modality = parser.getDicom('Modality')
-      const instanceNumber = parser.getDicom('InstanceNumber')
+      const filename = parser.getFilePathComp(parser.FILEBASENAME)
       const seriesUid = parser.getDicom('SeriesInstanceUID')
 
       return {
@@ -118,8 +117,8 @@ mappingSpecification = () => {
           ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
           ['Missing Instance Number(s)', parser.missingDicom('InstanceNumber')],
           [
-            'Duplicate Instance Number(s)',
-            !parser.isUniqueInGroup(instanceNumber, seriesUid),
+            'Duplicate File Name(s) in series',
+            !parser.isUniqueInGroup(filename, seriesUid),
           ],
           [
             'Missing Series Instance UID',
