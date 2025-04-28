@@ -351,7 +351,7 @@ describe('dcmOrganize basic functionality', () => {
     // Verify UIDs are hashed
     const hasHashedUIDMappings = Object.entries(
       result.mapResults.mappings,
-    ).some(([_, mapping]) => {
+    ).some(([, mapping]) => {
       return (
         mapping[0] === sampleUID &&
         mapping[1] === 'replace' &&
@@ -403,7 +403,7 @@ describe('dcmOrganize basic functionality', () => {
 
     // Find arbitrary value that will replace UIDs
     let UIDreplacementValue: string | undefined
-    for (const [_, mapping] of Object.entries(result.mapResults.mappings)) {
+    for (const [, mapping] of Object.entries(result.mapResults.mappings)) {
       if (isReplacedUID(mapping)) {
         UIDreplacementValue = mapping[3] as string
         break
@@ -415,7 +415,7 @@ describe('dcmOrganize basic functionality', () => {
     // Verify all UIDs are replaced with the same arbitrary value
     const mappings = result.mapResults.mappings
     const allUIDsReplacedWithSameValue = Object.entries(mappings).every(
-      ([_, mapping]) => {
+      ([, mapping]) => {
         if (isReplacedUID(mapping)) {
           return (mapping[3] as string) === UIDreplacementValue
         }
@@ -535,7 +535,7 @@ describe('dcmOrganize basic functionality', () => {
     // Check that PS3.15 rules are applied (tags will be marked with 'PS3.15E' reason)
     // and not the general 'cleanDescriptors' reason
     const ps315Descriptors = descriptorMappings.filter(
-      ([_, mapping]) => mapping[2] === 'PS3.15E',
+      ([, mapping]) => mapping[2] === 'PS3.15E',
     )
 
     // Verify we have some PS3.15 descriptor tags
@@ -543,7 +543,7 @@ describe('dcmOrganize basic functionality', () => {
 
     // Verify none of the descriptors have 'cleanDescriptors' as reason
     const cleanDescriptorsTags = descriptorMappings.filter(
-      ([_, mapping]) => mapping[2] === 'cleanDescriptors',
+      ([, mapping]) => mapping[2] === 'cleanDescriptors',
     )
     expect(cleanDescriptorsTags.length).toBe(0)
   })
