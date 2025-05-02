@@ -4,8 +4,8 @@ import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
 import type { TParser } from './types'
 
-export const FILEBASENAME = Symbol('fileBasename')
-export const FILENAME = Symbol('filename')
+export const FILEBASENAME: symbol = Symbol('fileBasename')
+export const FILENAME: symbol = Symbol('filename')
 
 const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
 
