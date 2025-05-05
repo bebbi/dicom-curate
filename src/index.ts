@@ -176,7 +176,8 @@ async function collectMappingOptions(
   let columnMappings: TColumnMappings | undefined
   if (organizeOptions.columnMapping) {
     const csvFile = await organizeOptions.columnMapping.getFile()
-    columnMappings = await extractCsvMappings(csvFile)
+    const csvText = await csvFile.text()
+    columnMappings = extractCsvMappings(csvText)
   }
 
   //
