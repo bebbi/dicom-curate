@@ -24,7 +24,7 @@ export const sampleSpecification = `curationSpecification = () => {
       //   NEW_ID: /\d+/,
     },
 
-    version: '1.0',
+    version: '1.1',
     identifiers,
 
     // This specifies the standardized DICOM de-identification
