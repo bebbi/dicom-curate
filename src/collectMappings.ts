@@ -51,7 +51,7 @@ export default function collectMappings(
     validation: () => ({ errors: [] }),
   }
 
-  // TODO: try/except with useful error hinting at mappingScripts
+  // TODO: try/except with useful error hinting at curationSpec
   eval(mappingOptions.curationSpec)
 
   const spec = curationSpecification()
