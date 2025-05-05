@@ -1,7 +1,7 @@
-// Auto-generated from ../testdata/sampleMappingSpecification.js
+// Auto-generated from ../testdata/sampleCurationSpecification.js
 // Run `yarn generate:sampleSpec` to update
 
-export const sampleSpecification = `mappingSpecification = () => {
+export const sampleSpecification = `curationSpecification = () => {
   // Confirm allowed identifiers for this transfer.
   const identifiers = {
     protocolNumber: 'Sample_Protocol_Number',

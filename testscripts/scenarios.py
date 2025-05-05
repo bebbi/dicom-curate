@@ -62,8 +62,8 @@ ACRIN-NSCLC-FDG-PET-003,patient_3,3
 """)
 
     # Copy the mapping spec file from source to destination
-    source_file = os.path.join(os.path.dirname(__file__), "..", "testdata", "sampleMappingSpecification.js")
-    destination_file = os.path.join(scenarioDir, "mappingSpecification.js")
+    source_file = os.path.join(os.path.dirname(__file__), "..", "testdata", "sampleCurationSpecification.js")
+    destination_file = os.path.join(scenarioDir, "curationSpecification.js")
 
     shutil.copy(source_file, destination_file)
 

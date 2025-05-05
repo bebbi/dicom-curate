@@ -1,4 +1,4 @@
-mappingSpecification = () => {
+curationSpecification = () => {
   // Confirm allowed identifiers for this transfer.
   const identifiers = {
     protocolNumber: 'Sample_Protocol_Number',
@@ -21,7 +21,7 @@ mappingSpecification = () => {
       //   NEW_ID: /\d+/,
     },
 
-    version: '1.0',
+    version: '1.1',
     identifiers,
 
     // This specifies the standardized DICOM de-identification
