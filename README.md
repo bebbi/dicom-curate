@@ -151,7 +151,7 @@ dicom-curate
 - identifies and removes additional ID attributes beyond PS3.15E1.1 by parsing PS3.06 and finding all attributes ending on "ID(s)", but not UID(s) that are not defined in PS3.15E. This ID list is defined in "src/config/dicom/retainAdditionalIds.ts", and a few of them are manually annotated to be retained if the "retain device identifier option" is activated.
 - keeps the 'EncapsulatedDocument' attribute if modality is "DOC", unless overridden
 - keeps the 'VerifyingObserverSequence' if modality is SR, unless overridden
-- allows the users to describe all cleaning configurations in the mappingScripts file
+- allows the users to describe all cleaning configurations in the curationSpec file
 - implements the following PS3.15E options:
   - 'retainDeviceIdentityOption': Keeps the attributes marked as 'K' and performs the default action on all other attributes
   - 'cleanDescriptorsOption' by removing all description and comment Attributes except those comment attributes explicitly listed in the `cleanDescriptorExceptions` list.
