@@ -1,4 +1,4 @@
-# dcm-organize
+# dicom-curate
 
 Organize and de-identify DICOM header values and file hierarchies based on a provided configuration object.
 
@@ -13,7 +13,7 @@ The library can be used in a toolkit-agnostic way, because it provides access to
 Converting a nested input folder structure containing DICOM files to a cleaned output folder destination:
 
 ```ts
-import apply, { OrganizeOptions } from 'dcm-organize'
+import apply, { OrganizeOptions } from 'dicom-curate'
 
 const options: OrganizeOptions = {
   inputDirectory, // input folder directory handle
@@ -135,7 +135,7 @@ curationSpecification = () => {
 
 ## DICOM Conformance Notes
 
-dcm-organize
+dicom-curate
 
 - does not use an Encrypted Attributes Sequence
 - does not anonymize burnt-in information or modify PixelData

@@ -1,5 +1,5 @@
 """
-test script to generate data scenarios for dcm-organize
+test script to generate data scenarios for dicom-curate
 
 This script should be runable in a vanilla python environment
 to create directories for testing.
