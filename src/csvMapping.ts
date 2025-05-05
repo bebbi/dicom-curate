@@ -2,7 +2,7 @@ type TFieldValue = number | string
 
 export type TColumnMappings = {
   headers: string[]
-  rowValues: { [rowIdx: number]: TFieldValue[] }
+  rowValues: TFieldValue[][]
   rowIndexByFieldValue: {
     [header: string]: {
       [fieldValue: TFieldValue]: number
@@ -15,7 +15,7 @@ export function extractCsvMappings(csvText: string) {
   const headers = rows.slice(0, 1)[0].split(',')
   const columnMappings: TColumnMappings = {
     headers: headers,
-    rowValues: {},
+    rowValues: [],
     rowIndexByFieldValue: {},
   }
   headers.forEach((header: string) => {
