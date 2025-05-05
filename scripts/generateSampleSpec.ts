@@ -12,7 +12,7 @@ const inputPath = join(
   __dirname,
   '..',
   'testdata',
-  'sampleMappingSpecification.js',
+  'sampleCurationSpecification.js',
 )
 const outputTsPath = join(
   __dirname,

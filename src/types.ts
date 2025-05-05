@@ -98,7 +98,7 @@ export type TParser = {
   FILEBASENAME: symbol
 }
 
-export type TMappingSpecification = {
+export type TCurationSpecification = {
   version: string
   modifications: (parser: TParser) => {
     dicomHeader: { [keyword: string]: string }

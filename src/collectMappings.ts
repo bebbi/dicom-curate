@@ -7,7 +7,7 @@ import { get as _get } from 'lodash'
 import type {
   TMappingOptions,
   TMapResults,
-  TMappingSpecification,
+  TCurationSpecification,
 } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
@@ -34,9 +34,9 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  let mappingSpecification: () => Partial<TMappingSpecification> = () => ({})
+  let curationSpecification: () => Partial<TCurationSpecification> = () => ({})
   let finalSpec: Omit<
-    TMappingSpecification,
+    TCurationSpecification,
     'identifiers' | 'mappingCsvHeaders' | 'version'
   > = {
     dicomPS315EOptions: defaultPs315Options,
@@ -54,15 +54,15 @@ export default function collectMappings(
   // TODO: try/except with useful error hinting at mappingScripts
   eval(mappingOptions.curationSpec)
 
-  const spec = mappingSpecification()
+  const spec = curationSpecification()
 
   if (spec.version !== specVersion) {
     throw new Error(
-      `Only version ${specVersion} supported in mappingSpecification`,
+      `Only version ${specVersion} supported in curationSpecification`,
     )
   }
 
-  // mappingSpecification was populated by eval, load it into mappingSpec
+  // curationSpecification was populated by eval, load it into mappingSpec
   Object.assign(finalSpec, spec)
 
   // create a parser object to be used in the eval'ed mappingFunctions

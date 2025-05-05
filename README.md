@@ -28,10 +28,10 @@ apply(options)
 
 An example mapping script file:
 
-<!-- Snippet auto-generated from ../testdata/sampleMappingSpecification.js -->
+<!-- Snippet auto-generated from ../testdata/sampleCurationSpecification.js -->
 
 ```js
-mappingSpecification = () => {
+curationSpecification = () => {
   // Confirm allowed identifiers for this transfer.
   const identifiers = {
     protocolNumber: 'Sample_Protocol_Number',

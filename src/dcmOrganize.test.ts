@@ -2,7 +2,7 @@ import dcmOrganize from './dcmOrganize'
 import { sample } from '../testdata/sample'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
-import type { TMappingOptions, TMappingSpecification } from './types'
+import type { TMappingOptions, TCurationSpecification } from './types'
 import { clearCaches } from './clearCaches'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { allElements } from '../testdata/allElements'
@@ -11,17 +11,17 @@ import * as path from 'path'
 
 const specPath = path.resolve(
   __dirname,
-  '../testdata/sampleMappingSpecification.js',
+  '../testdata/sampleCurationSpecification.js',
 )
 const specString = fs.readFileSync(specPath, 'utf8')
 
 // Like default mappingSpec, but custom options, please no dicomHeader!
-function specWithOptions(options: Partial<TMappingSpecification>) {
-  return `mappingSpecification = () => {
-    let mappingSpecification
+function specWithOptions(options: Partial<TCurationSpecification>) {
+  return `curationSpecification = () => {
+    let curationSpecification
     eval(\`${specString}\`)
     const spec = {
-      ...mappingSpecification(),
+      ...curationSpecification(),
       ...${JSON.stringify(options, (key, value) => {
         if (typeof value === 'function') {
           return value.toString()

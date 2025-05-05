@@ -19,7 +19,7 @@ export type {
   TMapResults,
   TProgressMessage,
   OrganizeOptions,
-  TMappingSpecification,
+  TCurationSpecification,
 } from './types'
 
 export { specVersion } from './config/specVersion'
