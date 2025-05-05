@@ -15,10 +15,62 @@ curationSpecification = () => {
     inputPathPattern:
       'protocolNumber/activityProvider/centerSubjectId/timepoint/scan',
 
-    // A CSV file is required if mappingCsvHeaders is not empty.
-    mappingCsvHeaders: {
+    // collect from both csv and listing
+    additionalData: {
+      type: 'listing',
+      // function if firstPass
+      collect: (parser) => {
+        const lookups = {
+          PatNamePatId: ['PatientName', 'PatientID']
+            .map(parser.getDicom)
+            .join('='),
+          PatNameSeriesDesc: ['PatientName', 'PatientID', 'SeriesDescription']
+            .map(parser.getDicom)
+            .join('='),
+        }
+        return {
+          lookups,
+          info: [
+            // [label, value]
+            ['Patient Name', parser.getDicom('PatientName')],
+            ['Patient ID', parser.getDicom('PatientID')],
+            ['Study Date', parser.getDicom('StudyDate')],
+            ['Study Description', parser.getDicom('StudyDescription')],
+            ['Series Date', parser.getDicom('SeriesDate')],
+            ['Series Description', parser.getDicom('SeriesDescription')],
+            ['Modality', parser.getDicom('Modality')],
+          ],
+          // This will imply a CSV with headers:
+          // PatNamePatId | PatNameSeriesDesc | CenterSubjectId | Timepoint | Comment
+          // [lookup header, format, lookup value]
+          collect: [
+            ['CenterSubjectId', identifiers.centerSubjectId, 'PatNamePatId'],
+            ['Timepoint', identifiers.timepointNames, 'PatNameSeriesDesc'],
+            ['Comment', /.*/, 'PatNameSeriesDesc'],
+          ],
+        }
+      },
+      // collect: {
       //   CURR_ID: identifiers.centerSubjectId,
-      //   NEW_ID: /\d+/,
+      //   StudyDescription: identifiers.timepointNames,
+      //   MAPPED_ID: /BLIND_\d+/,
+      // },
+      // Can refer to mappings as parser.getMapping('blindedId')
+      mapping: (parser) => ({
+        // csv situation
+        blindedId: {
+          value: parser.getDicom('PatientID'),
+          lookup: 'CURR_ID',
+          // lookup: row => row['CURR_ID'],
+          replace: 'MAPPED_ID',
+        },
+        // firstPass situation
+        centerSubjectId: {
+          value: ['PatientName', 'PatientID'].map(parser.getDicom).join('='),
+          lookup: 'PatNamePatId',
+          replace: 'Center_Subject_ID',
+        },
+      }),
     },
 
     version: '1.1',
@@ -52,7 +104,7 @@ curationSpecification = () => {
           // Align the PatientID DICOM header with the centerSubjectId folder name.
           PatientID: centerSubjectId,
           // This example maps PatientIDs based on the mapping CSV file.
-          // PatientID: parser.getMapping(parser.getDicom('PatientID'), 'CURR_ID', 'MAPPED_ID'),
+          // PatientID: parser.getMapping('blindedId'),
           PatientName: centerSubjectId,
           // Align the StudyDescription DICOM header with the timepoint folder name.
           StudyDescription: parser.getFilePathComp('timepoint'),
