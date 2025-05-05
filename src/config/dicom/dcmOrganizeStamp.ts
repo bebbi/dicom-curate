@@ -12,7 +12,7 @@ export function getDcmOrganizeStamp(options: TPs315Options) {
   return {
     LongitudinalTemporalInformationModified: tempModified,
     PatientIdentityRemoved: 'YES',
-    DeidentificationMethod: 'See dcm-organize README for details',
+    DeidentificationMethod: 'See dicom-curate README for details',
     DeidentificationMethodCodeSequence: getCid7050Codes(options).map(
       (option) => ({
         CodeValue: option.value,

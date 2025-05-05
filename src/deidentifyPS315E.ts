@@ -423,7 +423,7 @@ export default function deidentifyPS315E({
         mapResults.mappings[attrPath] = [
           oldValue,
           'replace',
-          'dcm-organize',
+          'dicom-curate',
           newValue,
         ]
       }

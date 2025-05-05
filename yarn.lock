@@ -4267,27 +4267,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dcm-organize@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "dcm-organize@workspace:."
-  dependencies:
-    "@types/lodash": "npm:^4"
-    "@types/xml2js": "npm:^0"
-    bebbi-scripts: "npm:^0.7.8"
-    dcmjs: "npm:^0.38.3"
-    husky: "npm:^8.0.3"
-    iso8601-duration: "npm:^2.1.2"
-    js-sha256: "npm:^0.11.0"
-    lodash: "npm:^4.17.21"
-    memize: "npm:^2.1.0"
-    node-fetch: "npm:^3.3.2"
-    prettier: "npm:^3.4.2"
-    tsx: "npm:^4.19.3"
-    uuid: "npm:^11.0.5"
-    xml2js: "npm:^0.6.2"
-  languageName: unknown
-  linkType: soft
-
 "dcmjs@npm:^0.38.3":
   version: 0.38.3
   resolution: "dcmjs@npm:0.38.3"
@@ -4399,6 +4378,27 @@ __metadata:
   checksum: 10/ae6cd429c41ad01b164c59ea36f264a2c479598e61cba7c99da24175a7ab80ddf066420f2bec9a1c57a6bead411b4655ff15ad7d281c000a89791f48cbe939e7
   languageName: node
   linkType: hard
+
+"dicom-curate@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "dicom-curate@workspace:."
+  dependencies:
+    "@types/lodash": "npm:^4"
+    "@types/xml2js": "npm:^0"
+    bebbi-scripts: "npm:^0.7.8"
+    dcmjs: "npm:^0.38.3"
+    husky: "npm:^8.0.3"
+    iso8601-duration: "npm:^2.1.2"
+    js-sha256: "npm:^0.11.0"
+    lodash: "npm:^4.17.21"
+    memize: "npm:^2.1.0"
+    node-fetch: "npm:^3.3.2"
+    prettier: "npm:^3.4.2"
+    tsx: "npm:^4.19.3"
+    uuid: "npm:^11.0.5"
+    xml2js: "npm:^0.6.2"
+  languageName: unknown
+  linkType: soft
 
 "diff-sequences@npm:^29.6.3":
   version: 29.6.3

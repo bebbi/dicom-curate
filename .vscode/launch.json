@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "dcm-organize test",
+      "name": "dicom-curate test",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",

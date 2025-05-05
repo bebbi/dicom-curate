@@ -1,5 +1,5 @@
 {
-  "name": "dcm-organize",
+  "name": "dicom-curate",
   "version": "0.0.1",
   "description": "Organize and de-identify DICOM header data ",
   "type": "module",
