@@ -23,14 +23,14 @@ export type TPs315Options = {
 export interface OrganizeOptions {
   inputDirectory: FileSystemDirectoryHandle
   outputDirectory: FileSystemDirectoryHandle
-  mappingScript: string
+  curationSpec: string
   // Fixme: Improve columnMapping (file) vs columnMappings (object) naming
   columnMapping?: FileSystemFileHandle
 }
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
-  mappingScript: string
+  curationSpec: string
 }
 
 export type TFileInfo = {

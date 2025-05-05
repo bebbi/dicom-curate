@@ -52,7 +52,7 @@ export default function collectMappings(
   }
 
   // TODO: try/except with useful error hinting at mappingScripts
-  eval(mappingOptions.mappingScript)
+  eval(mappingOptions.curationSpec)
 
   const spec = mappingSpecification()
 
