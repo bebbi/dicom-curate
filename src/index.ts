@@ -182,9 +182,9 @@ async function collectMappingOptions(
   //
   // then, get the mapping functions
   //
-  const mappingScript = organizeOptions.mappingScript
+  const curationSpec = organizeOptions.curationSpec
 
-  return { outputDirectory, columnMappings, mappingScript }
+  return { outputDirectory, columnMappings, curationSpec }
 }
 
 let progressCallback: ProgressCallback | undefined

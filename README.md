@@ -18,7 +18,7 @@ import apply, { OrganizeOptions } from 'dcm-organize'
 const options: OrganizeOptions = {
   inputDirectory, // input folder directory handle
   outputDirectory, // output folder directory handle
-  mappingScript, // Image Transfer Agreement file handle
+  curationSpec, // Image Transfer Agreement file handle
   columnMapping, // csv file handle to add csv-based mapping
 }
 
@@ -29,6 +29,7 @@ apply(options)
 An example mapping script file:
 
 <!-- Snippet auto-generated from ../testdata/sampleMappingSpecification.js -->
+
 ```js
 mappingSpecification = () => {
   // Confirm allowed identifiers for this transfer.

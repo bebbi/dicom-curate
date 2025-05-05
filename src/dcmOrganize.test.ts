@@ -52,7 +52,7 @@ describe('dcmOrganize basic functionality', () => {
       rowValues: {},
       rowIndexByFieldValue: {},
     },
-    mappingScript: specWithOptions({
+    curationSpec: specWithOptions({
       dicomPS315EOptions: {
         cleanDescriptorsOption: true,
         cleanDescriptorsExceptions: [],
@@ -236,7 +236,7 @@ describe('dcmOrganize basic functionality', () => {
   it('removes private tags when retainSafePrivateOption is false', () => {
     const withPrivateTagsRemoved = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: true,
           cleanDescriptorsExceptions: ['SeriesDescription'],
@@ -272,7 +272,7 @@ describe('dcmOrganize basic functionality', () => {
   it('retains UIDs when retainUIDsOption is On', () => {
     const withRetainedUIDs = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -307,7 +307,7 @@ describe('dcmOrganize basic functionality', () => {
   it('hashes UIDs when retainUIDsOption is Hashed', () => {
     const optionsWithHashedUIDs = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -352,7 +352,7 @@ describe('dcmOrganize basic functionality', () => {
   it('replaces UIDs with arbitrary values when retainUIDsOption is Off', () => {
     const withArbitraryUIDs = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -411,7 +411,7 @@ describe('dcmOrganize basic functionality', () => {
   it('removes all descriptors when cleanDescriptorsOption is true with no exceptions', () => {
     const optionsWithAllDescriptorsRemoved = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: true,
           cleanDescriptorsExceptions: [],
@@ -491,7 +491,7 @@ describe('dcmOrganize basic functionality', () => {
   it('applies PS3.15 rules to descriptors when cleanDescriptorsOption is false', () => {
     const withoutCleanDescriptors = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -544,7 +544,7 @@ describe('dcmOrganize basic functionality', () => {
 
     const withDescriptorExceptions = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: true,
           cleanDescriptorsExceptions: descriptorsToPreserve.map(
@@ -600,7 +600,7 @@ describe('dcmOrganize basic functionality', () => {
 
     const withPatientCharacteristics = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -707,7 +707,7 @@ describe('dcmOrganize basic functionality', () => {
   it('preserves institution identity elements when retainInstitutionIdentityOption is true', () => {
     const withRtnInstitutionIdentity = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -746,7 +746,7 @@ describe('dcmOrganize basic functionality', () => {
   it('anonymizes institution identity elements when retainInstitutionIdentityOption is false', () => {
     const withRtnInstitutionIdentity = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -832,7 +832,7 @@ describe('dcmOrganize basic functionality', () => {
   it('preserves all "rtnDevIdOpt": "K" device identity elements when retainDeviceIdentityOption overrides temporal settings', () => {
     const withRtnDeviceIdentity = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -879,7 +879,7 @@ describe('dcmOrganize basic functionality', () => {
   it('cleans all device identity elements when retainDeviceIdentityOption is false', () => {
     const withoutRtnDeviceIdentity = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -928,7 +928,7 @@ describe('dcmOrganize basic functionality', () => {
 
     const withoutTemporalData = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
@@ -1000,7 +1000,7 @@ describe('dcmOrganize basic functionality', () => {
 
     const withTemporalData = {
       ...defaultTestOptions,
-      mappingScript: specWithOptions({
+      curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: false,
           cleanDescriptorsExceptions: [],
