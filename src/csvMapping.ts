@@ -10,8 +10,7 @@ export type TColumnMappings = {
   }
 }
 
-export async function extractCsvMappings(csvFile: File) {
-  const csvText = await csvFile.text()
+export function extractCsvMappings(csvText: string) {
   const rows = csvText.trim().split('\n')
   const headers = rows.slice(0, 1)[0].split(',')
   const columnMappings: TColumnMappings = {
