@@ -50,6 +50,7 @@ curationSpecification = () => {
           ],
         }
       },
+      // type: 'load',
       // collect: {
       //   CURR_ID: identifiers.centerSubjectId,
       //   StudyDescription: identifiers.timepointNames,
