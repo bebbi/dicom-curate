@@ -57,7 +57,7 @@ export type TMapResults = {
   anomalies: string[]
   errors: string[]
   quarantine: { [objectPath: string]: string }
-  listing: {
+  listing?: {
     info: TMappingTwoPassInfo[]
     collectByValue: [...TMappingTwoPassCollect, string | number][]
   }
@@ -97,13 +97,15 @@ export type TParser = {
   FILEBASENAME: symbol
 }
 
-type TMappedValues = (
-  parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
-) => {
-  [key: string]: {
-    value: string
-    lookup: string
-    replace: string
+type TMappedValues = {
+  mapping: (
+    parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
+  ) => {
+    [key: string]: {
+      value: string
+      lookup: string
+      replace: string
+    }
   }
 }
 

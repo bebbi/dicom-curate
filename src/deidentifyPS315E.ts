@@ -8,6 +8,7 @@ import { offsetDateTime, iso8601 } from './offsetDateTime'
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
 import { uidRegistryPS3_06_A1 } from './config/dicom/uidRegistryPS3_06_A1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
+import { getCsvMapping } from './csvMapping'
 import { get as _get } from 'lodash'
 
 import type { TNaturalData } from 'dcmjs'
@@ -255,8 +256,8 @@ export default function deidentifyPS315E({
               const sourceValue = parser.getFrom(source, identifier)
               let error = ''
               if (sourceValue) {
-                // The ! because of the columnMappings check before.
-                const duration = parser.getMapping!(
+                const duration = getCsvMapping(
+                  columnMappings,
                   sourceValue,
                   fromHeader,
                   toHeader,
