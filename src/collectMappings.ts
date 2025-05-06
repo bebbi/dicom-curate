@@ -26,7 +26,6 @@ export default function collectMappings(
     anomalies: [],
     errors: [],
     quarantine: {},
-    listing: [],
   }
 
   // Make make the naturalized data so parser code operates on with tags not hex
