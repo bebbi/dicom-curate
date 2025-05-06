@@ -57,6 +57,10 @@ export type TMapResults = {
   anomalies: string[]
   errors: string[]
   quarantine: { [objectPath: string]: string }
+  listing: {
+    info: TMappingTwoPassInfo[]
+    collectByValue: [...TMappingTwoPassCollect, string | number][]
+  }
 }
 
 export type TPs315EElement = {
@@ -104,10 +108,17 @@ type TMappedValues = (
 }
 
 type TMappingInputDirect = {
-  // direct: csv file
-  type: 'direct'
+  // load: csv file
+  type: 'load'
   collect: Record<string, RegExp>
 }
+
+type TMappingTwoPassInfo = [name: string, value: string]
+type TMappingTwoPassCollect = [
+  value: string,
+  format: RegExp,
+  lookupField: string,
+]
 
 type TMappingInputTwoPass = {
   // two-pass: extract from listing.
@@ -116,8 +127,8 @@ type TMappingInputTwoPass = {
     parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
   ) => {
     lookups: { [lookupField: string]: string }
-    info: [name: string, value: string][]
-    collect: [value: string, format: RegExp, lookupField: string][]
+    info: TMappingTwoPassInfo[]
+    collect: TMappingTwoPassCollect[]
   }
 }
 
