@@ -1,4 +1,4 @@
-import { TMappedValuess, Row } from './csvMapping'
+import { TColumnMappings, Row } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
@@ -29,7 +29,7 @@ export interface OrganizeOptions {
 }
 
 export type TMappingOptions = {
-  columnMappings?: TMappedValuess
+  columnMappings?: TColumnMappings
   curationSpec: string
   skipWrite?: boolean
 }
