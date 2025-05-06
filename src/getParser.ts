@@ -2,7 +2,8 @@ import * as dcmjs from 'dcmjs'
 import { getCsvMapping, TColumnMappings } from './csvMapping'
 import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
-import type { TParser } from './types'
+import type { TParser, TCurationSpecification } from './types'
+import { add } from 'lodash'
 
 export const FILEBASENAME: symbol = Symbol('fileBasename')
 export const FILENAME: symbol = Symbol('filename')
@@ -39,6 +40,7 @@ export default function getParser(
   inputFilePath: string,
   naturalData: TNaturalData,
   columnMappings?: TColumnMappings,
+  additionalData?: TCurationSpecification['additionalData'],
 ): TParser {
   function getDicom(attrName: string) {
     if (attrName in dcmjs.data.DicomMetaDictionary.dictionary) {
@@ -80,28 +82,43 @@ export default function getParser(
     return segment
   }
 
+  function getFrom(source: string, identifier: string) {
+    return source === 'dicom'
+      ? getDicom(identifier)
+      : getFilePathComp(identifier)
+  }
+
+  const getMapping =
+    !additionalData || !columnMappings
+      ? undefined
+      : function getMapping(key: string) {
+          const { mapping } = additionalData
+          const item = mapping({ getDicom, getFilePathComp, getFrom })[key]
+
+          return getCsvMapping(
+            columnMappings,
+            item.value,
+            item.lookup,
+            item.replace,
+          )
+        }
+
   function missingDicom(attrName: string) {
     const value = getDicom(attrName)
     return typeof value === 'undefined' || value === ''
   }
 
   return {
-    // Sample error:
+    // This function enables errors like:
     // [
     //   'Duplicate Instance Number(s)',
     //   !parser.isUniqueInGroup(instanceNumber, seriesUid),
     // ],
     isUniqueInGroup,
     getUniqueNumberInGroup,
-    getFrom(source: string, identifier: string) {
-      return source === 'dicom'
-        ? getDicom(identifier)
-        : getFilePathComp(identifier)
-    },
+    getFrom,
     getFilePathComp,
-    getMapping: columnMappings
-      ? getCsvMapping.bind(null, columnMappings)
-      : undefined,
+    getMapping,
     getDicom,
     missingDicom,
     // TODO: Phase this out in favor of ISO8601 duration handling.
