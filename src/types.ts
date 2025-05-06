@@ -1,4 +1,4 @@
-import { TColumnMappings, Row } from './csvMapping'
+import { TMappedValuess, Row } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
@@ -28,7 +28,7 @@ export interface OrganizeOptions {
 }
 
 export type TMappingOptions = {
-  columnMappings?: TColumnMappings
+  columnMappings?: TMappedValuess
   curationSpec: string
 }
 
@@ -83,18 +83,40 @@ export type TParser = {
   getUniqueNumberInGroup: (groupingId: string) => string
   getFrom(source: string, identifier: string): string | number
   getFilePathComp: (component: string | number | symbol) => string
-  getMapping:
-    | ((
-        value: string | number,
-        fromColumn: string,
-        toColumn: string,
-      ) => string | number)
-    | undefined
+  getMapping: ((value: string) => string | number) | undefined
   getDicom: (attrName: string) => any
   missingDicom: (attrName: string) => boolean
   addDays: (dicomDateString: string, offsetDays: number) => string
   FILENAME: symbol
   FILEBASENAME: symbol
+}
+
+type TMappedValues = (
+  parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
+) => {
+  [key: string]: {
+    value: string
+    lookup: string
+    replace: string
+  }
+}
+
+type TMappingInputDirect = {
+  // direct: csv file
+  type: 'direct'
+  collect: Record<string, RegExp>
+}
+
+type TMappingInputTwoPass = {
+  // two-pass: extract from listing.
+  type: 'two-pass'
+  collect: (
+    parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
+  ) => {
+    lookups: { [lookupField: string]: string }
+    info: [name: string, value: string][]
+    collect: [value: string, format: RegExp, lookupField: string][]
+  }
 }
 
 export type TCurationSpecification = {
@@ -108,10 +130,8 @@ export type TCurationSpecification = {
   }
   dicomPS315EOptions: TPs315Options | 'Off'
   inputPathPattern: string
-  // These 2 are not used in code but added to maintain consistency in
-  // mappingSpec file (no const keywords)
   identifiers: Record<string, any>
-  mappingCsvHeaders: Record<string, any>
+  additionalData?: TMappedValues & (TMappingInputDirect | TMappingInputTwoPass)
 }
 
 export type TProgressMessage = {

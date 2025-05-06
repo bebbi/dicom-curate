@@ -35,10 +35,7 @@ export default function collectMappings(
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
   let curationSpecification: () => Partial<TCurationSpecification> = () => ({})
-  let finalSpec: Omit<
-    TCurationSpecification,
-    'identifiers' | 'mappingCsvHeaders' | 'version'
-  > = {
+  let finalSpec: Omit<TCurationSpecification, 'identifiers' | 'version'> = {
     dicomPS315EOptions: defaultPs315Options,
     inputPathPattern: '',
     modifications: () => ({
@@ -71,6 +68,7 @@ export default function collectMappings(
     inputFilePath,
     naturalData,
     mappingOptions.columnMappings,
+    finalSpec.additionalData,
   )
 
   let modificationMap = finalSpec.modifications(parser)
