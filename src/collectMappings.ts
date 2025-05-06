@@ -26,6 +26,7 @@ export default function collectMappings(
     anomalies: [],
     errors: [],
     quarantine: {},
+    listing: [],
   }
 
   // Make make the naturalized data so parser code operates on with tags not hex
@@ -73,10 +74,23 @@ export default function collectMappings(
 
   let modificationMap = finalSpec.modifications(parser)
 
+  // List all validation errors
   mapResults.errors = finalSpec
     .validation(parser)
     .errors.filter(([, failure]) => failure)
     .map(([message]) => message)
+
+  // Return listing for the "two-pass add mapping" scenario
+  if (finalSpec.additionalData?.type === 'two-pass') {
+    const { lookups, info, collect } = finalSpec.additionalData.collect(parser)
+    const collectByValue = collect.map((item) => {
+      const [, , lookupField] = item
+      const lookupValue = lookups[lookupField]
+      return [...item, lookupValue] as [...typeof item, typeof lookupValue]
+    })
+
+    mapResults.listing = { info, collectByValue }
+  }
 
   mapResults.outputFilePath = modificationMap.outputFilePathComponents.join('/')
 
