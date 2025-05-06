@@ -184,7 +184,9 @@ async function collectMappingOptions(
   //
   const curationSpec = organizeOptions.curationSpec
 
-  return { outputDirectory, columnMappings, curationSpec }
+  const skipWrite = organizeOptions.skipWrite ?? false
+
+  return { outputDirectory, columnMappings, curationSpec, skipWrite }
 }
 
 let progressCallback: ProgressCallback | undefined

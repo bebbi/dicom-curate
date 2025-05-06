@@ -61,28 +61,30 @@ async function applyMappings(
   const { dicomData: mappedDicomData, mapResults: clonedMapResults } =
     dcmOrganize(`${fileInfo.path}/${fileInfo.name}`, dicomData, mappingOptions)
 
-  // Finally, write the results
-  const dirPath = clonedMapResults.outputFilePath
-    .split('/')
-    .slice(0, -1)
-    .join('/')
-  const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
+  if (!mappingOptions.skipWrite) {
+    // Finally, write the results
+    const dirPath = clonedMapResults.outputFilePath
+      .split('/')
+      .slice(0, -1)
+      .join('/')
+    const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
 
-  // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
-  const modifiedArrayBuffer = mappedDicomData.write()
-  const subDirectoryHandle = await createNestedDirectories(
-    outputDirectory,
-    dirPath,
-  )
-  if (subDirectoryHandle === false) {
-    console.error(`Cannot create directory for ${dirPath}`)
-  } else {
-    const fileHandle = await subDirectoryHandle.getFileHandle(fileName, {
-      create: true,
-    })
-    const writable = await fileHandle.createWritable()
-    await writable.write(modifiedArrayBuffer)
-    await writable.close()
+    // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
+    const modifiedArrayBuffer = mappedDicomData.write()
+    const subDirectoryHandle = await createNestedDirectories(
+      outputDirectory,
+      dirPath,
+    )
+    if (subDirectoryHandle === false) {
+      console.error(`Cannot create directory for ${dirPath}`)
+    } else {
+      const fileHandle = await subDirectoryHandle.getFileHandle(fileName, {
+        create: true,
+      })
+      const writable = await fileHandle.createWritable()
+      await writable.write(modifiedArrayBuffer)
+      await writable.close()
+    }
   }
 
   return clonedMapResults
