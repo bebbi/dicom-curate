@@ -25,11 +25,13 @@ export interface OrganizeOptions {
   outputDirectory: FileSystemDirectoryHandle
   curationSpec: string
   table?: Row[]
+  skipWrite?: boolean
 }
 
 export type TMappingOptions = {
   columnMappings?: TMappedValuess
   curationSpec: string
+  skipWrite?: boolean
 }
 
 export type TFileInfo = {
