@@ -113,6 +113,7 @@ export default function collectMappings(
       naturalData,
       columnMappings: mappingOptions.columnMappings,
       dicomPS315EOptions: finalSpec.dicomPS315EOptions,
+      curationSpec: finalSpec,
       parser,
       mapResults,
     })
