@@ -1,4 +1,4 @@
-import { TColumnMappings } from './csvMapping'
+import { TColumnMappings, Row } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
 
 export type TPs315Options = {
@@ -24,8 +24,7 @@ export interface OrganizeOptions {
   inputDirectory: FileSystemDirectoryHandle
   outputDirectory: FileSystemDirectoryHandle
   curationSpec: string
-  // Fixme: Improve columnMapping (file) vs columnMappings (object) naming
-  columnMapping?: FileSystemFileHandle
+  table?: Row[]
 }
 
 export type TMappingOptions = {

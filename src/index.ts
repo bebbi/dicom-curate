@@ -1,4 +1,4 @@
-import { extractCsvMappings, TColumnMappings } from './csvMapping'
+import { extractCsvMappingsFromRows, TColumnMappings, Row } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import type {
   TMappingOptions,
@@ -24,6 +24,7 @@ export type {
 
 export { specVersion } from './config/specVersion'
 export { sampleSpecification } from './config/sampleSpecification'
+export { csvMappingStringToRows } from './csvMapping'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 
@@ -174,10 +175,8 @@ async function collectMappingOptions(
   //
   // assumes all fields are not repeated across rows
   let columnMappings: TColumnMappings | undefined
-  if (organizeOptions.columnMapping) {
-    const csvFile = await organizeOptions.columnMapping.getFile()
-    const csvText = await csvFile.text()
-    columnMappings = extractCsvMappings(csvText)
+  if (organizeOptions.table) {
+    columnMappings = extractCsvMappingsFromRows(organizeOptions.table)
   }
 
   //
