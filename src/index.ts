@@ -1,4 +1,4 @@
-import { extractCsvMappingsFromRows, TColumnMappings, Row } from './csvMapping'
+import { extractColumnMappings, TColumnMappings, Row } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import type {
   TMappingOptions,
@@ -6,7 +6,10 @@ import type {
   TFileInfo,
   OrganizeOptions,
   TProgressMessage,
+  TCurationSpecification,
+  TMoveTemporalInformation,
 } from './types'
+import type { TMappedValues } from './csvMapping'
 
 type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory: FileSystemDirectoryHandle
@@ -24,12 +27,24 @@ export type {
 
 export { specVersion } from './config/specVersion'
 export { sampleSpecification } from './config/sampleSpecification'
-export { csvMappingStringToRows } from './csvMapping'
+export { csvTextToRows } from './csvMapping'
+export type { Row } from './csvMapping'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 
 let filesToProcess: TFileInfo[] = []
 let directoryScanFinished = false
+
+function toDeidMap(deIdOptions: TMoveTemporalInformation): TMappedValues {
+  const [source, identifier, fromHeader, toHeader] = deIdOptions
+  return {
+    [toHeader]: {
+      value: (parser) => parser.getFrom(source, identifier),
+      lookup: (row) => row[fromHeader],
+      replace: (row) => row[toHeader],
+    },
+  }
+}
 
 /*
  * Directory scanner web worker management
@@ -171,18 +186,40 @@ async function collectMappingOptions(
   const outputDirectory = organizeOptions.outputDirectory
 
   //
+  // then, get the mapping functions
+  //
+  const curationSpec = organizeOptions.curationSpec
+
+  // FIXME: stop eval once spec is a real function
+  let curationSpecification: () => Partial<TCurationSpecification> = () => ({})
+  eval(curationSpec)
+  const spec = curationSpecification()
+
+  const deId = spec.dicomPS315EOptions
+  const hasDeIdMap =
+    deId !== 'Off' &&
+    Array.isArray(deId?.retainLongitudinalTemporalInformationOptions)
+
+  //
   // then, get the field mappings from the csv file
   //
   // assumes all fields are not repeated across rows
   let columnMappings: TColumnMappings | undefined
-  if (organizeOptions.table) {
-    columnMappings = extractCsvMappingsFromRows(organizeOptions.table)
+  if (
+    organizeOptions.table &&
+    (spec.additionalData || hasDeIdMap)
+  ) {
+    const fullMap = Object.assign(
+      {},
+      spec.additionalData?.mapping,
+      hasDeIdMap &&
+        toDeidMap(
+          // Type cast because of hasDeIdMap check
+          deId.retainLongitudinalTemporalInformationOptions as TMoveTemporalInformation,
+        ),
+    )
+    columnMappings = extractColumnMappings(organizeOptions.table, fullMap)
   }
-
-  //
-  // then, get the mapping functions
-  //
-  const curationSpec = organizeOptions.curationSpec
 
   const skipWrite = organizeOptions.skipWrite ?? false
 

@@ -17,6 +17,7 @@ import type {
   TPs315EElement,
   TMapResults,
   TParser,
+  TCurationSpecification,
 } from './types'
 import type { TColumnMappings } from './csvMapping'
 
@@ -68,12 +69,14 @@ export default function deidentifyPS315E({
   naturalData,
   columnMappings,
   dicomPS315EOptions,
+  curationSpec,
   parser,
   mapResults,
 }: {
   naturalData: TNaturalData
   columnMappings?: TColumnMappings
   dicomPS315EOptions: TPs315Options
+  curationSpec: Omit<TCurationSpecification, 'identifiers' | 'version'>
   parser: TParser
   mapResults: TMapResults
 }) {
@@ -258,9 +261,9 @@ export default function deidentifyPS315E({
               if (sourceValue) {
                 const duration = getCsvMapping(
                   columnMappings,
-                  sourceValue,
-                  fromHeader,
+                  curationSpec.additionalData!.mapping,
                   toHeader,
+                  sourceValue,
                 )
                 if (typeof duration === 'string' && duration.match(iso8601)) {
                   try {
