@@ -124,7 +124,7 @@ type TMappingTwoPassCollect = [
 
 type TMappingInputTwoPass = {
   // two-pass: extract from listing.
-  type: 'two-pass'
+  type: 'listing'
   collect: (
     parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
   ) => {
