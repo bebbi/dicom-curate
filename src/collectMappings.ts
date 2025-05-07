@@ -80,7 +80,7 @@ export default function collectMappings(
     .map(([message]) => message)
 
   // Return listing for the "two-pass add mapping" scenario
-  if (finalSpec.additionalData?.type === 'two-pass') {
+  if (finalSpec.additionalData?.type === 'listing') {
     const { lookups, info, collect } = finalSpec.additionalData.collect(parser)
     const collectByValue = collect.map((item) => {
       const [, , lookupField] = item
