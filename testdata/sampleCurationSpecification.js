@@ -56,22 +56,23 @@ curationSpecification = () => {
       //   StudyDescription: identifiers.timepointNames,
       //   MAPPED_ID: /BLIND_\d+/,
       // },
-      // Can refer to mappings as parser.getMapping('blindedId')
-      mapping: (parser) => ({
+      // With this, can refer to mappings as parser.getMapping('blindedId')
+      mapping: {
         // csv situation
         blindedId: {
-          value: parser.getDicom('PatientID'),
-          lookup: 'CURR_ID',
-          // lookup: row => row['CURR_ID'],
-          replace: 'MAPPED_ID',
+          value: (parser) => parser.getDicom('PatientID'),
+          lookup: (row) => row['CURR_ID'],
+          replace: (row) => row['MAPPED_ID'],
         },
         // firstPass situation
         centerSubjectId: {
-          value: ['PatientName', 'PatientID'].map(parser.getDicom).join('='),
-          lookup: 'PatNamePatId',
-          replace: 'Center_Subject_ID',
+          value: (parser) =>
+            ['PatientName', 'PatientID'].map(parser.getDicom).join('='),
+          // TODO: could rely on lookup and not need the combined field or field name
+          lookup: (row) => row['PatNamePatId'],
+          replace: (row) => row['CenterSubjectId'],
         },
-      }),
+      },
     },
 
     version: '1.1',
