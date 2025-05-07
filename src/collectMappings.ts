@@ -88,7 +88,22 @@ export default function collectMappings(
       return [...item, lookupValue] as [...typeof item, typeof lookupValue]
     })
 
-    mapResults.listing = { info, collectByValue }
+    // FIXME: Bug in dcmjs
+    const cleanedInfo = info.map((item) => {
+      if (
+        Array.isArray(item[1]) &&
+        item[1].length === 1 &&
+        typeof item[1][0] === 'object' &&
+        'Alphabetic' in item[1][0] &&
+        /^\d+$/.test(item[1][0].Alphabetic)
+      ) {
+        return [item[0], item[1][0].Alphabetic] as typeof item
+      } else {
+        return item
+      }
+    })
+
+    mapResults.listing = { info: cleanedInfo, collectByValue }
   }
 
   mapResults.outputFilePath = modificationMap.outputFilePathComponents.join('/')
