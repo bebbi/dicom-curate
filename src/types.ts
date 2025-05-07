@@ -1,5 +1,12 @@
-import { TColumnMappings, Row } from './csvMapping'
+import { TColumnMappings, TMappedValues, Row } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
+
+export type TMoveTemporalInformation = [
+  'dicom' | 'filePath',
+  identifier: string,
+  fromHeader: string,
+  toHeader: string,
+]
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
@@ -7,12 +14,7 @@ export type TPs315Options = {
   retainLongitudinalTemporalInformationOptions:
     | 'Full'
     | 'Off'
-    | [
-        'dicom' | 'filePath',
-        identifier: string,
-        fromHeader: string,
-        toHeader: string,
-      ]
+    | TMoveTemporalInformation
   retainPatientCharacteristicsOption: false | string[]
   retainDeviceIdentityOption: boolean
   retainUIDsOption: 'On' | 'Off' | 'Hashed'
@@ -97,18 +99,6 @@ export type TParser = {
   FILEBASENAME: symbol
 }
 
-type TMappedValues = {
-  mapping: (
-    parser: Pick<TParser, 'getDicom' | 'getFilePathComp' | 'getFrom'>,
-  ) => {
-    [key: string]: {
-      value: string
-      lookup: string
-      replace: string
-    }
-  }
-}
-
 type TMappingInputDirect = {
   // load: csv file
   type: 'load'
@@ -146,7 +136,10 @@ export type TCurationSpecification = {
   dicomPS315EOptions: TPs315Options | 'Off'
   inputPathPattern: string
   identifiers: Record<string, any>
-  additionalData?: TMappedValues & (TMappingInputDirect | TMappingInputTwoPass)
+  additionalData?: { mapping: TMappedValues } & (
+    | TMappingInputDirect
+    | TMappingInputTwoPass
+  )
 }
 
 export type TProgressMessage = {
