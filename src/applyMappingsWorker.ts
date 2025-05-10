@@ -41,10 +41,16 @@ async function applyMappings(
   }
 > {
   //
-  // First, read the dicom instance data from the file handle
+  // First, read the dicom instance data from the file handle or blob
   //
-  const file = await fileInfo.fileHandle.getFile()
+  let file
+  if (fileInfo.blob) {
+    file = fileInfo.blob
+  } else {
+    file = await fileInfo.fileHandle.getFile()
+  }
   const fileArrayBuffer = await file.arrayBuffer()
+
   // TODO: capture validation data in object and save as part of results object
   dcmjs.log.setLevel(dcmjs.log.levels.ERROR)
   dcmjs.log.getLogger('validation.dcmjs').setLevel(dcmjs.log.levels.SILENT)
