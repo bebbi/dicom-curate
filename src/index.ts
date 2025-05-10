@@ -173,7 +173,6 @@ function dispatchMappingJobs() {
     clearCaches()
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
-    console.log(mapResultsList)
   }
 }
 
@@ -223,24 +222,54 @@ async function collectMappingOptions(
   return { outputDirectory, columnMappings, curationSpec, skipWrite }
 }
 
+function queueFilesForMapping(organizeOptions: OrganizeOptions) {
+  organizeOptions.inputFiles.forEach( (inputFile) => {
+    const fileInfo: TFileInfo = {
+      path: "",
+      name: inputFile.name,
+      size: inputFile.size,
+      fileHandle: undefined,
+      blob: inputFile; // a File isA Blob
+    }
+    filesToProcess.push(fileInfo)
+    dispatchMappingJobs()
+  })
+}
+
 let progressCallback: ProgressCallback | undefined
 
 async function apply(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
 ) {
+  console.log("--- ORGANIZING ---")
   progressCallback = onProgress
 
-  const fileListWorker = initializeFileListWorker()
+  // create the mapping workers
   initializeMappingWorkers()
+
   // Set global mappingWorkerOptions
   mappingWorkerOptions = (await collectMappingOptions(
     organizeOptions,
   )) as TMappingWorkerOptions
-  fileListWorker.postMessage({
-    request: 'scan',
-    directoryHandle: organizeOptions.inputDirectory,
-  })
+
+  //
+  // If the request provides a directory, then use the worker
+  // to recursively convert to fileSystemHandles.
+  // If the request provides a list of File objects,
+  // send them to the mapping workers directly.
+  //
+  if (organizeOptions.inputDirectory) {
+    const fileListWorker = initializeFileListWorker()
+    fileListWorker.postMessage({
+      request: 'scan',
+      directoryHandle: organizeOptions.inputDirectory,
+    })
+  } else if(organizeOptions.inputFiles) {
+    queueFilesForMapping(organizeOptions)
+  } else {
+    console.error("Need either inputFiles or inputDirectory")
+  }
   dispatchMappingJobs()
 }
 
