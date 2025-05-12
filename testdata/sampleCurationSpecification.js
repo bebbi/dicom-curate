@@ -6,7 +6,7 @@ curationSpecification = () => {
     centerSubjectId: /^[A-Z]{3}\d{2}-\d{4}$/,
     timepointNames: ['Visit 1', 'Visit 2', 'Visit 3'],
     // Folder "scan": the trial-specific/provider-assigned series name
-    scanNames: ['Sample_Series_Desciption'],
+    scanNames: ['3DT1 Sagittal', 'PET-Abdomen'],
   }
 
   return {
