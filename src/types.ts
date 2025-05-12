@@ -21,7 +21,8 @@ export type TPs315Options = {
 }
 
 export interface OrganizeOptions {
-  inputDirectory: FileSystemDirectoryHandle
+  inputDirectory: FileSystemDirectoryHandle | undefined
+  inputFiles: File[] | undefined
   outputDirectory: FileSystemDirectoryHandle
   curationSpec: string
   table?: Row[]
@@ -36,7 +37,8 @@ export type TFileInfo = {
   path: string
   name: string
   size: number
-  fileHandle: FileSystemFileHandle
+  fileHandle: FileSystemFileHandle | undefined
+  blob: File | undefined
 }
 
 // Includes deep sequences

@@ -187,17 +187,19 @@ async function collectMappingOptions(
 }
 
 function queueFilesForMapping(organizeOptions: OrganizeOptions) {
-  organizeOptions.inputFiles.forEach( (inputFile) => {
-    const fileInfo: TFileInfo = {
-      path: "",
-      name: inputFile.name,
-      size: inputFile.size,
-      fileHandle: undefined,
-      blob: inputFile; // a File isA Blob
-    }
-    filesToProcess.push(fileInfo)
-    dispatchMappingJobs()
-  })
+  if (organizeOptions.inputFiles) {
+    organizeOptions.inputFiles.forEach( (inputFile) => {
+      const fileInfo: TFileInfo = {
+        path: "",
+        name: inputFile.name,
+        size: inputFile.size,
+        fileHandle: undefined,
+        blob: inputFile // a File isA Blob
+      }
+      filesToProcess.push(fileInfo)
+      dispatchMappingJobs()
+    })
+  }
 }
 
 let progressCallback: ProgressCallback | undefined

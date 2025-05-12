@@ -46,8 +46,13 @@ async function applyMappings(
   let file
   if (fileInfo.blob) {
     file = fileInfo.blob
-  } else {
+  } else if (fileInfo.fileHandle) {
     file = await fileInfo.fileHandle.getFile()
+  } else {
+    const mapResults = {
+      anomalies: [`Neither blob nor fileHandle passed for ${fileInfo.name}`],
+    }
+    return mapResults
   }
   const fileArrayBuffer = await file.arrayBuffer()
 
