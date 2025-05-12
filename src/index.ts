@@ -190,7 +190,7 @@ function queueFilesForMapping(organizeOptions: OrganizeOptions) {
   if (organizeOptions.inputFiles) {
     organizeOptions.inputFiles.forEach( (inputFile) => {
       const fileInfo: TFileInfo = {
-        path: "",
+        path: inputFile.name,
         name: inputFile.name,
         size: inputFile.size,
         fileHandle: undefined,
