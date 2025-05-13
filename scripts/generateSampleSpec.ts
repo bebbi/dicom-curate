@@ -43,20 +43,24 @@ const MARKER = `<!-- Snippet auto-generated from ${relativeInput} -->`
 // — extract the first array under "// File path"
 const filePathRe = /^[ \t]*\/\/ File path\s*\r?\n[ \t]*(\[[\s\S]*?\]),?/m
 const filePathMatch = content.match(filePathRe)
+
 if (!filePathMatch) {
-  console.error(`⚠️  No "// File path" comment found in ${inputPath}`)
-  process.exit(1)
+  console.warn(
+    `⚠️  No "// File path" comment found in ${inputPath}, retaining existing errors block`,
+  )
 }
-const filePathItem = filePathMatch[1].trim()
+const filePathItem = filePathMatch ? filePathMatch[1].trim() : ''
 
 // — extract the first array under "// DICOM header"
 const dicomRe = /^[ \t]*\/\/ DICOM header\s*\r?\n[ \t]*(\[[\s\S]*?\]),?/m
 const dicomMatch = content.match(dicomRe)
-if (!dicomMatch) {
-  console.error(`⚠️  No "// DICOM header" comment found in ${inputPath}`)
-  process.exit(1)
+
+if (filePathMatch && !dicomMatch) {
+  console.warn(
+    `⚠️  No "// DICOM header" comment found in ${inputPath}, retaining existing errors block`,
+  )
 }
-const dicomItem = dicomMatch[1].trim()
+const dicomItem = dicomMatch ? dicomMatch[1].trim() : ''
 
 // — capture the indent of the `errors:` line *and* match the entire existing block
 const errorsRe = new RegExp(
@@ -64,24 +68,31 @@ const errorsRe = new RegExp(
   'm',
 )
 const errorsMatch = content.match(errorsRe)
-if (!errorsMatch) {
-  console.error(`⚠️  No "errors: [...]" block found in ${inputPath}`)
-  process.exit(1)
+if (filePathMatch && dicomMatch && !errorsMatch) {
+  console.warn(
+    `⚠️  No "errors: [...]" block found in ${inputPath}, skipping errors replacement`,
+  )
 }
-const indent = errorsMatch[1]
+const indent = errorsMatch ? errorsMatch[1] : '  '
 
-// — build a brand-new, perfectly-indented errors: [ … ] block
-const newErrorsBlock = [
-  `${indent}errors: [`,
-  `${indent}  // File path`,
-  `${indent}  ${filePathItem},`,
-  `${indent}  // DICOM header`,
-  `${indent}  ${dicomItem},`,
-  `${indent}],`,
-].join('\n')
+// — build a new errors: [ … ] block
+const newErrorsBlock = (
+  filePathMatch && dicomMatch && errorsMatch
+    ? [
+        `${indent}errors: [`,
+        `${indent}  // File path`,
+        `${indent}  ${filePathItem},`,
+        `${indent}  // DICOM header`,
+        `${indent}  ${dicomItem},`,
+        `${indent}],`,
+      ]
+    : [`${indent}],`]
+).join('\n')
 
-// — splice it into your script
-const shortenedContent = content.replace(errorsRe, newErrorsBlock)
+// — splice it into your script (fall back to original if any regex failed)
+const shortenedContent = newErrorsBlock
+  ? content.replace(errorsRe, newErrorsBlock)
+  : content
 
 // — wrap that full script in your README snippet
 const replacement = `${MARKER}
