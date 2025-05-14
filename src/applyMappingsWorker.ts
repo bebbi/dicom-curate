@@ -59,7 +59,7 @@ async function applyMappings(
   }
 
   const { dicomData: mappedDicomData, mapResults: clonedMapResults } =
-    dcmOrganize(fileInfo.path, dicomData, mappingOptions)
+    dcmOrganize(`${fileInfo.path}/${fileInfo.name}`, dicomData, mappingOptions)
 
   // Finally, write the results
   const dirPath = clonedMapResults.outputFilePath
