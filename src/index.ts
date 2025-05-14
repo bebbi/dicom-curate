@@ -1,5 +1,6 @@
 import { extractColumnMappings, TColumnMappings, Row } from './csvMapping'
 import { clearCaches } from './clearCaches'
+import { resetCounts } from './UniqueNumbers'
 import type {
   TMappingOptions,
   TMapResults,
@@ -34,6 +35,8 @@ const mappingWorkerCount = navigator.hardwareConcurrency
 
 let filesToProcess: TFileInfo[] = []
 let directoryScanFinished = false
+let isSkipWriteMode = false // Track if we're in skipWrite mode
+let totalFilesFound = 0 // Keep track of total files found during scanning
 
 function toDeidMap(deIdOptions: TMoveTemporalInformation): TMappedValues {
   const [source, identifier, fromHeader, toHeader] = deIdOptions
@@ -60,6 +63,7 @@ function toDeidMap(deIdOptions: TMoveTemporalInformation): TMappedValues {
 function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
+  totalFilesFound = 0 // Reset total files counter
 
   const fileListWorker = new Worker(
     new URL('./scanDirectoryWorker.js', import.meta.url),
@@ -70,6 +74,7 @@ function initializeFileListWorker() {
     switch (event.data.response) {
       case 'file':
         filesToProcess.push(event.data.fileInfo)
+        totalFilesFound++ // Increment the total file count
         // Could do some throttling:
         // if (filesToProcess.length > 10) {
         //   fileListWorker.postMessage({ request: 'stop' })
@@ -122,15 +127,35 @@ function initializeMappingWorkers() {
           mapResultsList.push(event.data.mapResults)
           workersActive -= 1
 
-          // Report progress
+          // Report progress differently depending on skipWrite mode
           if (progressCallback) {
-            progressCallback({
-              response: 'progress',
-              mapResults: event.data.mapResults,
-              processedFiles: mapResultsList.length,
-              totalFiles:
-                filesToProcess.length + mapResultsList.length + workersActive,
-            })
+            // In skipWrite mode (collection phase), we don't care about processed file counts
+            // We just want to send the mapping results for patient data extraction
+            if (isSkipWriteMode) {
+              progressCallback({
+                response: 'progress',
+                mapResults: event.data.mapResults,
+                // Don't send file counts in collection phase
+                processedFiles: 0,
+                totalFiles: 0,
+              })
+            } else {
+              // In normal mode (processing phase), send file counts
+              // Ensure totalFiles doesn't change during processing to avoid progress going over 100%
+              const calculatedTotal = Math.max(
+                totalFilesFound,
+                mapResultsList.length + workersActive + filesToProcess.length,
+              )
+              progressCallback({
+                response: 'progress',
+                mapResults: event.data.mapResults,
+                processedFiles: Math.min(
+                  mapResultsList.length,
+                  calculatedTotal,
+                ),
+                totalFiles: calculatedTotal,
+              })
+            }
           }
 
           dispatchMappingJobs()
@@ -145,6 +170,27 @@ function initializeMappingWorkers() {
     /* eslint-enable no-loop-func */
 
     availableMappingWorkers.push(mappingWorker)
+  }
+}
+
+// Reset all progress-related variables and counters
+function resetProgress() {
+  // Reset worker tracking
+  filesToProcess = []
+  directoryScanFinished = false
+  workersActive = 0
+  mapResultsList = []
+  totalFilesFound = 0 // Reset total file count
+
+  // Clear worker options
+  mappingWorkerOptions = {}
+
+  // Terminate and remove any existing workers
+  while (availableMappingWorkers.length) {
+    const worker = availableMappingWorkers.pop()
+    if (worker) {
+      worker.terminate()
+    }
   }
 }
 
@@ -174,6 +220,31 @@ function dispatchMappingJobs() {
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
     console.log(mapResultsList)
+
+    // Send a final completion signal if in skipWrite mode
+    // This helps the UI know when to extract patient data
+    if (isSkipWriteMode && progressCallback) {
+      progressCallback({
+        response: 'progress',
+        processedFiles: mapResultsList.length,
+        totalFiles: mapResultsList.length, // Equal numbers indicate completion
+        mapResults:
+          mapResultsList.length > 0
+            ? mapResultsList[mapResultsList.length - 1]
+            : undefined,
+      })
+    } else if (progressCallback) {
+      // Send final progress with guaranteed 100% completion
+      progressCallback({
+        response: 'progress',
+        processedFiles: totalFilesFound,
+        totalFiles: totalFilesFound,
+        mapResults:
+          mapResultsList.length > 0
+            ? mapResultsList[mapResultsList.length - 1]
+            : undefined,
+      })
+    }
   }
 }
 
@@ -205,10 +276,7 @@ async function collectMappingOptions(
   //
   // assumes all fields are not repeated across rows
   let columnMappings: TColumnMappings | undefined
-  if (
-    organizeOptions.table &&
-    (spec.additionalData || hasDeIdMap)
-  ) {
+  if (organizeOptions.table && (spec.additionalData || hasDeIdMap)) {
     const fullMap = Object.assign(
       {},
       spec.additionalData?.mapping,
@@ -232,6 +300,12 @@ async function apply(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
 ) {
+  // Reset all counters to ensure clean state
+  resetCounts()
+
+  // Track if we're in skipWrite mode
+  isSkipWriteMode = organizeOptions.skipWrite ?? false
+
   progressCallback = onProgress
 
   const fileListWorker = initializeFileListWorker()

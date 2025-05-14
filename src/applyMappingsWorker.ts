@@ -1,6 +1,7 @@
 import * as dcmjs from 'dcmjs'
 import createNestedDirectories from './createNestedDirectories'
 import dcmOrganize from './dcmOrganize'
+import { resetCounts } from './UniqueNumbers'
 import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 
 declare var self: Window & typeof globalThis
@@ -14,6 +15,9 @@ self.addEventListener('message', (event) => {
           event.data.outputDirectory,
           event.data.mappingOptions,
         ).then((mapResults) => {
+          // Reset counts to prevent duplicates in progressive messages
+          resetCounts()
+
           // Send finished message for completion
           self.postMessage({
             response: 'finished',
