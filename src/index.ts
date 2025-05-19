@@ -222,7 +222,9 @@ async function collectMappingOptions(
   return { outputDirectory, columnMappings, curationSpec, skipWrite }
 }
 
-function queueFilesForMapping(organizeOptions: OrganizeOptions) {
+function queueFilesForMapping(
+  organizeOptions: Extract<OrganizeOptions, { inputType: 'files' }>,
+) {
   organizeOptions.inputFiles.forEach((inputFile) => {
     const fileInfo: TFileInfo = {
       path: '',
@@ -258,13 +260,13 @@ async function apply(
   // If the request provides a list of File objects,
   // send them to the mapping workers directly.
   //
-  if (organizeOptions.inputDirectory) {
+  if (organizeOptions.inputType === 'directory') {
     const fileListWorker = initializeFileListWorker()
     fileListWorker.postMessage({
       request: 'scan',
       directoryHandle: organizeOptions.inputDirectory,
     })
-  } else if (organizeOptions.inputFiles) {
+  } else if (organizeOptions.inputType === 'files') {
     queueFilesForMapping(organizeOptions)
   } else {
     console.error('Need either inputFiles or inputDirectory')
