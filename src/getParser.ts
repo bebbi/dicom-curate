@@ -91,8 +91,8 @@ export default function getParser(
   const getMapping =
     !additionalData || !columnMappings
       ? undefined
-      // key: one of the keys defined in the `mapping` object
-      : function getMapping(key: string) {
+      : // key: one of the keys defined in the `mapping` object
+        function getMapping(key: string) {
           const { mapping } = additionalData
           const { value: valueFn } = mapping[key]
           const value = valueFn({ getDicom, getFilePathComp, getFrom })

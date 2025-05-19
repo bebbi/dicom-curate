@@ -205,10 +205,7 @@ async function collectMappingOptions(
   //
   // assumes all fields are not repeated across rows
   let columnMappings: TColumnMappings | undefined
-  if (
-    organizeOptions.table &&
-    (spec.additionalData || hasDeIdMap)
-  ) {
+  if (organizeOptions.table && (spec.additionalData || hasDeIdMap)) {
     const fullMap = Object.assign(
       {},
       spec.additionalData?.mapping,

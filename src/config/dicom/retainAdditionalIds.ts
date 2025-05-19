@@ -99,5 +99,5 @@ export const retainAdditionalIds: {
   CarrierID: false,
   FileSetID: false,
   FileSetDescriptorFileID: false,
-  ReferencedFileID: false
+  ReferencedFileID: false,
 }
