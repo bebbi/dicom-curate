@@ -22,13 +22,17 @@ export type TPs315Options = {
   retainInstitutionIdentityOption: boolean
 }
 
-export interface OrganizeOptions {
-  inputDirectory: FileSystemDirectoryHandle
+
+
+export type OrganizeOptions = {
   outputDirectory: FileSystemDirectoryHandle
   curationSpec: string
   table?: Row[]
   skipWrite?: boolean
-}
+} & (
+  | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
+  | { inputType: 'files'; inputFiles: File[] }
+)
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
