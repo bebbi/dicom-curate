@@ -223,13 +223,14 @@ async function collectMappingOptions(
 }
 
 function queueFilesForMapping(organizeOptions: OrganizeOptions) {
-  organizeOptions.inputFiles.forEach( (inputFile) => {
+  organizeOptions.inputFiles.forEach((inputFile) => {
     const fileInfo: TFileInfo = {
-      path: "",
+      path: '',
       name: inputFile.name,
       size: inputFile.size,
       fileHandle: undefined,
-      blob: inputFile; // a File isA Blob
+      // a File is a Blob
+      blob: inputFile,
     }
     filesToProcess.push(fileInfo)
     dispatchMappingJobs()
@@ -242,7 +243,6 @@ async function apply(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
 ) {
-  console.log("--- ORGANIZING ---")
   progressCallback = onProgress
 
   // create the mapping workers
@@ -265,10 +265,10 @@ async function apply(
       request: 'scan',
       directoryHandle: organizeOptions.inputDirectory,
     })
-  } else if(organizeOptions.inputFiles) {
+  } else if (organizeOptions.inputFiles) {
     queueFilesForMapping(organizeOptions)
   } else {
-    console.error("Need either inputFiles or inputDirectory")
+    console.error('Need either inputFiles or inputDirectory')
   }
   dispatchMappingJobs()
 }
