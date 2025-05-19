@@ -69,7 +69,7 @@ function initializeFileListWorker() {
   fileListWorker.addEventListener('message', (event) => {
     switch (event.data.response) {
       case 'file':
-        filesToProcess.push(event.data.fileInfo)
+        filesToProcess.push(event.data.fileInfo as TFileInfo)
         // Could do some throttling:
         // if (filesToProcess.length > 10) {
         //   fileListWorker.postMessage({ request: 'stop' })
@@ -228,8 +228,7 @@ function queueFilesForMapping(organizeOptions: OrganizeOptions) {
       path: '',
       name: inputFile.name,
       size: inputFile.size,
-      fileHandle: undefined,
-      // a File is a Blob
+      kind: 'blob',
       blob: inputFile,
     }
     filesToProcess.push(fileInfo)

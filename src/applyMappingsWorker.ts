@@ -44,7 +44,7 @@ async function applyMappings(
   // First, read the dicom instance data from the file handle or blob
   //
   let file
-  if (fileInfo.blob) {
+  if (fileInfo.kind === 'blob') {
     file = fileInfo.blob
   } else {
     file = await fileInfo.fileHandle.getFile()

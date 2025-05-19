@@ -1,3 +1,5 @@
+import { TFileInfo } from './types'
+
 // For editor linter to treat the file as an es module, avoiding the error on
 // keepScanning being redeclared
 export {}
@@ -34,8 +36,9 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
             path: prefix,
             name: entry.name,
             size: file.size,
-            fileHandle: entry,
-          },
+            kind: 'handle',
+            fileHandle: entry as FileSystemFileHandle,
+          } satisfies TFileInfo,
         })
       } else if (entry.kind === 'directory' && keepScanning) {
         await traverse(
