@@ -36,12 +36,10 @@ export type TMappingOptions = {
   skipWrite?: boolean
 }
 
-export type TFileInfo = {
-  path: string
-  name: string
-  size: number
-  fileHandle: FileSystemFileHandle
-}
+export type TFileInfo = { path: string; name: string; size: number } & (
+  | { kind: 'handle'; fileHandle: FileSystemFileHandle }
+  | { kind: 'blob'; blob: Blob }
+)
 
 // Includes deep sequences
 type TAttr = { [name: string]: string | TAttr[] }
