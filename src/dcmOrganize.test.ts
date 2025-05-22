@@ -6,38 +6,26 @@ import type { TMappingOptions, TCurationSpecification } from './types'
 import { clearCaches } from './clearCaches'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { allElements } from '../testdata/allElements'
-import * as fs from 'fs'
-import * as path from 'path'
+import { sampleCurationSpecification } from './config/sampleBatchCurationSpecification'
 
-const specPath = path.resolve(
-  __dirname,
-  '../testdata/sampleCurationSpecification.js',
-)
-const specString = fs.readFileSync(specPath, 'utf8')
-
-// Like default mappingSpec, but custom options, please no dicomHeader!
+// Like default curation spec with dicom header modifications ignored, plus custom options
 function specWithOptions(options: Partial<TCurationSpecification>) {
-  return `curationSpecification = () => {
-    let curationSpecification
-    eval(\`${specString}\`)
-    const spec = {
-      ...curationSpecification(),
-      ...${JSON.stringify(options, (key, value) => {
-        if (typeof value === 'function') {
-          return value.toString()
-        }
-        return value
-      })}
-    }
-    // Avoid any dicom header changes
-    const mods = spec.modifications
-    spec.modifications = function(parser) { return {...mods(parser), dicomHeader: {}} }
-    return spec
-  }`
+  return () => ({
+    ...sampleCurationSpecification(),
+    ...options,
+    // but avoid DICOM header changes
+    modifications: function (parser: any) {
+      const mods = sampleCurationSpecification().modifications(parser)
+      return {
+        ...mods,
+        dicomHeader: {},
+      }
+    },
+  })
 }
 
 const passingFilename =
-  'Sample_Protocol_Number/Sample_CRO/ABC12-1234/Visit 1/Sample_Series_Desciption/0/test.dcm'
+  'Sample_Protocol_Number/Sample_CRO/AB12-123/Visit 1/PET-Abdomen/0/test.dcm'
 
 describe('dcmOrganize basic functionality', () => {
   // Clear UID cache after each test
@@ -47,11 +35,7 @@ describe('dcmOrganize basic functionality', () => {
 
   // Base test options
   const defaultTestOptions: TMappingOptions = {
-    columnMappings: {
-      headers: [],
-      rowValues: {},
-      rowIndexByFieldValue: {},
-    },
+    columnMappings: { rows: [], rowIndexByFieldValue: {} },
     curationSpec: specWithOptions({
       dicomPS315EOptions: {
         cleanDescriptorsOption: true,

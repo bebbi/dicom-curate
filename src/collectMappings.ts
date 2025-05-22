@@ -48,8 +48,8 @@ export default function collectMappings(
     validation: () => ({ errors: [] }),
   }
 
-  // TODO: try/except with useful error hinting at curationSpec
-  eval(mappingOptions.curationSpec)
+  // This is a save eval because the api receives a real function.
+  eval(`curationSpecification = ${mappingOptions.curationSpecStr}`)
 
   const spec = curationSpecification()
 

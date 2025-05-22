@@ -28,14 +28,17 @@ apply(options)
 
 An example mapping script file:
 
-<!-- Snippet auto-generated from ../testdata/sampleCurationSpecification.js -->
-```js
-curationSpecification = () => {
+<!-- Snippet auto-generated from src/config/sampleBatchCurationSpecification.ts -->
+```ts
+import type { TCurationSpecification } from 'dicom-curate';/*
+ * Curation specification for batch-curating DICOM files.
+ */
+export function sampleBatchCurationSpecification(): TCurationSpecification {
   // Confirm allowed identifiers for this transfer.
   const identifiers = {
     protocolNumber: 'Sample_Protocol_Number',
     activityProviderName: 'Sample_CRO',
-    centerSubjectId: /^[A-Z]{3}\d{2}-\d{4}$/,
+    centerSubjectId: /^[A-Z]{2}\d{2}-\d{3}$/,
     timepointNames: ['Visit 1', 'Visit 2', 'Visit 3'],
     // Folder "scan": the trial-specific/provider-assigned series name
     scanNames: ['3DT1 Sagittal', 'PET-Abdomen'],
@@ -47,10 +50,23 @@ curationSpecification = () => {
     inputPathPattern:
       'protocolNumber/activityProvider/centerSubjectId/timepoint/scan',
 
-    // A CSV file is required if mappingCsvHeaders is not empty.
-    mappingCsvHeaders: {
-      //   CURR_ID: identifiers.centerSubjectId,
-      //   NEW_ID: /\d+/,
+    additionalData: {
+      // collect from a csv file. A client can use regex to validate the input.
+      type: 'load',
+      collect: {
+        CURR_ID: identifiers.centerSubjectId,
+        StudyDescription: identifiers.timepointNames,
+        MAPPED_ID: /BLIND_\d+/,
+      },
+      // With this, can refer to mappings as parser.getMapping('blindedId')
+      mapping: {
+        // Using the CSV
+        blindedId: {
+          value: (parser) => parser.getDicom('PatientID'),
+          lookup: (row) => row['CURR_ID'],
+          replace: (row) => row['MAPPED_ID'],
+        },
+      },
     },
 
     version: '1.1',
@@ -84,7 +100,7 @@ curationSpecification = () => {
           // Align the PatientID DICOM header with the centerSubjectId folder name.
           PatientID: centerSubjectId,
           // This example maps PatientIDs based on the mapping CSV file.
-          // PatientID: parser.getMapping(parser.getDicom('PatientID'), 'CURR_ID', 'MAPPED_ID'),
+          // PatientID: parser.getMapping('blindedId'),
           PatientName: centerSubjectId,
           // Align the StudyDescription DICOM header with the timepoint folder name.
           StudyDescription: parser.getFilePathComp('timepoint'),

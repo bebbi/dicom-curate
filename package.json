@@ -49,6 +49,8 @@
     "generate:unitTestSample": "tsx scripts/generateSampleDicomData.ts"
   },
   "dependencies": {
+    "acorn": "^8.14.1",
+    "acorn-globals": "^7.0.1",
     "dcmjs": "^0.38.3",
     "iso8601-duration": "^2.1.2",
     "js-sha256": "^0.11.0",
@@ -64,6 +66,7 @@
     "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
     "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
     "xml2js": "^0.6.2"
   },
   "license": "MIT",
