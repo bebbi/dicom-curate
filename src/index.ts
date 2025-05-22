@@ -1,12 +1,14 @@
 import { extractColumnMappings, TColumnMappings, Row } from './csvMapping'
 import { clearCaches } from './clearCaches'
+import { assertNoClosure } from './checkClosure'
+
 import type {
   TMappingOptions,
   TMapResults,
   TFileInfo,
   OrganizeOptions,
   TProgressMessage,
-  TCurationSpecification,
+  TPs315Options,
   TMoveTemporalInformation,
 } from './types'
 import type { TMappedValues } from './csvMapping'
@@ -26,7 +28,7 @@ export type {
 } from './types'
 
 export { specVersion } from './config/specVersion'
-export { sampleSpecification } from './config/sampleSpecification'
+export { sample2PassCurationSpecification as sampleSpecification } from './config/sample2PassCurationSpecification'
 export { csvTextToRows } from './csvMapping'
 export type { Row } from './csvMapping'
 
@@ -35,7 +37,9 @@ const mappingWorkerCount = navigator.hardwareConcurrency
 let filesToProcess: TFileInfo[] = []
 let directoryScanFinished = false
 
-function toDeidMap(deIdOptions: TMoveTemporalInformation): TMappedValues {
+function getTemporalMapping(
+  deIdOptions: TMoveTemporalInformation,
+): TMappedValues {
   const [source, identifier, fromHeader, toHeader] = deIdOptions
   return {
     [toHeader]: {
@@ -44,6 +48,17 @@ function toDeidMap(deIdOptions: TMoveTemporalInformation): TMappedValues {
       replace: (row) => row[toHeader],
     },
   }
+}
+
+function hasTemporalMap(
+  deIdOpts: TPs315Options | 'Off',
+): deIdOpts is TPs315Options & {
+  retainLongitudinalTemporalInformationOptions: TMoveTemporalInformation
+} {
+  return (
+    deIdOpts !== 'Off' &&
+    Array.isArray(deIdOpts.retainLongitudinalTemporalInformationOptions)
+  )
 }
 
 /*
@@ -188,38 +203,41 @@ async function collectMappingOptions(
   // then, get the mapping functions
   //
   const curationSpec = organizeOptions.curationSpec
+  // throw on invalid curation spec
+  assertNoClosure(curationSpec)
 
-  // FIXME: stop eval once spec is a real function
-  let curationSpecification: () => Partial<TCurationSpecification> = () => ({})
-  eval(curationSpec)
-  const spec = curationSpecification()
+  const { dicomPS315EOptions: deIdOpts, additionalData } = curationSpec()
 
-  const deId = spec.dicomPS315EOptions
-  const hasDeIdMap =
-    deId !== 'Off' &&
-    Array.isArray(deId?.retainLongitudinalTemporalInformationOptions)
-
-  //
-  // then, get the field mappings from the csv file
-  //
-  // assumes all fields are not repeated across rows
+  // Parse the column mappings if the spec requires them and they exist.
+  // The need for mapping can come from additionalData or from the
+  // retainLongitudinalTemporalInformationOptions option
   let columnMappings: TColumnMappings | undefined
-  if (organizeOptions.table && (spec.additionalData || hasDeIdMap)) {
-    const fullMap = Object.assign(
-      {},
-      spec.additionalData?.mapping,
-      hasDeIdMap &&
-        toDeidMap(
-          // Type cast because of hasDeIdMap check
-          deId.retainLongitudinalTemporalInformationOptions as TMoveTemporalInformation,
+  if (organizeOptions.table) {
+    let combinedMap: TMappedValues = {}
+    if (additionalData) {
+      Object.assign(combinedMap, additionalData.mapping)
+    }
+
+    if (hasTemporalMap(deIdOpts)) {
+      Object.assign(
+        combinedMap,
+        getTemporalMapping(
+          deIdOpts.retainLongitudinalTemporalInformationOptions,
         ),
-    )
-    columnMappings = extractColumnMappings(organizeOptions.table, fullMap)
+      )
+    }
+
+    columnMappings = extractColumnMappings(organizeOptions.table, combinedMap)
   }
 
   const skipWrite = organizeOptions.skipWrite ?? false
 
-  return { outputDirectory, columnMappings, curationSpec, skipWrite }
+  return {
+    outputDirectory,
+    columnMappings,
+    curationSpecStr: curationSpec.toString(),
+    skipWrite,
+  }
 }
 
 function queueFilesForMapping(
@@ -269,7 +287,7 @@ async function apply(
   } else if (organizeOptions.inputType === 'files') {
     queueFilesForMapping(organizeOptions)
   } else {
-    console.error('Need either inputFiles or inputDirectory')
+    console.error('`inputType` should be "directory" or "files"')
   }
   dispatchMappingJobs()
 }

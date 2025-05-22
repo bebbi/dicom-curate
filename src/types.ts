@@ -22,11 +22,9 @@ export type TPs315Options = {
   retainInstitutionIdentityOption: boolean
 }
 
-
-
 export type OrganizeOptions = {
   outputDirectory: FileSystemDirectoryHandle
-  curationSpec: string
+  curationSpec: () => TCurationSpecification
   table?: Row[]
   skipWrite?: boolean
 } & (
@@ -36,7 +34,8 @@ export type OrganizeOptions = {
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
-  curationSpec: string
+  // string for passing to workers
+  curationSpecStr: string
   skipWrite?: boolean
 }
 
@@ -104,13 +103,13 @@ export type TParser = {
 type TMappingInputDirect = {
   // load: csv file
   type: 'load'
-  collect: Record<string, RegExp>
+  collect: Record<string, RegExp | string[]>
 }
 
 type TMappingTwoPassInfo = [name: string, value: string]
 type TMappingTwoPassCollect = [
   value: string,
-  format: RegExp,
+  format: RegExp | string[],
   lookupField: string,
 ]
 
