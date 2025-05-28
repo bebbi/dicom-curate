@@ -97,7 +97,7 @@ export default function getParser(
           const { value: valueFn } = mapping[key]
           const value = valueFn({ getDicom, getFilePathComp, getFrom })
 
-          return getCsvMapping(columnMappings, mapping, 'blindedId', value)
+          return getCsvMapping(columnMappings, mapping, key, value)
         }
 
   function missingDicom(attrName: string) {
