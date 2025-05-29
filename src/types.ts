@@ -64,6 +64,7 @@ export type TMapResults = {
     info: TMappingTwoPassInfo[]
     collectByValue: [...TMappingTwoPassCollect, string | number][]
   }
+  mappedBlob?: Blob
 }
 
 export type TPs315EElement = {

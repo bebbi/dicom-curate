@@ -32,7 +32,7 @@ self.addEventListener('message', (event) => {
 
 async function applyMappings(
   fileInfo: TFileInfo,
-  outputDirectory: FileSystemDirectoryHandle,
+  outputDirectory: FileSystemDirectoryHandle | undefined,
   mappingOptions: TMappingOptions,
 ): Promise<
   // anomalies is minimally present.
@@ -77,19 +77,25 @@ async function applyMappings(
 
     // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
     const modifiedArrayBuffer = mappedDicomData.write()
-    const subDirectoryHandle = await createNestedDirectories(
-      outputDirectory,
-      dirPath,
-    )
-    if (subDirectoryHandle === false) {
-      console.error(`Cannot create directory for ${dirPath}`)
+
+    if (outputDirectory) {
+      const subDirectoryHandle = await createNestedDirectories(
+        outputDirectory,
+        dirPath,
+      )
+      if (subDirectoryHandle === false) {
+        console.error(`Cannot create directory for ${dirPath}`)
+      } else {
+        const fileHandle = await subDirectoryHandle.getFileHandle(fileName, {
+          create: true,
+        })
+        const writable = await fileHandle.createWritable()
+        await writable.write(modifiedArrayBuffer)
+        await writable.close()
+      }
     } else {
-      const fileHandle = await subDirectoryHandle.getFileHandle(fileName, {
-        create: true,
-      })
-      const writable = await fileHandle.createWritable()
-      await writable.write(modifiedArrayBuffer)
-      await writable.close()
+      clonedMapResults.mappedBlob = new Blob([modifiedArrayBuffer],
+                                             { type: 'application/octet-stream' });
     }
   }
 
