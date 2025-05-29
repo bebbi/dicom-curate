@@ -1,1 +1,1 @@
-export const specVersion = '1.1'
+export const specVersion = '2.0'
