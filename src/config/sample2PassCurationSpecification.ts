@@ -4,6 +4,13 @@ import type { TCurationSpecification } from '../types'
  * Sample of a 2-pass curation specification.
  * First pass: collect the mapping input from the listing
  * Second pass: load the mapping output from the CSV file
+ * 
+ * First pass to be called without getMapping() calls:
+ * firstPassSpec() { return {
+ *   ...sample2PassCurationSpecification(),
+ *   modifications(parser) { return {}},
+ *   validation(parser) { return {}},
+ * }}
  */
 export function sample2PassCurationSpecification(): TCurationSpecification {
   // Confirm allowed identifiers for this transfer.
