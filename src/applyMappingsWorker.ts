@@ -101,3 +101,5 @@ async function applyMappings(
 
   return clonedMapResults
 }
+
+export { applyMappings }

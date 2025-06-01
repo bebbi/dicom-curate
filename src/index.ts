@@ -1,6 +1,7 @@
 import { extractColumnMappings, TColumnMappings, Row } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import { assertNoClosure } from './checkClosure'
+import { applyMappings } from './applyMappingsWorker'
 
 import type {
   TMappingOptions,
@@ -292,4 +293,4 @@ async function apply(
   dispatchMappingJobs()
 }
 
-export { apply }
+export { apply, applyMappings }
