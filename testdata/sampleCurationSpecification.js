@@ -33,7 +33,7 @@ export function sampleBatchCurationSpecification() {
                 },
             },
         },
-        version: '1.1',
+        version: '2.0',
         identifiers,
         // This specifies the standardized DICOM de-identification
         dicomPS315EOptions: {
