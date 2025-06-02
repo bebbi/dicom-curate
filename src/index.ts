@@ -278,4 +278,4 @@ async function apply(
   dispatchMappingJobs()
 }
 
-export { apply, curateFile, clearCaches }
+export { apply, curateFile, extractColumnMappings, clearCaches }
