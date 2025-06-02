@@ -1,6 +1,6 @@
 import * as dcmjs from 'dcmjs'
 import createNestedDirectories from './createNestedDirectories'
-import dcmOrganize from './dcmOrganize'
+import curateDict from './curateDict'
 import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 
 export async function curateFile(
@@ -38,7 +38,7 @@ export async function curateFile(
   }
 
   const { dicomData: mappedDicomData, mapResults: clonedMapResults } =
-    dcmOrganize(`${fileInfo.path}/${fileInfo.name}`, dicomData, mappingOptions)
+    curateDict(`${fileInfo.path}/${fileInfo.name}`, dicomData, mappingOptions)
 
   if (!mappingOptions.skipWrite) {
     // Finally, write the results
