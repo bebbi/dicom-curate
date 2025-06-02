@@ -34,8 +34,7 @@ export type OrganizeOptions = {
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
-  // string for passing to workers
-  curationSpecStr: string
+  curationSpec: () => TCurationSpecification
   skipWrite?: boolean
 }
 

@@ -1,7 +1,7 @@
 import { extractColumnMappings, TColumnMappings } from './csvMapping'
 import { clearCaches } from './clearCaches'
-import { assertNoClosure } from './checkClosure'
 import { curateFile } from './curateFile'
+import { serializeMappingOptions } from './serializeMappingOptions'
 
 import type {
   TMappingOptions,
@@ -168,12 +168,14 @@ function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const fileInfo = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
-    const { outputDirectory, ...mappingOptions } = mappingWorkerOptions
+    const { outputDirectory, ...mappingOptions } =
+      // Not partial anymore.
+      mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
       request: 'apply',
       fileInfo,
       outputDirectory,
-      mappingOptions,
+      serializedMappingOptions: serializeMappingOptions(mappingOptions),
     })
     workersActive += 1
   }
@@ -204,8 +206,6 @@ async function collectMappingOptions(
   // then, get the mapping functions
   //
   const curationSpec = organizeOptions.curationSpec
-  // throw on invalid curation spec
-  assertNoClosure(curationSpec)
 
   const { dicomPS315EOptions: deIdOpts, additionalData } = curationSpec()
 
@@ -233,12 +233,7 @@ async function collectMappingOptions(
 
   const skipWrite = organizeOptions.skipWrite ?? false
 
-  return {
-    outputDirectory,
-    columnMappings,
-    curationSpecStr: curationSpec.toString(),
-    skipWrite,
-  }
+  return { outputDirectory, columnMappings, curationSpec, skipWrite }
 }
 
 function queueFilesForMapping(
