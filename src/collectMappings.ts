@@ -34,7 +34,6 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  let curationSpecification: () => Partial<TCurationSpecification> = () => ({})
   let finalSpec: Omit<TCurationSpecification, 'identifiers' | 'version'> = {
     dicomPS315EOptions: defaultPs315Options,
     inputPathPattern: '',
@@ -48,10 +47,7 @@ export default function collectMappings(
     validation: () => ({ errors: [] }),
   }
 
-  // This is a save eval because the api receives a real function.
-  eval(`curationSpecification = ${mappingOptions.curationSpecStr}`)
-
-  const spec = curationSpecification()
+  const spec = mappingOptions.curationSpec()
 
   if (spec.version !== specVersion) {
     throw new Error(
