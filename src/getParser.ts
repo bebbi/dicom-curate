@@ -3,7 +3,6 @@ import { getCsvMapping, TColumnMappings } from './csvMapping'
 import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
 import type { TParser, TCurationSpecification } from './types'
-import { add } from 'lodash'
 
 export const FILEBASENAME: symbol = Symbol('fileBasename')
 export const FILENAME: symbol = Symbol('filename')

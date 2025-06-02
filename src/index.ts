@@ -1,4 +1,4 @@
-import { extractColumnMappings, TColumnMappings, Row } from './csvMapping'
+import { extractColumnMappings, TColumnMappings } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import { assertNoClosure } from './checkClosure'
 import { curateFile } from './curateFile'
