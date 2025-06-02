@@ -15,7 +15,7 @@ import type {
 import type { TMappedValues } from './csvMapping'
 
 type TMappingWorkerOptions = TMappingOptions & {
-  outputDirectory: FileSystemDirectoryHandle
+  outputDirectory?: FileSystemDirectoryHandle
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void

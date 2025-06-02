@@ -23,7 +23,7 @@ export type TPs315Options = {
 }
 
 export type OrganizeOptions = {
-  outputDirectory: FileSystemDirectoryHandle
+  outputDirectory?: FileSystemDirectoryHandle
   curationSpec: () => TCurationSpecification
   table?: Row[]
   skipWrite?: boolean
