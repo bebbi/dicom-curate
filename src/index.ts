@@ -288,4 +288,4 @@ async function apply(
   dispatchMappingJobs()
 }
 
-export { apply, curateFile }
+export { apply, curateFile, clearCaches }
