@@ -4,22 +4,19 @@ import hashUid from './hashUid'
 import replaceUid from './replaceUid'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
-import { offsetDateTime, iso8601 } from './offsetDateTime'
+import { offsetDateTime } from './offsetDateTime'
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
 import { uidRegistryPS3_06_A1 } from './config/dicom/uidRegistryPS3_06_A1'
 import { getDcmOrganizeStamp } from './config/dicom/dcmOrganizeStamp'
-import { getCsvMapping } from './csvMapping'
 import { get as _get } from 'lodash'
 
 import type { TNaturalData } from 'dcmjs'
 import type {
+  Iso8601Duration,
   TPs315Options,
   TPs315EElement,
   TMapResults,
-  TParser,
-  TCurationSpecification,
 } from './types'
-import type { TColumnMappings } from './csvMapping'
 
 const nameMap = dcmjs.data.DicomMetaDictionary.nameMap
 
@@ -67,17 +64,13 @@ const ps315EElements = rawPs315EElements.map((elm) => {
 
 export default function deidentifyPS315E({
   naturalData,
-  columnMappings,
   dicomPS315EOptions,
-  curationSpec,
-  parser,
+  dateOffset,
   mapResults,
 }: {
   naturalData: TNaturalData
-  columnMappings?: TColumnMappings
   dicomPS315EOptions: TPs315Options
-  curationSpec: Omit<TCurationSpecification, 'identifiers' | 'version'>
-  parser: TParser
+  dateOffset?: Iso8601Duration
   mapResults: TMapResults
 }) {
   const {
@@ -249,41 +242,37 @@ export default function deidentifyPS315E({
                 'removeTemporalOpt',
                 undefined,
               ]
-            } else if (Array.isArray(dateOpt)) {
-              if (!columnMappings) {
-                throw new Error(
-                  'retainLongitudinalTemporalInformationOptions is array but no mapping table provided',
-                )
-              }
-              const [source, identifier, fromHeader, toHeader] = dateOpt
-              const sourceValue = parser.getFrom(source, identifier)
-              let error = ''
-              if (sourceValue) {
-                const duration = getCsvMapping(
-                  columnMappings,
-                  curationSpec.additionalData!.mapping,
-                  toHeader,
-                  sourceValue,
-                )
-                if (typeof duration === 'string' && duration.match(iso8601)) {
-                  try {
-                    mapResults.mappings[attrPath] = [
-                      data[name],
-                      'replace',
-                      'offsetTemporalOpt',
-                      offsetDateTime(data[name], duration),
-                    ]
-                  } catch (e) {
-                    error = `Date mapping error: Date mapping failed for attribute ${attrPath}: "${data[name]}"`
-                  }
-                } else
-                  error = `Date mapping error: An ISO-8601 compatible date offset was not found for value ${sourceValue} at columns ${fromHeader}, ${toHeader}.`
+            } else if (dateOpt === 'Offset') {
+              let failed = false
+
+              if (typeof dateOffset !== 'undefined') {
+                try {
+                  mapResults.mappings[attrPath] = [
+                    data[name],
+                    'replace',
+                    'offsetTemporalOpt',
+                    offsetDateTime(data[name], dateOffset),
+                  ]
+                } catch (e) {
+                  failed = true
+                  mapResults.errors.push(
+                    `Offset calculation failed, date mapping failed for attribute ${attrPath}: "${data[name]}". Removing date.`,
+                  )
+                }
               } else {
-                error = `Date mapping error: Did not find a value in ${source} for ${identifier}.`
+                failed = true
+                mapResults.errors.push(
+                  `Missing dateOffset, date mapping failed for attribute ${attrPath}: "${data[name]}". Removing date.`,
+                )
               }
 
-              if (error) {
-                mapResults.errors.push(error)
+              if (failed) {
+                mapResults.mappings[attrPath] = [
+                  data[name],
+                  'delete',
+                  'removeTemporalOpt',
+                  undefined,
+                ]
               }
             }
           }

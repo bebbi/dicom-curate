@@ -1,20 +1,12 @@
 import { TColumnMappings, TMappedValues, Row } from './csvMapping'
 import { TNaturalData } from 'dcmjs'
 
-export type TMoveTemporalInformation = [
-  'dicom' | 'filePath',
-  identifier: string,
-  fromHeader: string,
-  toHeader: string,
-]
+export type Iso8601Duration = string
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
   cleanDescriptorsExceptions: string[]
-  retainLongitudinalTemporalInformationOptions:
-    | 'Full'
-    | 'Off'
-    | TMoveTemporalInformation
+  retainLongitudinalTemporalInformationOptions: 'Full' | 'Off' | 'Offset'
   retainPatientCharacteristicsOption: false | string[]
   retainDeviceIdentityOption: boolean
   retainUIDsOption: 'On' | 'Off' | 'Hashed'
@@ -27,6 +19,7 @@ export type OrganizeOptions = {
   curationSpec: () => TCurationSpecification
   table?: Row[]
   skipWrite?: boolean
+  dateOffset?: Iso8601Duration
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
@@ -36,6 +29,7 @@ export type TMappingOptions = {
   columnMappings?: TColumnMappings
   curationSpec: () => TCurationSpecification
   skipWrite?: boolean
+  dateOffset?: Iso8601Duration
 }
 
 export type TFileInfo = { path: string; name: string; size: number } & (
