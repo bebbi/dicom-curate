@@ -6,7 +6,7 @@ import type { TMappingOptions } from './types'
 
 import { set as _set, unset as _unset, cloneDeep as _cloneDeep } from 'lodash'
 
-export default function dcmOrganize(
+export default function curateDict(
   inputFilePath: string,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,

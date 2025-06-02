@@ -1,4 +1,4 @@
-import dcmOrganize from './dcmOrganize'
+import curateDict from './curateDict'
 import { sample } from '../testdata/sample'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
@@ -6,16 +6,18 @@ import type { TMappingOptions, TCurationSpecification } from './types'
 import { clearCaches } from './clearCaches'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { allElements } from '../testdata/allElements'
-import { sampleCurationSpecification } from './config/sampleBatchCurationSpecification'
+import { sampleBatchCurationSpecification } from './config/sampleBatchCurationSpecification'
 
 // Like default curation spec with dicom header modifications ignored, plus custom options
 function specWithOptions(options: Partial<TCurationSpecification>) {
+  const batchSpec = sampleBatchCurationSpecification()
+
   return () => ({
-    ...sampleCurationSpecification(),
+    ...batchSpec,
     ...options,
     // but avoid DICOM header changes
     modifications: function (parser: any) {
-      const mods = sampleCurationSpecification().modifications(parser)
+      const mods = batchSpec.modifications(parser)
       return {
         ...mods,
         dicomHeader: {},
@@ -27,7 +29,7 @@ function specWithOptions(options: Partial<TCurationSpecification>) {
 const passingFilename =
   'Sample_Protocol_Number/Sample_CRO/AB12-123/Visit 1/PET-Abdomen/0/test.dcm'
 
-describe('dcmOrganize basic functionality', () => {
+describe('curateDict basic functionality', () => {
   // Clear UID cache after each test
   afterEach(() => {
     clearCaches()
@@ -207,7 +209,7 @@ describe('dcmOrganize basic functionality', () => {
 
   // TODO: Fix bug, quarantine tags are being removed from the final dicom data
   it('captures private tags to be quarantined when retainSafePrivateOption is true', () => {
-    const result = dcmOrganize(passingFilename, sample, defaultTestOptions)
+    const result = curateDict(passingFilename, sample, defaultTestOptions)
     verifyNoErrors(result)
 
     // Verify private tags are quarantined
@@ -234,7 +236,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withPrivateTagsRemoved)
+    const result = curateDict(passingFilename, sample, withPrivateTagsRemoved)
     verifyNoErrors(result)
 
     // Verify private tags are not quarantined
@@ -270,7 +272,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withRetainedUIDs)
+    const result = curateDict(passingFilename, sample, withRetainedUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -305,7 +307,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, optionsWithHashedUIDs)
+    const result = curateDict(passingFilename, sample, optionsWithHashedUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data and its hashed value
@@ -350,7 +352,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withArbitraryUIDs)
+    const result = curateDict(passingFilename, sample, withArbitraryUIDs)
     verifyNoErrors(result)
 
     // Only known UID found in sample data
@@ -409,7 +411,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
+    const result = curateDict(
       passingFilename,
       sample,
       optionsWithAllDescriptorsRemoved,
@@ -489,7 +491,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withoutCleanDescriptors)
+    const result = curateDict(passingFilename, sample, withoutCleanDescriptors)
     verifyNoErrors(result)
 
     // Find all mappings related to descriptors (ending with Comment, Comments, or Description)
@@ -544,11 +546,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      passingFilename,
-      sample,
-      withDescriptorExceptions,
-    )
+    const result = curateDict(passingFilename, sample, withDescriptorExceptions)
     verifyNoErrors(result)
 
     // Verify that excepted descriptors are preserved in the dicomData
@@ -601,7 +599,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
+    const result = curateDict(
       passingFilename,
       sample,
       withPatientCharacteristics,
@@ -705,7 +703,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
+    const result = curateDict(
       passingFilename,
       sample,
       withRtnInstitutionIdentity,
@@ -744,7 +742,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
+    const result = curateDict(
       passingFilename,
       sample,
       withRtnInstitutionIdentity,
@@ -830,7 +828,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withRtnDeviceIdentity)
+    const result = curateDict(passingFilename, sample, withRtnDeviceIdentity)
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -877,11 +875,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(
-      passingFilename,
-      sample,
-      withoutRtnDeviceIdentity,
-    )
+    const result = curateDict(passingFilename, sample, withoutRtnDeviceIdentity)
     verifyNoErrors(result)
 
     const mappings = result.mapResults.mappings
@@ -926,7 +920,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withoutTemporalData)
+    const result = curateDict(passingFilename, sample, withoutTemporalData)
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
@@ -998,7 +992,7 @@ describe('dcmOrganize basic functionality', () => {
       }),
     }
 
-    const result = dcmOrganize(passingFilename, sample, withTemporalData)
+    const result = curateDict(passingFilename, sample, withTemporalData)
     verifyNoErrors(result)
 
     const dict = result.dicomData.dict
