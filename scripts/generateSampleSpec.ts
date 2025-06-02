@@ -30,7 +30,7 @@ const tsSource = readFileSync(tsSourcePath, 'utf8').trim()
 // ——— Prep snippet version: witch to dicom-curate import and drop comments ———
 const snippetSource = tsSource.replace(
   /^import type \{ TCurationSpecification \} from ['"][^'"]+['"]\s*;?/m,
-  "import type { TCurationSpecification } from 'dicom-curate';"
+  "import type { TCurationSpecification } from 'dicom-curate'\n\n"
 )
 
 // ——— 1) Generate the JS module via transpilation ———
