@@ -10,23 +10,52 @@ The library can be used in a toolkit-agnostic way, because it provides access to
 
 ## Usage
 
-Converting a nested input folder structure containing DICOM files to a cleaned output folder destination:
+Converting a nested input folder structure containing DICOM files to a cleaned output folder destination (note: this uses a browser API only supported in Chrome and Edge browsers):
 
 ```ts
 import apply, { OrganizeOptions } from 'dicom-curate'
 
 const options: OrganizeOptions = {
+  inputType: 'directory',
   inputDirectory, // input folder directory handle
   outputDirectory, // output folder directory handle
-  curationSpec, // Image Transfer Agreement file handle
+  curationSpec, // DICOM curation specification
   columnMapping, // csv file handle to add csv-based mapping
 }
 
 // Read input, map headers, write to well-structured output.
-apply(options)
+apply(options, onProgressCallback)
 ```
 
-An example mapping script file:
+Alternatively, a list of `File`s is accepted:
+
+```ts
+const options: OrganizeOptions = {
+  inputType: 'files',
+  inputFiles, // list of `File` objects
+  outputDirectory, // output folder directory handle
+  curationSpec, // DICOM curation specification
+  columnMappings, // csv file handle to add csv-based mapping
+}
+```
+
+If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgressCallback` function instead.
+
+
+You can also call `curateFile` directly and receive a promise with the mapped blob:
+
+```ts
+import { curateFile } from 'dicom-curate'
+
+curateFile(
+  fileInfo, // path, name, size, kind, blob
+  undefined,
+  { curationSpec }
+)
+```
+
+
+An example DICOM curation function:
 
 <!-- Snippet auto-generated from src/config/sampleBatchCurationSpecification.ts -->
 ```ts
