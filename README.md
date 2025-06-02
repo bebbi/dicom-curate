@@ -44,21 +44,31 @@ If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgres
 You can also call `curateFile` directly and receive a promise with the mapped blob:
 
 ```ts
-import { curateFile } from 'dicom-curate'
+import { curateFile, extractColumnMappings, clearCaches } from 'dicom-curate'
+
+// Data prep responsibility for optional table is with caller
+const columnMappings = extractColumnMappings([
+  { subjectID: 'SubjectID1', blindedID: 'BlindedID1' },
+  { subjectID: 'SubjectID2', blindedID: 'BlindedID2' },
+])
 
 curateFile(
   fileInfo, // path, name, size, kind, blob
   undefined,
-  { curationSpec },
+  { curationSpec, columnMappings },
 )
+
+// Cache clean-up responsibility, e.g. for consistent UID mapping in `retainUIDsOption: 'Off'` is with caller
+clearCaches()
 ```
 
 An example DICOM curation function:
 
 <!-- Snippet auto-generated from src/config/sampleBatchCurationSpecification.ts -->
-
 ```ts
-import type { TCurationSpecification } from 'dicom-curate' /*
+import type { TCurationSpecification } from 'dicom-curate'
+
+/*
  * Curation specification for batch-curating DICOM files.
  */
 export function sampleBatchCurationSpecification(): TCurationSpecification {
