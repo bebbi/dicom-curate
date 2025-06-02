@@ -41,7 +41,6 @@ const options: OrganizeOptions = {
 
 If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgressCallback` function instead.
 
-
 You can also call `curateFile` directly and receive a promise with the mapped blob:
 
 ```ts
@@ -50,16 +49,16 @@ import { curateFile } from 'dicom-curate'
 curateFile(
   fileInfo, // path, name, size, kind, blob
   undefined,
-  { curationSpec }
+  { curationSpec },
 )
 ```
-
 
 An example DICOM curation function:
 
 <!-- Snippet auto-generated from src/config/sampleBatchCurationSpecification.ts -->
+
 ```ts
-import type { TCurationSpecification } from 'dicom-curate';/*
+import type { TCurationSpecification } from 'dicom-curate' /*
  * Curation specification for batch-curating DICOM files.
  */
 export function sampleBatchCurationSpecification(): TCurationSpecification {
@@ -201,8 +200,7 @@ dicom-curate
   - 'retainDeviceIdentityOption': Keeps the attributes marked as 'K' and performs the default action on all other attributes
   - 'cleanDescriptorsOption' by removing all description and comment Attributes except those comment attributes explicitly listed in the `cleanDescriptorExceptions` list.
   - 'retainLongitudinalTemporalInformationOptions': this considers all temporal attributes (DA, TM, DT), as described as a possible approach in PS3.15E.
-    Possible values are 'Full' (keep all temporal info intact), 'Off' (remove all temporal attributes or add defaults per PS3.15E), or accepts a list to offset all temporal information consistently by ISO-8601 compliant durations. Example:
-    for the patient id defined in the folder path, replace dates per a per-subject csv 'DATE_OFFSET' column: `['filePath', 'centersubj', 'SUBJECT_ID', 'DATE_OFFSET']`
+    Possible values are 'Full' (keep all temporal info intact), 'Off' (remove all temporal attributes or add defaults per PS3.15E), or 'Offset' (move all temporal attributes by a duration. An ISO-8601 compliant duration `dateOffset` parameter must be passed).
   - 'retainDeviceIdentityOption': true or false. If true, overrides `retainLongitudinalTemporalInformationOptions` for the respective attributes to keep.
   - 'retainUIDsOption': 'On', 'Off', or 'Hashed'.
     - If 'On', maintain all UIDs.

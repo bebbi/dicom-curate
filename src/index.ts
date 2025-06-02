@@ -2,6 +2,7 @@ import { extractColumnMappings, TColumnMappings } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import { curateFile } from './curateFile'
 import { serializeMappingOptions } from './serializeMappingOptions'
+import { iso8601 } from './offsetDateTime'
 
 import type {
   TMappingOptions,
@@ -10,7 +11,6 @@ import type {
   OrganizeOptions,
   TProgressMessage,
   TPs315Options,
-  TMoveTemporalInformation,
 } from './types'
 import type { TMappedValues } from './csvMapping'
 
@@ -38,27 +38,14 @@ const mappingWorkerCount = navigator.hardwareConcurrency
 let filesToProcess: TFileInfo[] = []
 let directoryScanFinished = false
 
-function getTemporalMapping(
-  deIdOptions: TMoveTemporalInformation,
-): TMappedValues {
-  const [source, identifier, fromHeader, toHeader] = deIdOptions
-  return {
-    [toHeader]: {
-      value: (parser) => parser.getFrom(source, identifier),
-      lookup: (row) => row[fromHeader],
-      replace: (row) => row[toHeader],
-    },
-  }
-}
-
-function hasTemporalMap(
+function requiresDateOffset(
   deIdOpts: TPs315Options | 'Off',
 ): deIdOpts is TPs315Options & {
-  retainLongitudinalTemporalInformationOptions: TMoveTemporalInformation
+  retainLongitudinalTemporalInformationOptions: 'Offset'
 } {
   return (
     deIdOpts !== 'Off' &&
-    Array.isArray(deIdOpts.retainLongitudinalTemporalInformationOptions)
+    deIdOpts.retainLongitudinalTemporalInformationOptions === 'Offset'
   )
 }
 
@@ -213,27 +200,30 @@ async function collectMappingOptions(
   // The need for mapping can come from additionalData or from the
   // retainLongitudinalTemporalInformationOptions option
   let columnMappings: TColumnMappings | undefined
-  if (organizeOptions.table) {
-    let combinedMap: TMappedValues = {}
-    if (additionalData) {
-      Object.assign(combinedMap, additionalData.mapping)
-    }
-
-    if (hasTemporalMap(deIdOpts)) {
-      Object.assign(
-        combinedMap,
-        getTemporalMapping(
-          deIdOpts.retainLongitudinalTemporalInformationOptions,
-        ),
-      )
-    }
-
-    columnMappings = extractColumnMappings(organizeOptions.table, combinedMap)
+  if (organizeOptions.table && additionalData) {
+    columnMappings = extractColumnMappings(
+      organizeOptions.table,
+      additionalData.mapping,
+    )
   }
 
   const skipWrite = organizeOptions.skipWrite ?? false
 
-  return { outputDirectory, columnMappings, curationSpec, skipWrite }
+  const dateOffset = organizeOptions.dateOffset
+
+  if (requiresDateOffset(deIdOpts) && !dateOffset?.match(iso8601)) {
+    throw new Error(
+      'When using "Offset" for retainLongitudinalTemporalInformationOptions, an iso8601 compatible dateOffset must be provided.',
+    )
+  }
+
+  return {
+    outputDirectory,
+    columnMappings,
+    curationSpec,
+    skipWrite,
+    dateOffset,
+  }
 }
 
 function queueFilesForMapping(

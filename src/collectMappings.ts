@@ -107,10 +107,8 @@ export default function collectMappings(
   if (finalSpec.dicomPS315EOptions !== 'Off') {
     deidentifyPS315E({
       naturalData,
-      columnMappings: mappingOptions.columnMappings,
       dicomPS315EOptions: finalSpec.dicomPS315EOptions,
-      curationSpec: finalSpec,
-      parser,
+      dateOffset: mappingOptions.dateOffset,
       mapResults,
     })
   }
