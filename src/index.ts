@@ -208,6 +208,8 @@ async function collectMappingOptions(
   }
 
   const skipWrite = organizeOptions.skipWrite ?? false
+  const skipModifications = organizeOptions.skipModifications ?? false
+  const skipValidation = organizeOptions.skipValidation ?? false
 
   const dateOffset = organizeOptions.dateOffset
 
@@ -222,6 +224,8 @@ async function collectMappingOptions(
     columnMappings,
     curationSpec,
     skipWrite,
+    skipModifications,
+    skipValidation,
     dateOffset,
   }
 }

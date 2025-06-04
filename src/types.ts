@@ -19,6 +19,8 @@ export type OrganizeOptions = {
   curationSpec: () => TCurationSpecification
   table?: Row[]
   skipWrite?: boolean
+  skipModifications?: boolean
+  skipValidation?: boolean
   dateOffset?: Iso8601Duration
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
@@ -29,6 +31,8 @@ export type TMappingOptions = {
   columnMappings?: TColumnMappings
   curationSpec: () => TCurationSpecification
   skipWrite?: boolean
+  skipModifications?: boolean
+  skipValidation?: boolean
   dateOffset?: Iso8601Duration
 }
 

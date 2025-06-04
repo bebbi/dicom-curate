@@ -47,16 +47,25 @@ export default function collectMappings(
     validation: () => ({ errors: [] }),
   }
 
-  const spec = mappingOptions.curationSpec()
+  const { modifications, validation, ...restSpec } =
+    mappingOptions.curationSpec()
 
-  if (spec.version !== specVersion) {
+  if (restSpec.version !== specVersion) {
     throw new Error(
       `Only version ${specVersion} supported in curationSpecification`,
     )
   }
 
   // curationSpecification was populated by eval, load it into mappingSpec
-  Object.assign(finalSpec, spec)
+  Object.assign(finalSpec, restSpec)
+
+  if (!mappingOptions.skipModifications) {
+    finalSpec.modifications = modifications
+  }
+
+  if (!mappingOptions.skipValidation) {
+    finalSpec.validation = validation
+  }
 
   // create a parser object to be used in the eval'ed mappingFunctions
   const parser = getParser(
