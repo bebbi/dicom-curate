@@ -12,7 +12,6 @@ import type {
   TProgressMessage,
   TPs315Options,
 } from './types'
-import type { TMappedValues } from './csvMapping'
 
 type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory?: FileSystemDirectoryHandle
