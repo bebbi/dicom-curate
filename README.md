@@ -2,6 +2,12 @@
 
 Organize and de-identify DICOM header values and file hierarchies based on a provided configuration object.
 
+## ⚠️ Disclaimer
+
+This project is currently in a pre-1.0.0 state. APIs and behavior may change at any time without notice.
+
+You're welcome to open issues, but please only do so if you're also willing to contribute a pull request.
+
 ## Why
 
 This provides an open configuration language and a ready-to-use library for modifying DICOM headers for the purpose of de-identification and organization.
