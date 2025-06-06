@@ -30,7 +30,7 @@ const tsSource = readFileSync(tsSourcePath, 'utf8').trim()
 // ——— Prep snippet version: witch to dicom-curate import and drop comments ———
 const snippetSource = tsSource.replace(
   /^import type \{ TCurationSpecification \} from ['"][^'"]+['"]\s*;?/m,
-  "import type { TCurationSpecification } from 'dicom-curate'\n\n"
+  "import type { TCurationSpecification } from 'dicom-curate'\n\n",
 )
 
 // ——— 1) Generate the JS module via transpilation ———
@@ -90,6 +90,7 @@ const shortenedContent = errorsMatch
 
 // — wrap that full script in your README snippet, using TS fences
 const replacement = `${MARKER}
+
 \`\`\`ts
 ${shortenedContent}
 \`\`\``
