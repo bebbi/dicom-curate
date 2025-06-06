@@ -3,7 +3,7 @@ import createNestedDirectories from './createNestedDirectories'
 import curateDict from './curateDict'
 import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 
-export async function curateFile(
+export async function curateOne(
   fileInfo: TFileInfo,
   outputDirectory: FileSystemDirectoryHandle | undefined,
   mappingOptions: TMappingOptions,

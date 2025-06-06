@@ -13,7 +13,7 @@ The library can be used in a toolkit-agnostic way, because it provides access to
 Converting a nested input folder structure containing DICOM files to a cleaned output folder destination (note: this uses a browser API only supported in Chrome and Edge browsers):
 
 ```ts
-import apply, { OrganizeOptions } from 'dicom-curate'
+import { curateMany, OrganizeOptions } from 'dicom-curate'
 
 const options: OrganizeOptions = {
   inputType: 'directory',
@@ -24,7 +24,7 @@ const options: OrganizeOptions = {
 }
 
 // Read input, map headers, write to well-structured output.
-apply(options, onProgressCallback)
+curateMany(options, onProgressCallback)
 ```
 
 Alternatively, a list of `File`s is accepted:
@@ -41,10 +41,10 @@ const options: OrganizeOptions = {
 
 If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgressCallback` function instead.
 
-You can also call `curateFile` directly and receive a promise with the mapped blob:
+You can also call `curateOne` directly and receive a promise with the mapped blob:
 
 ```ts
-import { curateFile, extractColumnMappings, clearCaches } from 'dicom-curate'
+import { curateOne, extractColumnMappings, clearCaches } from 'dicom-curate'
 
 // Data prep responsibility for optional table is with caller
 const columnMappings = extractColumnMappings([
@@ -52,7 +52,7 @@ const columnMappings = extractColumnMappings([
   { subjectID: 'SubjectID2', blindedID: 'BlindedID2' },
 ])
 
-curateFile(
+curateOne(
   fileInfo, // path, name, size, kind, blob
   undefined,
   { curationSpec, columnMappings },
@@ -65,6 +65,7 @@ clearCaches()
 An example DICOM curation function:
 
 <!-- Snippet auto-generated from src/config/sampleBatchCurationSpecification.ts -->
+
 ```ts
 import type { TCurationSpecification } from 'dicom-curate'
 
