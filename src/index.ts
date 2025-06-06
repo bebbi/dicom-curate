@@ -1,6 +1,6 @@
 import { extractColumnMappings, TColumnMappings } from './csvMapping'
 import { clearCaches } from './clearCaches'
-import { curateFile } from './curateFile'
+import { curateOne } from './curateOne'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
@@ -248,7 +248,7 @@ function queueFilesForMapping(
 
 let progressCallback: ProgressCallback | undefined
 
-async function apply(
+async function curateMany(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
 ) {
@@ -282,4 +282,4 @@ async function apply(
   dispatchMappingJobs()
 }
 
-export { apply, curateFile, extractColumnMappings, clearCaches }
+export { curateMany, curateOne, extractColumnMappings, clearCaches }

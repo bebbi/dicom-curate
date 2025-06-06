@@ -1,4 +1,4 @@
-import { curateFile } from './curateFile'
+import { curateOne } from './curateOne'
 import { deserializeMappingOptions } from './serializeMappingOptions'
 
 declare var self: Window & typeof globalThis
@@ -10,7 +10,7 @@ self.addEventListener('message', (event) => {
       const mappingOptions = deserializeMappingOptions(serializedMappingOptions)
 
       try {
-        curateFile(
+        curateOne(
           event.data.fileInfo,
           event.data.outputDirectory,
           mappingOptions,
