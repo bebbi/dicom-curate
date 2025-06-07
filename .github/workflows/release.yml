@@ -25,11 +25,6 @@ jobs:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_APP_SECRET }}
 
-      # - name: Set Git identity to match GitHub App
-      #  run: |
-      #    git config user.name "dicom-curate-semantic-release[bot]"
-      #    git config user.email "1373572-dicom-curate-semantic-release[bot]@users.noreply.github.com"
-
       - name: Install dependencies
         uses: actions/setup-node@v4
         with:
