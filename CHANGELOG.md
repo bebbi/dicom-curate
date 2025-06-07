@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/bebbi/dicom-curate/compare/v0.1.1...v0.1.2) (2025-06-07)
+
+
+### Bug Fixes
+
+* add build step to npm publish ([7e624be](https://github.com/bebbi/dicom-curate/commit/7e624be5efd1bfc797c6e25b15291bf133b3a081))
+
 ## [0.1.1](https://github.com/bebbi/dicom-curate/compare/v0.1.0...v0.1.1) (2025-06-07)
 
 
