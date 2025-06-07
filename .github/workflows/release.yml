@@ -16,7 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # 🚨 disable the default token so later pushes use your custom one
           persist-credentials: false
 
       - name: Generate GitHub App token
@@ -26,30 +25,26 @@ jobs:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_APP_SECRET }}
 
-      - name: Set Git identity to match GitHub App
-        run: |
-          git config user.name "dicom-curate-semantic-release[bot]"
-          git config user.email "1373572-dicom-curate-semantic-release[bot]@users.noreply.github.com"
+      # - name: Set Git identity to match GitHub App
+      #  run: |
+      #    git config user.name "dicom-curate-semantic-release[bot]"
+      #    git config user.email "1373572-dicom-curate-semantic-release[bot]@users.noreply.github.com"
 
-      - name: Use Node.js
+      - name: Install dependencies
         uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
 
       - run: yarn install
 
-      - run: yarn test # optional
+      - name: Test
+        run: yarn test
 
-      - name: Debug identity
-        run: |
-          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
-          echo "git user.name: $(git config user.name)"
-          echo "git user.email: $(git config user.email)"
+      - name: Build
+        run: yarn build
 
-      - name: Release with semantic-release (verbose)
-        run: |
-          GIT_TRACE=1 GIT_CURL_VERBOSE=1 npx semantic-release
+      - name: Release with semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          NPM_TOKEN:  ${{ secrets.NPM_TOKEN }}
-
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
