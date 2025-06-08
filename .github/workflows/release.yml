@@ -25,18 +25,16 @@ jobs:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_APP_SECRET }}
 
-      - name: Install dependencies
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
 
       - run: yarn install
 
-      - name: Test
-        run: yarn test
+      - run: yarn test # optional, but harmless
 
-      - name: Build
-        run: yarn build
+      - run: yarn build
 
       - name: Release with semantic-release
         run: npx semantic-release
