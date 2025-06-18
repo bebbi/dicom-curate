@@ -2,28 +2,26 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
-import nodePolyfills from 'rollup-plugin-polyfill-node'; // Added import
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 export default {
   input: 'src/index.ts',
   output: {
-    file: 'dist/dicom-curate.umd.min.js',
+    file: 'dist/umd/dicom-curate.umd.min.js',
     format: 'umd',
     name: 'dicomCurate',
-    sourcemap: true, // Optional: include sourcemaps
+    sourcemap: true,
   },
   plugins: [
     typescript({
-      tsconfig: './tsconfig.json', // Ensure this path is correct
-      moduleResolution: 'node', // Or 'classic', depending on your tsconfig
-      outDir: 'dist', // Align with Rollup's output.file
-      declaration: false, // Avoid issues with declaration output for UMD
+      tsconfig: './tsconfig.json',
+      moduleResolution: 'node',
+      outDir: 'dist',
+      declaration: false,
     }),
     nodeResolve(),
     commonjs(),
-    nodePolyfills(), // Added plugin
-    terser() // For minification
+    nodePolyfills(),
+    terser()
   ],
-  // Externalize peer dependencies if any, or ensure all are bundled
-  // external: ['peer-dependency'],
 };
