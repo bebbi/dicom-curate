@@ -38,7 +38,7 @@
   },
   "scripts": {
     "clean": "bebbi-scripts clean",
-    "build": "yarn generate:sampleSpec && bebbi-scripts build esm types",
+    "build": "yarn generate:sampleSpec && bebbi-scripts build esm types && yarn build:umd",
     "build:umd": "rollup -c",
     "watch": "bebbi-scripts build --watch",
     "test": "bebbi-scripts test",
