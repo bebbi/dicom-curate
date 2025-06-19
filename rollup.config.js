@@ -1,8 +1,8 @@
-import typescript from '@rollup/plugin-typescript';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
+import typescript from '@rollup/plugin-typescript'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import { terser } from 'rollup-plugin-terser'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
 
 const plugins = [
   typescript({
@@ -14,8 +14,8 @@ const plugins = [
   nodeResolve(),
   commonjs(),
   nodePolyfills(),
-  terser()  
-];
+  terser(),
+]
 
 export default [
   {
@@ -24,7 +24,7 @@ export default [
       file: 'dist/umd/dicom-curate.umd.min.js',
       format: 'umd',
       name: 'dicomCurate',
-      sourcemap: true
+      sourcemap: true,
     },
     plugins,
   },
@@ -33,8 +33,8 @@ export default [
     output: {
       file: 'dist/esm/dicom-curate.esm.js',
       format: 'esm',
-      sourcemap: true
+      sourcemap: true,
     },
     plugins,
-  }
-];
+  },
+]
