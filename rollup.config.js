@@ -4,24 +4,37 @@ import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-export default {
-  input: 'src/index.ts',
-  output: {
-    file: 'dist/umd/dicom-curate.umd.min.js',
-    format: 'umd',
-    name: 'dicomCurate',
-    sourcemap: true,
+const plugins = [
+  typescript({
+    tsconfig: './tsconfig.json',
+    moduleResolution: 'node',
+    outDir: 'dist',
+    declaration: false,
+  }),
+  nodeResolve(),
+  commonjs(),
+  nodePolyfills(),
+  terser()  
+];
+
+export default [
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/umd/dicom-curate.umd.min.js',
+      format: 'umd',
+      name: 'dicomCurate',
+      sourcemap: true
+    },
+    plugins,
   },
-  plugins: [
-    typescript({
-      tsconfig: './tsconfig.json',
-      moduleResolution: 'node',
-      outDir: 'dist',
-      declaration: false,
-    }),
-    nodeResolve(),
-    commonjs(),
-    nodePolyfills(),
-    terser()
-  ],
-};
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/esm/dicom-curate.esm.js',
+      format: 'esm',
+      sourcemap: true
+    },
+    plugins,
+  }
+];
