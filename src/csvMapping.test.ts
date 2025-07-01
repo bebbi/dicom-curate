@@ -171,16 +171,4 @@ describe('extractColumnMappings with 2-key specification', () => {
       ],
     })
   })
-
-  // it('gets the correct mapping for a given value', () => {
-  //   const columnMappings = extractCsvMappings(csvText2, mapping2)
-
-  //   expect(
-  //     getCsvMapping(columnMappings, mapping2, 'oldToNew', 'oldR1'),
-  //   ).toEqual('newR1')
-
-  //   expect(
-  //     getCsvMapping(columnMappings, mapping2, 'oldToNew', 'oldR2'),
-  //   ).toEqual('newR2')
-  // })
 })
