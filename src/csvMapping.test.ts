@@ -1,6 +1,7 @@
 import {
   extractCsvMappings,
   getCsvMapping,
+  extractColumnMappings,
   Row,
   TMappedValues,
 } from './csvMapping'
@@ -49,4 +50,137 @@ describe('extractCsvMappings', () => {
       'oldV1',
     )
   })
+})
+
+describe('extractColumnMappings with 2-key specification', () => {
+  const rows = [
+    {
+      PatNamePatId: 'Pi^Jane=1234',
+      CenterSubjectId: 'XX01-003',
+      PatNameIDSeriesDesc: 'Pi^Jane=1234=Custom CT',
+      Timepoint: 'Visit 1',
+      ScanName: 'CT',
+      Comment: '',
+    },
+    {
+      PatNamePatId: 'Pi^Jane=1234',
+      CenterSubjectId: 'XX01-003',
+      PatNameIDSeriesDesc: 'Pi^Jane=1234=Head_SAG T1 IRSPGR 1mm ISO',
+      Timepoint: 'Visit 2',
+      ScanName: 'PET-CT',
+      Comment: '',
+    },
+    {
+      PatNamePatId: 'Doe^John=ABCD',
+      CenterSubjectId: 'NN01-001',
+      PatNameIDSeriesDesc: 'Doe^John=ABCD=PET TK AC PSMA',
+      Timepoint: 'Visit 3',
+      ScanName: 'PET',
+      Comment: '',
+    },
+    {
+      PatNamePatId: 'Doe^John=ABCD',
+      CenterSubjectId: 'NN01-001',
+      PatNameIDSeriesDesc: 'Doe^John=ABCD=Custom CT',
+      Timepoint: 'Visit 3',
+      ScanName: 'CT',
+      Comment: '',
+    },
+  ]
+
+  const mapping2: TMappedValues = {
+    centerSubjectId: {
+      value: (parser) =>
+        ['PatientName', 'PatientID'].map(parser.getDicom).join('='),
+      lookup: (row) => row['PatNamePatId'],
+      replace: (row) => row['CenterSubjectId'],
+    },
+    timepoint: {
+      value: (parser) =>
+        ['PatientName', 'PatientID', 'SeriesDescription']
+          .map(parser.getDicom)
+          .join('='),
+      lookup: (row) => row['PatNameIDSeriesDesc'],
+      replace: (row) => row['Timepoint'],
+    },
+    scanName: {
+      value: (parser) =>
+        ['PatientName', 'PatientID', 'SeriesDescription']
+          .map(parser.getDicom)
+          .join('='),
+      lookup: (row) => row['PatNameIDSeriesDesc'],
+      replace: (row) => row['ScanName'],
+    },
+  }
+
+  it('extracts column mappings for a 2-key specification', () => {
+    expect(extractColumnMappings(rows, mapping2)).toEqual({
+      rowIndexByFieldValue: {
+        centerSubjectId: {
+          // Multiple rows can have the same PatNamePatId, we expect them
+          // all to have the same value (here, same centerSubjectId)
+          'Doe^John=ABCD': 3,
+          'Pi^Jane=1234': 1,
+        },
+        scanName: {
+          'Doe^John=ABCD=Custom CT': 3,
+          'Doe^John=ABCD=PET TK AC PSMA': 2,
+          'Pi^Jane=1234=Custom CT': 0,
+          'Pi^Jane=1234=Head_SAG T1 IRSPGR 1mm ISO': 1,
+        },
+        timepoint: {
+          'Doe^John=ABCD=Custom CT': 3,
+          'Doe^John=ABCD=PET TK AC PSMA': 2,
+          'Pi^Jane=1234=Custom CT': 0,
+          'Pi^Jane=1234=Head_SAG T1 IRSPGR 1mm ISO': 1,
+        },
+      },
+      rows: [
+        {
+          CenterSubjectId: 'XX01-003',
+          Comment: '',
+          PatNameIDSeriesDesc: 'Pi^Jane=1234=Custom CT',
+          PatNamePatId: 'Pi^Jane=1234',
+          ScanName: 'CT',
+          Timepoint: 'Visit 1',
+        },
+        {
+          CenterSubjectId: 'XX01-003',
+          Comment: '',
+          PatNameIDSeriesDesc: 'Pi^Jane=1234=Head_SAG T1 IRSPGR 1mm ISO',
+          PatNamePatId: 'Pi^Jane=1234',
+          ScanName: 'PET-CT',
+          Timepoint: 'Visit 2',
+        },
+        {
+          CenterSubjectId: 'NN01-001',
+          Comment: '',
+          PatNameIDSeriesDesc: 'Doe^John=ABCD=PET TK AC PSMA',
+          PatNamePatId: 'Doe^John=ABCD',
+          ScanName: 'PET',
+          Timepoint: 'Visit 3',
+        },
+        {
+          CenterSubjectId: 'NN01-001',
+          Comment: '',
+          PatNameIDSeriesDesc: 'Doe^John=ABCD=Custom CT',
+          PatNamePatId: 'Doe^John=ABCD',
+          ScanName: 'CT',
+          Timepoint: 'Visit 3',
+        },
+      ],
+    })
+  })
+
+  // it('gets the correct mapping for a given value', () => {
+  //   const columnMappings = extractCsvMappings(csvText2, mapping2)
+
+  //   expect(
+  //     getCsvMapping(columnMappings, mapping2, 'oldToNew', 'oldR1'),
+  //   ).toEqual('newR1')
+
+  //   expect(
+  //     getCsvMapping(columnMappings, mapping2, 'oldToNew', 'oldR2'),
+  //   ).toEqual('newR2')
+  // })
 })

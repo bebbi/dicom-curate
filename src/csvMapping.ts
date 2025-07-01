@@ -62,6 +62,8 @@ export function extractColumnMappings(
     rowIndexByFieldValue[key] = {}
     rows.forEach((row, i) => {
       const v = fn(row)
+      // It's a denormalized dataset, so we don't care if the index is overwritten
+      // by a later row with the same value.
       rowIndexByFieldValue[key][v] = i
     })
   }
