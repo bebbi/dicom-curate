@@ -16,6 +16,8 @@ The library can be used in a toolkit-agnostic way, because it provides access to
 
 ## Usage
 
+> NOTE: using 'require' to import dicom-curate will use the UMD build. Import statements will default to the ESM build.
+
 Converting a nested input folder structure containing DICOM files to a cleaned output folder destination (note: this uses a browser API only supported in Chrome and Edge browsers):
 
 ```ts
