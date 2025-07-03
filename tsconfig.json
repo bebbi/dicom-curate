@@ -3,6 +3,6 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "lib": ["dom", "dom.asynciterable", "esnext"],
+    "lib": ["dom", "dom.asynciterable", "esnext"]
   }
 }
