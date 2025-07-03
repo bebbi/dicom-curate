@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/bebbi/dicom-curate/compare/v0.1.2...v0.2.0) (2025-07-03)
+
+
+### Features
+
+* add UMD build output using Rollup ([6fdaeb5](https://github.com/bebbi/dicom-curate/commit/6fdaeb542a122ca8bc28b43ef54ca28e04ca675e))
+
 ## [0.1.2](https://github.com/bebbi/dicom-curate/compare/v0.1.1...v0.1.2) (2025-06-07)
 
 
