@@ -4,6 +4,5 @@
     "module": "esnext",
     "moduleResolution": "node",
     "lib": ["dom", "dom.asynciterable", "esnext"],
-    "typeRoots": ["./src/@types", "./node_modules/@types"]
   }
 }
