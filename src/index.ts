@@ -10,6 +10,7 @@ import type {
   TFileInfo,
   OrganizeOptions,
   TProgressMessage,
+  TProgressMessageDone,
   TPs315Options,
 } from './types'
 
@@ -125,15 +126,13 @@ function initializeMappingWorkers() {
           workersActive -= 1
 
           // Report progress
-          if (progressCallback) {
-            progressCallback({
-              response: 'progress',
-              mapResults: event.data.mapResults,
-              processedFiles: mapResultsList.length,
-              totalFiles:
-                filesToProcess.length + mapResultsList.length + workersActive,
-            })
-          }
+          progressCallback({
+            response: 'progress',
+            mapResults: event.data.mapResults,
+            processedFiles: mapResultsList.length,
+            totalFiles:
+              filesToProcess.length + mapResultsList.length + workersActive,
+          })
 
           dispatchMappingJobs()
           if (mapResultsList.length % 100 === 0) {
@@ -179,14 +178,12 @@ function dispatchMappingJobs() {
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
 
-    if (progressCallback) {
-      progressCallback({
-        response: 'done',
-        mapResultsList: mapResultsList,
-        processedFiles: mapResultsList.length,
-        totalFiles: mapResultsList.length,
-      })
-    }
+    progressCallback({
+      response: 'done',
+      mapResultsList: mapResultsList,
+      processedFiles: mapResultsList.length,
+      totalFiles: mapResultsList.length,
+    })
   }
 }
 
@@ -255,40 +252,53 @@ function queueFilesForMapping(
   })
 }
 
-let progressCallback: ProgressCallback | undefined
+let progressCallback: ProgressCallback
 
 async function curateMany(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
-) {
-  progressCallback = onProgress
+): Promise<TProgressMessageDone> {
+  return new Promise<TProgressMessageDone>(async (resolve, reject) => {
+    // Resolve promise if progressCallback gets called with 'done'
+    progressCallback = (msg) => {
+      onProgress?.(msg)
 
-  // create the mapping workers
-  initializeMappingWorkers()
+      if (msg.response === 'done') {
+        resolve(msg)
+      }
+    }
 
-  // Set global mappingWorkerOptions
-  mappingWorkerOptions = (await collectMappingOptions(
-    organizeOptions,
-  )) as TMappingWorkerOptions
+    try {
+      // create the mapping workers
+      initializeMappingWorkers()
 
-  //
-  // If the request provides a directory, then use the worker
-  // to recursively convert to fileSystemHandles.
-  // If the request provides a list of File objects,
-  // send them to the mapping workers directly.
-  //
-  if (organizeOptions.inputType === 'directory') {
-    const fileListWorker = initializeFileListWorker()
-    fileListWorker.postMessage({
-      request: 'scan',
-      directoryHandle: organizeOptions.inputDirectory,
-    })
-  } else if (organizeOptions.inputType === 'files') {
-    queueFilesForMapping(organizeOptions)
-  } else {
-    console.error('`inputType` should be "directory" or "files"')
-  }
-  dispatchMappingJobs()
+      // Set global mappingWorkerOptions
+      mappingWorkerOptions = (await collectMappingOptions(
+        organizeOptions,
+      )) as TMappingWorkerOptions
+
+      //
+      // If the request provides a directory, then use the worker
+      // to recursively convert to fileSystemHandles.
+      // If the request provides a list of File objects,
+      // send them to the mapping workers directly.
+      //
+      if (organizeOptions.inputType === 'directory') {
+        const fileListWorker = initializeFileListWorker()
+        fileListWorker.postMessage({
+          request: 'scan',
+          directoryHandle: organizeOptions.inputDirectory,
+        })
+      } else if (organizeOptions.inputType === 'files') {
+        queueFilesForMapping(organizeOptions)
+      } else {
+        console.error('`inputType` should be "directory" or "files"')
+      }
+      dispatchMappingJobs()
+    } catch (error) {
+      reject(error)
+    }
+  })
 }
 
 export { curateMany, curateOne, extractColumnMappings, clearCaches }
