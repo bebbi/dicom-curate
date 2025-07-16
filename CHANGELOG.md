@@ -1,3 +1,11 @@
+# [0.3.0](https://github.com/bebbi/dicom-curate/compare/v0.2.0...v0.3.0) (2025-07-16)
+
+
+### Features
+
+* `curateMany` returns a promise that resolves when all is done ([0d97606](https://github.com/bebbi/dicom-curate/commit/0d9760673649d2addce8c1bdab5ab85e8ea2d690))
+* `onProgress` is called when job is done with a response of `done` and the `mapResultsList` ([a343261](https://github.com/bebbi/dicom-curate/commit/a343261f63eb41f8c0601969a50296332d730891))
+
 # [0.2.0](https://github.com/bebbi/dicom-curate/compare/v0.1.2...v0.2.0) (2025-07-03)
 
 
