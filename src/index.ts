@@ -174,9 +174,19 @@ function dispatchMappingJobs() {
     while (availableMappingWorkers.length) {
       availableMappingWorkers.pop()!.terminate()
     }
+
     clearCaches()
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
+
+    if (progressCallback) {
+      progressCallback({
+        response: 'done',
+        mapResultsList: mapResultsList,
+        processedFiles: mapResultsList.length,
+        totalFiles: mapResultsList.length,
+      })
+    }
   }
 }
 
