@@ -142,9 +142,16 @@ export type TCurationSpecification = {
 }
 
 export type TProgressMessage = {
-  response: 'start' | 'progress' | 'finished' | 'error'
   totalFiles?: number
   processedFiles?: number
-  mapResults?: TMapResults
-  error?: Error
-}
+} & (
+  | {
+      response: 'progress'
+      mapResults?: TMapResults
+      error?: Error
+    }
+  | {
+      response: 'done'
+      mapResultsList: TMapResults[]
+    }
+)
