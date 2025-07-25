@@ -1,9 +1,5 @@
-import { TMappingOptions } from './types'
+import { TMappingOptions, TSerializedMappingOptions } from './types'
 import { assertNoClosure } from './checkClosure'
-
-type TSerializedMappingOptions = Omit<TMappingOptions, 'curationSpec'> & {
-  curationSpecStr: string
-}
 
 export function serializeMappingOptions(
   mappingOptions: TMappingOptions,

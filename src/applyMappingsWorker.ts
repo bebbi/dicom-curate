@@ -1,20 +1,34 @@
 import { curateOne } from './curateOne'
 import { deserializeMappingOptions } from './serializeMappingOptions'
+import type {
+  TFileInfo,
+  TMappingOptions,
+  TSerializedMappingOptions,
+} from './types'
 
 declare var self: Window & typeof globalThis
 
-self.addEventListener('message', (event) => {
+export type MappingRequest = {
+  request: 'apply'
+  fileInfo: TFileInfo
+  fileIndex: number
+  outputDirectory?: FileSystemDirectoryHandle
+  serializedMappingOptions: TSerializedMappingOptions
+}
+
+self.addEventListener('message', (event: MessageEvent<MappingRequest>) => {
   switch (event.data.request) {
     case 'apply':
       const { serializedMappingOptions } = event.data
       const mappingOptions = deserializeMappingOptions(serializedMappingOptions)
 
       try {
-        curateOne(
-          event.data.fileInfo,
-          event.data.outputDirectory,
+        curateOne({
+          fileInfo: event.data.fileInfo,
+          fileIndex: event.data.fileIndex,
+          outputDirectory: event.data.outputDirectory,
           mappingOptions,
-        ).then((mapResults) => {
+        }).then((mapResults) => {
           // Send finished message for completion
           self.postMessage({
             response: 'finished',

@@ -8,6 +8,7 @@ import { set as _set, unset as _unset, cloneDeep as _cloneDeep } from 'lodash'
 
 export default function curateDict(
   inputFilePath: string,
+  inputFileIndex: number,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ) {
@@ -16,6 +17,7 @@ export default function curateDict(
   //
   const [naturalData, mapResults] = collectMappings(
     inputFilePath,
+    inputFileIndex,
     dicomData,
     mappingOptions,
   )
