@@ -1,4 +1,5 @@
 import * as dcmjs from 'dcmjs'
+import { protectUid as rawProtectUid } from './deidentifyPS315E'
 import { getCsvMapping, TColumnMappings } from './csvMapping'
 import { UniqueNumbers } from './UniqueNumbers'
 import type { TNaturalData } from 'dcmjs'
@@ -38,9 +39,22 @@ export default function getParser(
   inputPathPattern: string,
   inputFilePath: string,
   naturalData: TNaturalData,
+  dicomPS315EOptions: TCurationSpecification['dicomPS315EOptions'],
   columnMappings?: TColumnMappings,
   additionalData?: TCurationSpecification['additionalData'],
 ): TParser {
+  function protectUid(uid: string): string {
+    let protectedUid = uid
+
+    if (dicomPS315EOptions !== 'Off') {
+      const { retainUIDsOption } = dicomPS315EOptions
+
+      protectedUid = rawProtectUid(uid, retainUIDsOption)
+    }
+
+    return protectedUid
+  }
+
   function getDicom(attrName: string) {
     if (attrName in dcmjs.data.DicomMetaDictionary.dictionary) {
       // if in hex like "(0008,0100)", convert to text key
@@ -117,6 +131,7 @@ export default function getParser(
     getMapping,
     getDicom,
     missingDicom,
+    protectUid,
     // TODO: Phase this out in favor of ISO8601 duration handling.
     // Example of this logic:
     // ContentDate:

@@ -93,6 +93,7 @@ export type TParser = {
   getMapping: ((value: string) => string | number) | undefined
   getDicom: (attrName: string) => any
   missingDicom: (attrName: string) => boolean
+  protectUid: (uid: string) => string
   addDays: (dicomDateString: string, offsetDays: number) => string
   FILENAME: symbol
   FILEBASENAME: symbol
