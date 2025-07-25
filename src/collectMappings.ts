@@ -13,6 +13,7 @@ import type { TDicomData, TNaturalData } from 'dcmjs'
 
 export default function collectMappings(
   inputFilePath: string,
+  inputFileIndex: number,
   dicomData: TDicomData,
   mappingOptions: TMappingOptions,
 ): [TNaturalData, TMapResults] {
@@ -69,10 +70,17 @@ export default function collectMappings(
     finalSpec.validation = validation
   }
 
+  // protect filename if we de-identify
+  const finalFilePath =
+    finalSpec.dicomPS315EOptions === 'Off'
+      ? inputFilePath
+      : inputFilePath.slice(0, inputFilePath.lastIndexOf('/') + 1) +
+        `${String(inputFileIndex + 1).padStart(5, '0')}.dcm`
+
   // create a parser object to be used in the eval'ed mappingFunctions
   const parser = getParser(
     finalSpec.inputPathPattern,
-    inputFilePath,
+    finalFilePath,
     naturalData,
     finalSpec.dicomPS315EOptions,
     mappingOptions.columnMappings,

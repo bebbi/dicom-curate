@@ -36,6 +36,10 @@ export type TMappingOptions = {
   dateOffset?: Iso8601Duration
 }
 
+export type TSerializedMappingOptions = Omit<TMappingOptions, 'curationSpec'> & {
+  curationSpecStr: string
+}
+
 export type TFileInfo = { path: string; name: string; size: number } & (
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }

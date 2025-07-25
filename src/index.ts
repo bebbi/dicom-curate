@@ -14,6 +14,9 @@ import type {
   TPs315Options,
 } from './types'
 
+import type { FileScanMsg } from './scanDirectoryWorker'
+import type { MappingRequest } from './applyMappingsWorker'
+
 type TMappingWorkerOptions = TMappingOptions & {
   outputDirectory?: FileSystemDirectoryHandle
 }
@@ -28,6 +31,8 @@ export type {
   TCurationSpecification,
 } from './types'
 
+export { TCurateOneArgs } from './curateOne'
+
 export { specVersion } from './config/specVersion'
 export { sample2PassCurationSpecification as sampleSpecification } from './config/sample2PassCurationSpecification'
 export { csvTextToRows } from './csvMapping'
@@ -35,7 +40,7 @@ export type { Row } from './csvMapping'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 
-let filesToProcess: TFileInfo[] = []
+let filesToProcess: { fileInfo: TFileInfo; fileIndex: number }[] = []
 let directoryScanFinished = false
 
 function requiresDateOffset(
@@ -69,25 +74,30 @@ function initializeFileListWorker() {
     { type: 'module' },
   )
 
-  fileListWorker.addEventListener('message', (event) => {
-    switch (event.data.response) {
-      case 'file':
-        filesToProcess.push(event.data.fileInfo as TFileInfo)
-        // Could do some throttling:
-        // if (filesToProcess.length > 10) {
-        //   fileListWorker.postMessage({ request: 'stop' })
-        // }
-        dispatchMappingJobs()
-        break
-      case 'done':
-        console.log('directoryScanFinished')
-        directoryScanFinished = true
-        break
-      default:
-        console.error(`Unknown response from worker ${event.data.response}`)
-    }
-    dispatchMappingJobs()
-  })
+  fileListWorker.addEventListener(
+    'message',
+    (event: MessageEvent<FileScanMsg>) => {
+      switch (event.data.response) {
+        case 'file':
+          const { fileIndex, fileInfo } = event.data
+          filesToProcess.push({ fileIndex, fileInfo })
+          // Could do some throttling:
+          // if (filesToProcess.length > 10) {
+          //   fileListWorker.postMessage({ request: 'stop' })
+          // }
+          dispatchMappingJobs()
+          break
+        case 'done':
+          console.log('directoryScanFinished')
+          directoryScanFinished = true
+          break
+        default:
+          // @ts-expect-error: response is string here, not never
+          console.error(`Unknown response from worker ${event.data.response}`)
+      }
+      dispatchMappingJobs()
+    },
+  )
 
   return fileListWorker
 }
@@ -151,7 +161,7 @@ function initializeMappingWorkers() {
 
 function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
-    const fileInfo = filesToProcess.pop()!
+    const { fileInfo, fileIndex } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
     const { outputDirectory, ...mappingOptions } =
       // Not partial anymore.
@@ -159,9 +169,10 @@ function dispatchMappingJobs() {
     mappingWorker.postMessage({
       request: 'apply',
       fileInfo,
+      fileIndex,
       outputDirectory,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
-    })
+    } satisfies MappingRequest)
     workersActive += 1
   }
   if (
@@ -239,7 +250,7 @@ async function collectMappingOptions(
 function queueFilesForMapping(
   organizeOptions: Extract<OrganizeOptions, { inputType: 'files' }>,
 ) {
-  organizeOptions.inputFiles.forEach((inputFile) => {
+  organizeOptions.inputFiles.forEach((inputFile, fileIndex) => {
     const fileInfo: TFileInfo = {
       path: '',
       name: inputFile.name,
@@ -247,7 +258,7 @@ function queueFilesForMapping(
       kind: 'blob',
       blob: inputFile,
     }
-    filesToProcess.push(fileInfo)
+    filesToProcess.push({ fileInfo, fileIndex })
     dispatchMappingJobs()
   })
 }

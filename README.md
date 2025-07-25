@@ -77,11 +77,11 @@ const columnMappings = extractColumnMappings([
   { subjectID: 'SubjectID2', blindedID: 'BlindedID2' },
 ])
 
-curateOne(
+curateOne({
   fileInfo, // path, name, size, kind, blob
-  undefined,
-  { curationSpec, columnMappings },
-)
+  mappingOptions: { curationSpec, columnMappings },
+})
+
 
 // Cache clean-up responsibility, e.g. for consistent UID mapping in `retainUIDsOption: 'Off'` is with caller
 clearCaches()

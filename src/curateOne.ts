@@ -3,11 +3,19 @@ import createNestedDirectories from './createNestedDirectories'
 import curateDict from './curateDict'
 import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 
-export async function curateOne(
-  fileInfo: TFileInfo,
-  outputDirectory: FileSystemDirectoryHandle | undefined,
-  mappingOptions: TMappingOptions,
-): Promise<
+export type TCurateOneArgs = {
+  fileInfo: TFileInfo
+  fileIndex?: number
+  outputDirectory: FileSystemDirectoryHandle | undefined
+  mappingOptions: TMappingOptions
+}
+
+export async function curateOne({
+  fileInfo,
+  fileIndex = 0,
+  outputDirectory,
+  mappingOptions,
+}: TCurateOneArgs): Promise<
   // anomalies is minimally present.
   Omit<Partial<TMapResults>, 'anomalies'> & {
     anomalies: TMapResults['anomalies']
@@ -38,7 +46,12 @@ export async function curateOne(
   }
 
   const { dicomData: mappedDicomData, mapResults: clonedMapResults } =
-    curateDict(`${fileInfo.path}/${fileInfo.name}`, dicomData, mappingOptions)
+    curateDict(
+      `${fileInfo.path}/${fileInfo.name}`,
+      fileIndex,
+      dicomData,
+      mappingOptions,
+    )
 
   if (!mappingOptions.skipWrite) {
     // Finally, write the results
