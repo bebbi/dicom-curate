@@ -35,6 +35,10 @@ function removeRetiredPrefix(name: string) {
   return name.startsWith('RETIRED_') ? name.slice(8) : name
 }
 
+export function protectUid(uid: string, retainUIDsOption: string): string {
+  return retainUIDsOption === 'Hashed' ? hashUid(uid) : replaceUid(uid)
+}
+
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
 
 // Special conditions for some PS3.15 E1.1 elements.
@@ -296,8 +300,8 @@ export default function deidentifyPS315E({
             !(uid in uidRegistryPS3_06_A1)
           ) {
             // UIDs that need to be mapped
-            const mappedUID =
-              retainUIDsOption === 'Hashed' ? hashUid(uid) : replaceUid(uid)
+            const mappedUID = protectUid(uid, retainUIDsOption)
+
             mapResults.mappings[attrPath] = [
               uid,
               'replace',
