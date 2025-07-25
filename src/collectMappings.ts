@@ -37,13 +37,15 @@ export default function collectMappings(
   let finalSpec: Omit<TCurationSpecification, 'identifiers' | 'version'> = {
     dicomPS315EOptions: defaultPs315Options,
     inputPathPattern: '',
-    modifications: () => ({
-      dicomHeader: {},
-      outputFilePathComponents: [
-        parser.getDicom('SeriesInstanceUID'),
-        parser.getFilePathComp(parser.FILENAME),
-      ],
-    }),
+    modifications(parser) {
+      return {
+        dicomHeader: {},
+        outputFilePathComponents: [
+          parser.protectUid(parser.getDicom('SeriesInstanceUID')),
+          parser.getFilePathComp(parser.FILENAME),
+        ],
+      }
+    },
     validation: () => ({ errors: [] }),
   }
 
