@@ -72,6 +72,7 @@ export default function collectMappings(
     finalSpec.inputPathPattern,
     inputFilePath,
     naturalData,
+    finalSpec.dicomPS315EOptions,
     mappingOptions.columnMappings,
     finalSpec.additionalData,
   )
