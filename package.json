@@ -1,6 +1,7 @@
 {
   "name": "dicom-curate",
   "version": "0.4.0",
+  "packageManager": "pnpm@10.13.1",
   "description": "Organize and de-identify DICOM header data ",
   "type": "module",
   "main": "dist/esm/index.js",
@@ -44,7 +45,7 @@
   },
   "scripts": {
     "clean": "bebbi-scripts clean",
-    "build": "yarn generate:sampleSpec && bebbi-scripts build esm types && rollup -c",
+    "build": "pnpm generate:sampleSpec && bebbi-scripts build esm types && rollup -c",
     "watch": "bebbi-scripts build --watch",
     "test": "bebbi-scripts test",
     "format": "bebbi-scripts format",
@@ -89,6 +90,5 @@
     "typescript": "^5.8.3",
     "xml2js": "^0.6.2"
   },
-  "license": "Apache-2.0",
-  "packageManager": "yarn@4.5.3"
+  "license": "Apache-2.0"
 }
