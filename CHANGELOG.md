@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/bebbi/dicom-curate/compare/v0.3.0...v0.4.0) (2025-07-27)
+
+
+### Features
+
+* default outputFilePathComponents are not relying original instance UIDs ([a2fc7cf](https://github.com/bebbi/dicom-curate/commit/a2fc7cf2c3e6a8a121be00396bb6e88390516e14))
+* parser exposes the protectUid function to protect instance uids ([32efaa6](https://github.com/bebbi/dicom-curate/commit/32efaa6fe4bc1992ea039ac19f7a9c347931603f))
+* scan directory worker passes the sequence number of the file to process within the directory ([4e65a45](https://github.com/bebbi/dicom-curate/commit/4e65a45e5569b7ae9c66d6f53584cfda0d142d55))
+
 # [0.3.0](https://github.com/bebbi/dicom-curate/compare/v0.2.0...v0.3.0) (2025-07-16)
 
 
