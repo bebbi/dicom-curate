@@ -216,7 +216,10 @@ export function offsetDateTime(
   dicomValue: string,
   iso8601Duration: string,
 ): string {
-  // Step 0: Detect and handle a leading minus sign.
+  // Step 0: Trim leading/trailing spaces from the DICOM value
+  const trimmedDicomValue = dicomValue.trim()
+  
+  // Step 0.5: Detect and handle a leading minus sign.
   let sign = 1
   let durationStr = iso8601Duration
   if (iso8601Duration.startsWith('-')) {
@@ -225,7 +228,7 @@ export function offsetDateTime(
   }
 
   // Step 1: Convert the original DICOM string to a canonical DT string.
-  const canonical = dicomToCanonicalDT(dicomValue) // Format: "YYYYMMDDHHMMSS.FFFFFF"
+  const canonical = dicomToCanonicalDT(trimmedDicomValue) // Format: "YYYYMMDDHHMMSS.FFFFFF"
 
   // Step 2: Split the canonical DT string.
   const base = canonical.slice(0, 14) // 14-digit base: YYYYMMDDHHMMSS
@@ -266,5 +269,5 @@ export function offsetDateTime(
   const newCanonical = newBase + '.' + newFractionStr
 
   // Step 9: Convert the canonical DT back to the original DICOM format.
-  return canonicalDTToDicom(newCanonical, dicomValue)
+  return canonicalDTToDicom(newCanonical, trimmedDicomValue)
 }
