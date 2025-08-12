@@ -207,19 +207,7 @@ describe('curateDict basic functionality', () => {
   const simplePrivateTag = '00051100'
   const nestedPrivateTag = 'GeneralMatchingSequence[0].00510014'
 
-  // TODO: Fix bug, quarantine tags are being removed from the final dicom data
-  it('captures private tags to be quarantined when retainSafePrivateOption is true', () => {
-    const result = curateDict(passingFilename, 0, sample, defaultTestOptions)
-    verifyNoErrors(result)
-
-    // Verify private tags are quarantined
-    const quarantine = result.mapResults.quarantine
-    expect(quarantine).toBeDefined()
-    expect(simplePrivateTag in quarantine).toBe(true)
-    expect(nestedPrivateTag in quarantine).toBe(true)
-  })
-
-  it('removes private tags when retainSafePrivateOption is false', () => {
+  it('removes private tags when retainSafePrivateOption is Off', () => {
     const withPrivateTagsRemoved = {
       ...defaultTestOptions,
       curationSpec: specWithOptions({
@@ -1061,5 +1049,129 @@ describe('curateDict basic functionality', () => {
         )
       }
     })
+  })
+
+  it.each([
+    {
+      description: 'trailing spaces',
+      value: '20250101123000.000000 ',
+      expectedOffsetDateTime: '20260306163506.000000',
+    },
+    {
+      description: 'leading spaces',
+      value: ' 20250101123000.000000',
+      expectedOffsetDateTime: '20260306163506.000000',
+    },
+    {
+      description: 'both leading and trailing spaces',
+      value: ' 20250101123000.000000 ',
+      expectedOffsetDateTime: '20260306163506.000000',
+    },
+    {
+      description: 'no leading or trailing spaces',
+      value: '20250101123000.000000',
+      expectedOffsetDateTime: '20260306163506.000000',
+    },
+  ])('successfully offsets RadiopharmaceuticalStartDateTime with $description', ({ value, expectedOffsetDateTime }) => {
+    const dateOffset = 'P1Y2M3DT4H5M6S' // 1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds
+
+    // Create a modified sample with spaces in RadiopharmaceuticalStartDateTime
+    const sampleWithSpaces = {
+      ...sample,
+      dict: {
+        ...sample.dict,
+        '00181078': {
+          vr: 'DT',
+          Value: [value], // Use the parameterised value with spaces
+        },
+      },
+    }
+
+    const withOffsetTemporalData = {
+      ...defaultTestOptions,
+      curationSpec: specWithOptions({
+        dicomPS315EOptions: {
+          cleanDescriptorsOption: false,
+          cleanDescriptorsExceptions: [],
+          retainLongitudinalTemporalInformationOptions: 'Offset' as const,
+          retainPatientCharacteristicsOption: [],
+          retainDeviceIdentityOption: false,
+          retainUIDsOption: 'On' as const,
+          retainSafePrivateOption: 'Off',
+          retainInstitutionIdentityOption: false,
+        },
+      }),
+      dateOffset,
+    }
+
+    const result = curateDict(passingFilename, 0, sampleWithSpaces, withOffsetTemporalData)
+    verifyNoErrors(result)
+
+    // Verify that RadiopharmaceuticalStartDateTime (00181078) is preserved and correctly offset
+    verifyDicomTagIsPreserved(result, '00181078', expectedOffsetDateTime)
+
+    // Verify that the original value (with spaces) appears in mappings as a replacement
+    const mappings = result.mapResults.mappings
+    const radiopharmMapping = mappings['RadiopharmaceuticalStartDateTime']
+    expect(radiopharmMapping).toBeDefined()
+    expect(radiopharmMapping[0]).toBe(value) // Original value with spaces
+    expect(radiopharmMapping[1]).toBe('replace')
+    expect(radiopharmMapping[2]).toBe('offsetTemporalOpt')
+    expect(radiopharmMapping[3]).toBe(expectedOffsetDateTime) // Correctly offset value
+  })
+
+  it('preserves private tags when retainSafePrivateOption is Quarantine', () => {
+    // Use sampleBatchCurationSpecification with quarantine mode
+    const batchSpec = sampleBatchCurationSpecification()
+    const withQuarantineSpec = {
+      ...defaultTestOptions,
+      curationSpec: () => ({
+        ...batchSpec,
+        dicomPS315EOptions: {
+          ...(batchSpec.dicomPS315EOptions as any || {}),
+          retainSafePrivateOption: 'Quarantine' as const,
+        },
+        // Disable DICOM header modifications for cleaner testing
+        modifications: function (parser: any) {
+          const mods = batchSpec.modifications(parser)
+          return {
+            ...mods,
+            dicomHeader: {},
+          }
+        },
+      }),
+    }
+
+    const result = curateDict(passingFilename, 0, sample, withQuarantineSpec)
+    verifyNoErrors(result)
+
+    // Verify private tags are quarantined
+    const quarantine = result.mapResults.quarantine
+    expect(quarantine).toBeDefined()
+    expect('00051100' in quarantine).toBe(true)
+    expect('GeneralMatchingSequence[0].00510014' in quarantine).toBe(true)
+
+    // Verify private tags are preserved in the final DICOM data
+    const dict = result.dicomData.dict
+
+    // Check top-level private tag
+    expect(dict['00051100']).toBeDefined()
+    expect(dict['00051100'].vr).toBe('SH')
+    expect(dict['00051100'].Value).toEqual(['Test Private Tag'])
+
+    // Check nested private tag in sequence - handle different structures
+    expect(dict['00080413']).toBeDefined()
+    const sequence = dict['00080413']
+    const sequenceItem = sequence.Value ? sequence.Value[0] : (sequence as any)[0]
+
+    expect(sequenceItem).toBeDefined()
+    expect(sequenceItem['00510014']).toBeDefined()
+    expect(sequenceItem['00510014'].vr).toBe('ST')
+    expect(sequenceItem['00510014'].Value).toEqual(['Test Private Tag'])
+
+    // Verify that private tags are NOT in the mappings (they should be preserved, not modified)
+    const mappings = result.mapResults.mappings
+    expect('00051100' in mappings).toBe(false)
+    expect('GeneralMatchingSequence[0].00510014' in mappings).toBe(false)
   })
 })

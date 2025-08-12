@@ -130,6 +130,7 @@ export default function collectMappings(
       dicomPS315EOptions: finalSpec.dicomPS315EOptions,
       dateOffset: mappingOptions.dateOffset,
       mapResults,
+      originalDicomDict: dicomData.dict,
     })
   }
 
