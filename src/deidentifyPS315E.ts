@@ -4,6 +4,7 @@ import hashUid from './hashUid'
 import replaceUid from './replaceUid'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
+import { convertKeywordToTagId } from './config/dicom/tagConversion'
 import { offsetDateTime } from './offsetDateTime'
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
 import { uidRegistryPS3_06_A1 } from './config/dicom/uidRegistryPS3_06_A1'
@@ -71,12 +72,52 @@ export default function deidentifyPS315E({
   dicomPS315EOptions,
   dateOffset,
   mapResults,
+  originalDicomDict,
 }: {
   naturalData: TNaturalData
   dicomPS315EOptions: TPs315Options
   dateOffset?: Iso8601Duration
   mapResults: TMapResults
+  originalDicomDict?: Record<string, any>
 }) {
+  // Helper function to get original DICOM element from nested path
+  function getOriginalDicomElement(path: string, tagName: string): any {
+    if (!originalDicomDict) return null
+    
+    if (!path) {
+      // Top-level element
+      return originalDicomDict[tagName]
+    }
+    
+    // Parse nested path like "GeneralMatchingSequence[0]."
+    const pathParts = path.split('.')
+    let current = originalDicomDict
+    
+    for (const part of pathParts) {
+      if (!part) continue // Skip empty parts from trailing dots
+      
+      const arrayMatch = part.match(/^(.+)\[(\d+)\]$/)
+      if (arrayMatch) {
+        const [, sequenceName, index] = arrayMatch
+        const tagId = convertKeywordToTagId(sequenceName)
+        if (current[tagId] && current[tagId].Value && current[tagId].Value[parseInt(index)]) {
+          current = current[tagId].Value[parseInt(index)]
+        } else {
+          return null
+        }
+      } else {
+        const tagId = convertKeywordToTagId(part)
+        if (current[tagId]) {
+          current = current[tagId]
+        } else {
+          return null
+        }
+      }
+    }
+    
+    return current[tagName] || null
+  }
+
   const {
     cleanDescriptorsOption,
     cleanDescriptorsExceptions,
@@ -394,7 +435,16 @@ export default function deidentifyPS315E({
             ]
           } else {
             // We keep the private tag but register its value for checking.
-            mapResults.quarantine[attrPath] = data[name]
+            // Store the full DICOM element structure, not just the value
+            // For private tags, we need to preserve the original structure
+            const originalElement = getOriginalDicomElement(path, name)
+            if (originalElement) {
+              // Store the original DICOM element structure (with vr and Value)
+              mapResults.quarantine[attrPath] = originalElement
+            } else {
+              // Fallback to the naturalized value if original not available
+              mapResults.quarantine[attrPath] = data[name]
+            }
           }
         } else {
           mapResults.anomalies.push(
