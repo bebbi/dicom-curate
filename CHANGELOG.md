@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/bebbi/dicom-curate/compare/v0.4.0...v0.4.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* handle nested private tags and temporal offsets with leading/trailing whitespace ([1783214](https://github.com/bebbi/dicom-curate/commit/178321492963dd0eaa6165fc0a882c188576415d))
+
 # [0.4.0](https://github.com/bebbi/dicom-curate/compare/v0.3.0...v0.4.0) (2025-07-27)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "dicom-curate",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Organize and de-identify DICOM header data ",
   "type": "module",
   "main": "dist/esm/index.js",
