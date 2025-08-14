@@ -70,9 +70,11 @@ declare module 'dcmjs' {
       ): Record<string, DicomJsonElement>
     }
 
-    function datasetToDict(dataset: Dataset): Record<string, DicomJsonElement>
-    function datasetToBuffer(dataset: Dataset): ArrayBuffer
-    function datasetToBlob(dataset: Dataset): Blob
+    function datasetToDict(
+      dataset: DicomDataset,
+    ): Record<string, DicomJsonElement>
+    function datasetToBuffer(dataset: DicomDataset): ArrayBuffer
+    function datasetToBlob(dataset: DicomDataset): Blob
   }
 
   export namespace log {
