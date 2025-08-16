@@ -144,6 +144,7 @@ export type TCurationSpecification = {
     | TMappingInputDirect
     | TMappingInputTwoPass
   )
+  excludedFiletypes?: string[]
 }
 
 type TProgressMessageBase = {
