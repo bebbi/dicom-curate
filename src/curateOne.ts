@@ -39,9 +39,23 @@ export async function curateOne({
   try {
     dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer)
   } catch (error) {
+    console.warn(`[dicom-curate] Could not parse ${fileInfo.name} as DICOM data:`, error)
+    
+    // Create a more informative error result
     const mapResults = {
-      anomalies: [`Could not parse ${fileInfo.name} as dicom data`],
+      anomalies: [`Could not parse ${fileInfo.name} as DICOM data`],
+      errors: [`File ${fileInfo.name} is not a valid DICOM file or is corrupted`],
+      sourceInstanceUID: `invalid_${fileInfo.name.replace(/[^a-zA-Z0-9]/g, '_')}`,
+      outputFilePath: `${fileInfo.path}/${fileInfo.name}`,
+      // Add metadata about the failed file
+      fileInfo: {
+        name: fileInfo.name,
+        size: fileInfo.size,
+        path: fileInfo.path,
+        parseError: error instanceof Error ? error.message : String(error)
+      }
     }
+    
     return mapResults
   }
 
