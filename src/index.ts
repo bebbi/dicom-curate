@@ -296,9 +296,12 @@ async function curateMany(
       //
       if (organizeOptions.inputType === 'directory') {
         const fileListWorker = initializeFileListWorker()
+        const curationSpec = organizeOptions.curationSpec()
+        const specExcludedFiletypes = curationSpec.excludedFiletypes
         fileListWorker.postMessage({
           request: 'scan',
           directoryHandle: organizeOptions.inputDirectory,
+          excludedFiletypes: specExcludedFiletypes,
         })
       } else if (organizeOptions.inputType === 'files') {
         queueFilesForMapping(organizeOptions)
