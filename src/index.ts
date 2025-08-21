@@ -40,8 +40,16 @@ export type { Row } from './csvMapping'
 
 const mappingWorkerCount = navigator.hardwareConcurrency
 
-let filesToProcess: { fileInfo: TFileInfo; fileIndex: number }[] = []
+// Update the type to include scan anomalies
+let filesToProcess: {
+  fileInfo: TFileInfo
+  fileIndex: number
+  scanAnomalies: string[]
+}[] = []
 let directoryScanFinished = false
+
+// Track scan anomalies separately since they don't go through the processing pipeline
+let scanAnomalies: { fileInfo: TFileInfo; anomalies: string[] }[] = []
 
 function requiresDateOffset(
   deIdOpts: TPs315Options | 'Off',
@@ -68,6 +76,7 @@ function requiresDateOffset(
 function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
+  scanAnomalies = []
 
   const fileListWorker = new Worker(
     new URL('./scanDirectoryWorker.js', import.meta.url),
@@ -80,19 +89,29 @@ function initializeFileListWorker() {
       switch (event.data.response) {
         case 'file':
           const { fileIndex, fileInfo } = event.data
-          filesToProcess.push({ fileIndex, fileInfo })
+          filesToProcess.push({
+            fileIndex,
+            fileInfo,
+            scanAnomalies: [], // Files sent to processing have no scan anomalies
+          })
+
           // Could do some throttling:
           // if (filesToProcess.length > 10) {
           //   fileListWorker.postMessage({ request: 'stop' })
           // }
           dispatchMappingJobs()
           break
+        case 'scanAnomalies':
+          // Handle scan anomalies separately - they don't go to processing
+          const { fileInfo: anomalyFileInfo, anomalies } = event.data
+          scanAnomalies.push({ fileInfo: anomalyFileInfo, anomalies })
+          break
         case 'done':
           console.log('directoryScanFinished')
           directoryScanFinished = true
           break
         default:
-          // @ts-expect-error: response is string here, not never
+          // @ts-expect-error: response is string here, not never
           console.error(`Unknown response from worker ${event.data.response}`)
       }
       dispatchMappingJobs()
@@ -189,6 +208,24 @@ function dispatchMappingJobs() {
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
 
+    // Create individual mapResults entries for each scan anomaly
+    // Only do this during actual processing (not first pass)
+    if (!mappingWorkerOptions.skipWrite) {
+      scanAnomalies.forEach(({ fileInfo, anomalies }) => {
+        const scanAnomalyResult: TMapResults = {
+          sourceInstanceUID: `scan_${fileInfo.name.replace(/[^a-zA-Z0-9]/g, '_')}`,
+          outputFilePath: `${fileInfo.path}/${fileInfo.name}`, // Use the actual file path
+          mappings: {},
+          anomalies: anomalies, // Keep the original anomalies array
+          errors: [],
+          quarantine: {},
+        }
+
+        // Add each scan anomaly result to the final results
+        mapResultsList.push(scanAnomalyResult)
+      })
+    }
+
     progressCallback({
       response: 'done',
       mapResultsList: mapResultsList,
@@ -258,9 +295,14 @@ function queueFilesForMapping(
       kind: 'blob',
       blob: inputFile,
     }
-    filesToProcess.push({ fileInfo, fileIndex })
-    dispatchMappingJobs()
+    filesToProcess.push({
+      fileInfo,
+      fileIndex,
+      scanAnomalies: [],
+    })
   })
+  // Dispatch jobs once after all files are queued to prevent race conditions
+  dispatchMappingJobs()
 }
 
 let progressCallback: ProgressCallback
