@@ -1,3 +1,11 @@
+# [0.5.0](https://github.com/bebbi/dicom-curate/compare/v0.4.1...v0.5.0) (2025-08-21)
+
+
+### Features
+
+* add file-exclusions to anomalies array in mapresults ([8ac59d6](https://github.com/bebbi/dicom-curate/commit/8ac59d601c05ca93a0bc2cd208e8d9030deae788))
+* implement file-exclusion logic into scanDirectoryWorker and specifications ([b9a3552](https://github.com/bebbi/dicom-curate/commit/b9a3552a158a1b931a4b0b42b5af3952415e3f55))
+
 ## [0.4.1](https://github.com/bebbi/dicom-curate/compare/v0.4.0...v0.4.1) (2025-08-13)
 
 
