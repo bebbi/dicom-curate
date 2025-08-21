@@ -14,6 +14,12 @@ export type FileScanMsg =
     fileInfo: TFileInfo
   }
   | {
+    response: 'scanAnomalies'
+    fileIndex: number
+    fileInfo: TFileInfo
+    anomalies: string[]
+  }
+  | {
     response: 'done'
   }
 
@@ -25,9 +31,10 @@ let excludedFiletypes: string[] = []
 /**
  * Check if a file should be processed based on filtering rules
  * @param file - The file to check
+ * @param fileAnomalies - Array to collect anomalies for this specific file e.g. excluded files
  * @returns Promise<boolean> - True if the file should be processed
  */
-async function shouldProcessFile(file: File): Promise<boolean> {
+async function shouldProcessFile(file: File, fileAnomalies: string[]): Promise<boolean> {
   const allExcludedFiletypes = [
     ...DEFAULT_EXCLUDED_FILETYPES,
     ...excludedFiletypes
@@ -36,13 +43,13 @@ async function shouldProcessFile(file: File): Promise<boolean> {
   try {
     // Check if the file is in the list of excluded files
     if (allExcludedFiletypes.some(excluded => file.name.toLowerCase() === excluded.toLowerCase())) {
-      console.log(`[dicom-curate] Skipping excluded file: ${file.name}`)
+      fileAnomalies.push(`Skipped excluded file: ${file.name}`)
       return false
     }
 
     // Check filesize - (valid) DICOM files are at least 132 bytes (128-byte preamble + 4-byte signature)
     if (file.size < 132) {
-      console.log(`[dicom-curate] Skipping very small file: ${file.name} (${file.size} bytes)`)
+      fileAnomalies.push(`Skipped very small file: ${file.name} (${file.size} bytes)`)
       return false
     }
 
@@ -55,11 +62,11 @@ async function shouldProcessFile(file: File): Promise<boolean> {
     }
 
     // Don't parse file without DICOM signature
-    console.log(`[dicom-curate] Skipping file without DICOM signature: ${file.name}`)
+    fileAnomalies.push(`Skipped file without DICOM signature: ${file.name}`)
     return false
 
   } catch (error) {
-    console.warn(`[dicom-curate] Error checking file ${file.name}, allowing parser to decide:`, error)
+    fileAnomalies.push(`Unable to determine file validity - processing anyway: ${file.name} - ${error}`)
     // If vetting process fails, let the parser decide
     return true
   }
@@ -103,8 +110,10 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
     for (const entry of entries) {
       if (entry.kind === 'file' && keepScanning) {
         const file = await (entry as FileSystemFileHandle).getFile()
+        const fileAnomalies: string[] = []
 
-        if (await shouldProcessFile(file)) {
+        if (await shouldProcessFile(file, fileAnomalies)) {
+          // Send file to processing pipeline
           self.postMessage({
             response: 'file',
             fileIndex: fileIndex++,
@@ -115,6 +124,20 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
               kind: 'handle',
               fileHandle: entry as FileSystemFileHandle,
             },
+          } satisfies FileScanMsg)
+        } else if (fileAnomalies.length > 0) {
+          // Send scan anomalies as separate messsage so they are not sent to processing (curate)
+          self.postMessage({
+            response: 'scanAnomalies',
+            fileIndex: fileIndex++,
+            fileInfo: {
+              path: prefix,
+              name: entry.name,
+              size: file.size,
+              kind: 'handle',
+              fileHandle: entry as FileSystemFileHandle,
+            },
+            anomalies: fileAnomalies,
           } satisfies FileScanMsg)
         }
       } else if (entry.kind === 'directory' && keepScanning) {
