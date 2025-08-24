@@ -146,7 +146,6 @@ function initializeMappingWorkers() {
     )
     mappingWorker.onerror = console.error
 
-    /* eslint-disable no-loop-func */
     mappingWorker.addEventListener('message', (event) => {
       switch (event.data.response) {
         case 'finished':
@@ -172,7 +171,6 @@ function initializeMappingWorkers() {
           console.error(`Unknown response from worker ${event.data.response}`)
       }
     })
-    /* eslint-enable no-loop-func */
 
     availableMappingWorkers.push(mappingWorker)
   }
