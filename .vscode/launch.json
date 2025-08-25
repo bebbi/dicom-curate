@@ -8,7 +8,7 @@
       "protocol": "inspector",
       "cwd": "${workspaceFolder}",
       "env": { "NODE_OPTIONS": "--inspect" },
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["run", "test"],
       "console": "integratedTerminal",
       "outputCapture": "std"
