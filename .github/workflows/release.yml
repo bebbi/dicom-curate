@@ -30,11 +30,15 @@ jobs:
         with:
           node-version: '20.8.1'
 
-      - run: yarn install
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-      - run: yarn test # optional, but harmless
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: yarn build
+      - run: pnpm test # optional, but harmless
+
+      - run: pnpm build
 
       - name: Release with semantic-release
         run: npx semantic-release
