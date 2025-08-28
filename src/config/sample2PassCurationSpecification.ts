@@ -13,7 +13,6 @@ import type { TCurationSpecification } from '../types'
  * }}
  */
 export function sample2PassCurationSpecification(): TCurationSpecification {
-  // Confirm hostProps for this transfer.
   const hostProps = {
     protocolNumber: 'Sample_Protocol_Number',
     activityProviderName: 'Sample_CRO',
@@ -104,10 +103,10 @@ export function sample2PassCurationSpecification(): TCurationSpecification {
       cleanDescriptorsExceptions: ['SeriesDescription'],
       retainLongitudinalTemporalInformationOptions: 'Full',
       retainPatientCharacteristicsOption: [
-        'PatientsWeight',
-        'PatientsSize',
-        'PatientsAge',
-        'PatientsSex',
+        'PatientWeight',
+        'PatientSize',
+        'PatientAge',
+        'PatientSex',
         'SelectorASValue',
       ],
       retainDeviceIdentityOption: true,

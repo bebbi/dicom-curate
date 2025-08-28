@@ -97,7 +97,6 @@ import type { TCurationSpecification } from 'dicom-curate'
  * Curation specification for batch-curating DICOM files.
  */
 export function sampleBatchCurationSpecification(): TCurationSpecification {
-  // Confirm hostProps for this transfer.
   const hostProps = {
     protocolNumber: 'Sample_Protocol_Number',
     activityProviderName: 'Sample_CRO',
@@ -141,10 +140,10 @@ export function sampleBatchCurationSpecification(): TCurationSpecification {
       cleanDescriptorsExceptions: ['SeriesDescription'],
       retainLongitudinalTemporalInformationOptions: 'Full',
       retainPatientCharacteristicsOption: [
-        'PatientsWeight',
-        'PatientsSize',
-        'PatientsAge',
-        'PatientsSex',
+        'PatientWeight',
+        'PatientSize',
+        'PatientAge',
+        'PatientSex',
         'SelectorASValue',
       ],
       retainDeviceIdentityOption: true,
