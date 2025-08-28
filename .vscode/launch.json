@@ -2,16 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "dicom-curate test",
+      "name": "Debug dicom-curate",
       "type": "node",
       "request": "launch",
       "protocol": "inspector",
-      "cwd": "${workspaceFolder}",
-      "env": { "NODE_OPTIONS": "--inspect" },
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "test"],
-      "console": "integratedTerminal",
-      "outputCapture": "std"
+      "runtimeArgs": ["test"],
+      "args": ["--runInBand", "--no-cache"]
     }
   ]
 }
