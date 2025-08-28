@@ -97,8 +97,8 @@ import type { TCurationSpecification } from 'dicom-curate'
  * Curation specification for batch-curating DICOM files.
  */
 export function sampleBatchCurationSpecification(): TCurationSpecification {
-  // Confirm allowed identifiers for this transfer.
-  const identifiers = {
+  // Confirm hostProps for this transfer.
+  const hostProps = {
     protocolNumber: 'Sample_Protocol_Number',
     activityProviderName: 'Sample_CRO',
     centerSubjectId: /^[A-Z]{2}\d{2}-\d{3}$/,
@@ -117,8 +117,8 @@ export function sampleBatchCurationSpecification(): TCurationSpecification {
       // collect from a csv file. A client can use regex to validate the input.
       type: 'load',
       collect: {
-        CURR_ID: identifiers.centerSubjectId,
-        StudyDescription: identifiers.timepointNames,
+        CURR_ID: hostProps.centerSubjectId,
+        StudyDescription: hostProps.timepointNames,
         MAPPED_ID: /BLIND_\d+/,
       },
       // With this, can refer to mappings as parser.getMapping('blindedId')
@@ -132,8 +132,8 @@ export function sampleBatchCurationSpecification(): TCurationSpecification {
       },
     },
 
-    version: '2.0',
-    identifiers,
+    version: '3.0',
+    hostProps,
 
     // This specifies the standardized DICOM de-identification
     dicomPS315EOptions: {
@@ -153,60 +153,53 @@ export function sampleBatchCurationSpecification(): TCurationSpecification {
       retainInstitutionIdentityOption: true,
     },
 
-    // This section defines the output folder structure and alignment of DICOM headers
-    modifications(parser) {
+    modifyDicomHeader(parser) {
       const scan = parser.getFilePathComp('scan')
       const centerSubjectId = parser.getFilePathComp('centerSubjectId')
 
       return {
-        dicomHeader: {
-          // Align the PatientID DICOM header with the centerSubjectId folder name.
-          PatientID: centerSubjectId,
-          // This example maps PatientIDs based on the mapping CSV file.
-          // PatientID: parser.getMapping('blindedId'),
-          PatientName: centerSubjectId,
-          // Align the StudyDescription DICOM header with the timepoint folder name.
-          StudyDescription: parser.getFilePathComp('timepoint'),
-          // The party responsible for assigning a standard ClinicalTrialSeriesDescription
-          ClinicalTrialCoordinatingCenterName: identifiers.activityProviderName,
-          // Align the ClinicalTrialSeriesDescription DICOM header with the scan folder name.
-          ClinicalTrialSeriesDescription: scan,
-        },
-
-        // This defines the output folder structure.
-        outputFilePathComponents: [
-          parser.getFilePathComp('protocolNumber'),
-          parser.getFilePathComp('activityProvider'),
-          centerSubjectId,
-          parser.getFilePathComp('timepoint'),
-          parser.getFilePathComp('scan') +
-            '=' +
-            parser.getDicom('SeriesNumber'),
-          parser.getFilePathComp(parser.FILEBASENAME) + '.dcm',
-        ],
+        // Align the PatientID DICOM header with the centerSubjectId folder name.
+        PatientID: centerSubjectId,
+        // This example maps PatientIDs based on the mapping CSV file.
+        // PatientID: parser.getMapping('blindedId'),
+        PatientName: centerSubjectId,
+        // Align the StudyDescription DICOM header with the timepoint folder name.
+        StudyDescription: parser.getFilePathComp('timepoint'),
+        // The party responsible for assigning a standard ClinicalTrialSeriesDescription
+        ClinicalTrialCoordinatingCenterName: hostProps.activityProviderName,
+        // Align the ClinicalTrialSeriesDescription DICOM header with the scan folder name.
+        ClinicalTrialSeriesDescription: scan,
       }
+    },
+
+    outputFilePathComponents(parser) {
+      const scan = parser.getFilePathComp('scan')
+      const centerSubjectId = parser.getFilePathComp('centerSubjectId')
+
+      return [
+        parser.getFilePathComp('protocolNumber'),
+        parser.getFilePathComp('activityProvider'),
+        centerSubjectId,
+        parser.getFilePathComp('timepoint'),
+        scan + '=' + parser.getDicom('SeriesNumber'),
+        parser.getFilePathComp(parser.FILEBASENAME) + '.dcm',
+      ]
     },
 
     // This section defines the validation rules for the input DICOMs.
     // The processing continues on errors, but errors will have to be fixed
     // or reviewed between the parties.
-    validation(parser) {
-      const modality = parser.getDicom('Modality')
-      const filename = parser.getFilePathComp(parser.FILEBASENAME)
-      const seriesUid = parser.getDicom('SeriesInstanceUID')
-
-      return {
-        errors: [
-          // File path
-          [
-            'Invalid study folder name',
-            parser.getFilePathComp('protocolNumber') !==
-              identifiers.protocolNumber,
-          ],
-          // DICOM header
-          ['Missing Modality', parser.missingDicom('Modality')],
+    errors(parser) {
+      return [
+        // File path
+        [
+          'Invalid study folder name',
+          parser.getFilePathComp('protocolNumber') !== hostProps.protocolNumber,
         ],
-      }
+        // DICOM header
+        ['Missing Modality', parser.missingDicom('Modality')],
+        ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
+      ]
     },
   }
 }
