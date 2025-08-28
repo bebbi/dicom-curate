@@ -1,15 +1,43 @@
 import esbuild from 'esbuild'
+import { readdirSync, statSync } from 'fs'
+import { join, extname } from 'path'
+
+// Function to recursively find TypeScript files, excluding tests and @types
+function findEntryPoints(dir, baseDir = '') {
+  const entries = []
+  const items = readdirSync(dir)
+
+  for (const item of items) {
+    const fullPath = join(dir, item)
+    const relativePath = join(baseDir, item)
+
+    if (statSync(fullPath).isDirectory()) {
+      // Skip @types directory
+      if (item === '@types') continue
+
+      // Recursively search subdirectories
+      entries.push(...findEntryPoints(fullPath, relativePath))
+    } else if (extname(item) === '.ts') {
+      // Skip test files
+      if (item.endsWith('.test.ts') || item.endsWith('.spec.ts')) continue
+
+      // Add as entry point
+      entries.push(`src/${relativePath}`)
+    }
+  }
+
+  return entries
+}
+
+// Get entry points dynamically
+const entryPoints = findEntryPoints('src')
 
 const buildOptions = {
-  entryPoints: [
-    'src/index.ts',
-    'src/scanDirectoryWorker.ts',
-    'src/applyMappingsWorker.ts',
-  ],
-  bundle: true,
+  entryPoints,
   format: 'esm',
   outdir: 'dist/esm',
-  sourcemap: true,
+  bundle: true,
+  sourcemap: false, // Set to false to disable source maps
   target: 'es2020',
   platform: 'browser',
   external: [],
