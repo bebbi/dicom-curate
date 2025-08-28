@@ -51,48 +51,11 @@ const readme = readFileSync(readmePath, 'utf8')
 const relativeInput = relative(join(__dirname, '..'), tsSourcePath)
 const MARKER = `<!-- Snippet auto-generated from ${relativeInput} -->`
 
-// — extract the first array under "// File path"
-const filePathRe = /^[ \t]*\/\/ File path\s*\r?\n[ \t]*(\[[\s\S]*?\]),?/m
-const filePathMatch = snippetSource.match(filePathRe)
-const filePathItem = filePathMatch ? filePathMatch[1].trim() : ''
-
-// — extract the first array under "// DICOM header"
-const dicomRe = /^[ \t]*\/\/ DICOM header\s*\r?\n[ \t]*(\[[\s\S]*?\]),?/m
-const dicomMatch = snippetSource.match(dicomRe)
-const dicomItem = dicomMatch ? dicomMatch[1].trim() : ''
-
-// — capture the indent of the errors: line *and* match the entire existing block
-const errorsRe = new RegExp(
-  '^([ \\t]*)errors\\s*:\\s*\\[[ \\t]*\\r?\\n[\\s\\S]*?^\\1\\],?',
-  'm',
-)
-const errorsMatch = snippetSource.match(errorsRe)
-const indent = errorsMatch ? errorsMatch[1] : '  '
-
-// — build a new errors: [ … ] block
-const newErrorsBlock = (
-  filePathMatch && dicomMatch && errorsMatch
-    ? [
-        `${indent}errors: [`,
-        `${indent}  // File path`,
-        `${indent}  ${filePathItem},`,
-        `${indent}  // DICOM header`,
-        `${indent}  ${dicomItem},`,
-        `${indent}],`,
-      ]
-    : [`${indent}],`]
-).join('\n')
-
-// — splice it into your snippet (fall back to original if any regex failed)
-const shortenedContent = errorsMatch
-  ? snippetSource.replace(errorsRe, newErrorsBlock)
-  : snippetSource
-
 // — wrap that full script in your README snippet, using TS fences
 const replacement = `${MARKER}
 
 \`\`\`ts
-${shortenedContent}
+${snippetSource}
 \`\`\``
 
 // — locate & replace the old fenced snippet

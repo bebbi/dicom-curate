@@ -34,7 +34,6 @@ export type {
 export { TCurateOneArgs } from './curateOne'
 
 export { specVersion } from './config/specVersion'
-export { sample2PassCurationSpecification as sampleSpecification } from './config/sample2PassCurationSpecification'
 export { csvTextToRows } from './csvMapping'
 export type { Row } from './csvMapping'
 

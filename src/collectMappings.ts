@@ -35,22 +35,18 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  let finalSpec: Omit<TCurationSpecification, 'identifiers' | 'version'> = {
+  let finalSpec: Omit<TCurationSpecification, 'hostProps' | 'version'> = {
     dicomPS315EOptions: defaultPs315Options,
     inputPathPattern: '',
-    modifications(parser) {
-      return {
-        dicomHeader: {},
-        outputFilePathComponents: [
-          parser.protectUid(parser.getDicom('SeriesInstanceUID')),
-          parser.getFilePathComp(parser.FILENAME),
-        ],
-      }
-    },
-    validation: () => ({ errors: [] }),
+    modifyDicomHeader: () => ({}),
+    outputFilePathComponents: (parser) => [
+      parser.protectUid(parser.getDicom('SeriesInstanceUID')),
+      parser.getFilePathComp(parser.FILENAME),
+    ],
+    errors: () => [],
   }
 
-  const { modifications, validation, ...restSpec } =
+  const { modifyDicomHeader, errors, ...restSpec } =
     mappingOptions.curationSpec()
 
   if (restSpec.version !== specVersion) {
@@ -63,11 +59,11 @@ export default function collectMappings(
   Object.assign(finalSpec, restSpec)
 
   if (!mappingOptions.skipModifications) {
-    finalSpec.modifications = modifications
+    finalSpec.modifyDicomHeader = modifyDicomHeader
   }
 
   if (!mappingOptions.skipValidation) {
-    finalSpec.validation = validation
+    finalSpec.errors = errors
   }
 
   // protect filename if we de-identify
@@ -87,12 +83,10 @@ export default function collectMappings(
     finalSpec.additionalData,
   )
 
-  let modificationMap = finalSpec.modifications(parser)
-
   // List all validation errors
   mapResults.errors = finalSpec
-    .validation(parser)
-    .errors.filter(([, failure]) => failure)
+    .errors(parser)
+    .filter(([, failure]) => failure)
     .map(([message]) => message)
 
   // Return listing for the "two-pass add mapping" scenario
@@ -122,7 +116,9 @@ export default function collectMappings(
     mapResults.listing = { info: cleanedInfo, collectByValue }
   }
 
-  mapResults.outputFilePath = modificationMap.outputFilePathComponents.join('/')
+  mapResults.outputFilePath = finalSpec
+    .outputFilePathComponents(parser)
+    .join('/')
 
   if (finalSpec.dicomPS315EOptions !== 'Off') {
     deidentifyPS315E({
@@ -138,7 +134,7 @@ export default function collectMappings(
   // collect the tag mappings before assigning them into dicomData
   // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
   //   for each tag they want to map
-  const dicomMap = modificationMap.dicomHeader
+  const dicomMap = finalSpec.modifyDicomHeader(parser)
   for (let attrPath in dicomMap) {
     // This overrides any default action if attrPath is the same
     mapResults.mappings[attrPath] = [
