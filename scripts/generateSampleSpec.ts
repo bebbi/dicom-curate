@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from 'fs'
 import { join, relative, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import ts from 'typescript'
+import prettier from 'prettier'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -34,7 +35,7 @@ const snippetSource = tsSource.replace(
 )
 
 // ——— 1) Generate the JS module via transpilation ———
-const jsOutput = ts.transpileModule(tsSource, {
+let jsOutput = ts.transpileModule(tsSource, {
   compilerOptions: {
     target: ts.ScriptTarget.ES2020,
     module: ts.ModuleKind.ESNext,
@@ -42,6 +43,13 @@ const jsOutput = ts.transpileModule(tsSource, {
     alwaysStrict: false,
   },
 }).outputText
+
+jsOutput = await prettier.format(jsOutput, {
+  parser: 'babel',
+  semi: false,
+  tabWidth: 2,
+  singleQuote: true,
+})
 
 writeFileSync(jsOutPath, jsOutput, 'utf8')
 console.log(`✅ Generated ${jsOutPath}`)
