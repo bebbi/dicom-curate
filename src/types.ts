@@ -36,7 +36,10 @@ export type TMappingOptions = {
   dateOffset?: Iso8601Duration
 }
 
-export type TSerializedMappingOptions = Omit<TMappingOptions, 'curationSpec'> & {
+export type TSerializedMappingOptions = Omit<
+  TMappingOptions,
+  'curationSpec'
+> & {
   curationSpecStr: string
 }
 
@@ -128,18 +131,19 @@ type TMappingInputTwoPass = {
   }
 }
 
-export type TCurationSpecification = {
+type HPPrimitive = string | number | boolean | null | RegExp
+export type HPValue = HPPrimitive | { [k: string]: HPValue } | HPValue[]
+
+export type HostProps = Record<string, HPValue>
+
+export type TCurationSpecification<THost extends HostProps = HostProps> = {
   version: string
-  modifications: (parser: TParser) => {
-    dicomHeader: { [keyword: string]: string }
-    outputFilePathComponents: string[]
-  }
-  validation: (parser: TParser) => {
-    errors: [message: string, failure: boolean][]
-  }
+  modifyDicomHeader: (parser: TParser) => { [keyword: string]: string }
+  outputFilePathComponents: (parser: TParser) => string[]
+  errors: (parser: TParser) => [message: string, failure: boolean][]
   dicomPS315EOptions: TPs315Options | 'Off'
   inputPathPattern: string
-  identifiers: Record<string, any>
+  hostProps: THost
   additionalData?: { mapping: TMappedValues } & (
     | TMappingInputDirect
     | TMappingInputTwoPass
