@@ -37,7 +37,12 @@ export async function curateOne({
   dcmjs.log.getLogger('validation.dcmjs').setLevel(dcmjs.log.levels.SILENT)
   let dicomData
   try {
-    dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer)
+    // Use ignoreErrors to allow processing DICOM files with VR length violations during reading
+    // This prevents the curation process to continue when encountering errors in the DICOM files and allows
+    // processing of files that may not strictly conform to VR length limits (e.g., CS values > 16 chars)
+    dicomData = (dcmjs.data.DicomMessage.readFile as any)(fileArrayBuffer, {
+      ignoreErrors: true
+    })
   } catch (error) {
     console.warn(`[dicom-curate] Could not parse ${fileInfo.name} as DICOM data:`, error)
     
@@ -76,7 +81,11 @@ export async function curateOne({
     const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
 
     // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
-    const modifiedArrayBuffer = mappedDicomData.write()
+    // Use allowInvalidVRLength to allow writing DICOM files with VR length violations
+    // This ensures consistency with our reading approach and prevents write failures for non-conformant data
+    const modifiedArrayBuffer = (mappedDicomData.write as any)({
+      allowInvalidVRLength: true
+    })
 
     if (outputDirectory) {
       const subDirectoryHandle = await createNestedDirectories(
