@@ -9,14 +9,16 @@ import { allElements } from '../testdata/allElements'
 import { sampleBatchCurationSpecification } from './config/sampleBatchCurationSpecification'
 
 // Like default curation spec with dicom header modifications ignored, plus custom options
-function specWithOptions(options: Partial<TCurationSpecification>) {
+function specWithOptions(
+  options: Partial<TCurationSpecification>,
+): () => Partial<TCurationSpecification> {
   const batchSpec = sampleBatchCurationSpecification()
 
   return () => ({
     ...batchSpec,
     ...options,
     // but avoid DICOM header changes
-    modifyDicomHeader(parser) {
+    modifyDicomHeader() {
       return {}
     },
   })
