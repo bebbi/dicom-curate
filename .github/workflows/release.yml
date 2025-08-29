@@ -43,6 +43,5 @@ jobs:
       - name: Release with semantic-release
         run: npx semantic-release
         env:
-          HUSKY: 0
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
