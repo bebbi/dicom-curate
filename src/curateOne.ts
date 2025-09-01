@@ -37,7 +37,10 @@ export async function curateOne({
   dcmjs.log.getLogger('validation.dcmjs').setLevel(dcmjs.log.levels.SILENT)
   let dicomData
   try {
-    dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer)
+    // Allow processing DICOM files with DICOM violations (e.g., CS values > 16 chars)
+    dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer, {
+      ignoreErrors: true
+    })
   } catch (error) {
     console.warn(`[dicom-curate] Could not parse ${fileInfo.name} as DICOM data:`, error)
     
@@ -76,7 +79,10 @@ export async function curateOne({
     const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
 
     // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
-    const modifiedArrayBuffer = mappedDicomData.write()
+    // Allow writing DICOM files with VR length violations
+    const modifiedArrayBuffer = mappedDicomData.write({
+      allowInvalidVRLength: true
+    })
 
     if (outputDirectory) {
       const subDirectoryHandle = await createNestedDirectories(
