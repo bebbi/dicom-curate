@@ -1,3 +1,9 @@
+# [0.6.0](https://github.com/bebbi/dicom-curate/compare/v0.5.1...v0.6.0) (2025-09-01)
+
+### Features
+
+- handle DICOM files with VR length violations ([d0a23fd](https://github.com/bebbi/dicom-curate/commit/d0a23fd707fe9a9aa1a846d99d458d415085c777))
+
 ## [0.5.1](https://github.com/bebbi/dicom-curate/compare/v0.5.0...v0.5.1) (2025-08-29)
 
 ### Bug Fixes
