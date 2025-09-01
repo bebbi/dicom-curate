@@ -31,17 +31,25 @@ declare module 'dcmjs' {
   }
 
   export namespace data {
+    interface ReadFileOptions {
+      ignoreErrors?: boolean
+    }
+
+    interface WriteOptions {
+      allowInvalidVRLength?: boolean
+    }
+
     class DicomDict {
       constructor(meta: DicomDataset)
       meta: DicomDataset
       dict: DicomDataset
-      write(): ArrayBuffer
+      write(options?: WriteOptions): ArrayBuffer
       merge(other: DicomDict): void
     }
 
     class DicomMessage {
       constructor(arrayBuffer: ArrayBuffer)
-      static readFile(fileArrayBuffer: ArrayBuffer): DicomDict
+      static readFile(fileArrayBuffer: ArrayBuffer, options?: ReadFileOptions): DicomDict
     }
 
     class DicomMetaDictionary {
