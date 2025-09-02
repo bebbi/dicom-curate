@@ -1,14 +1,11 @@
 import * as dcmjs from 'dcmjs'
-import deidentifyPS315E, { defaultPs315Options } from './deidentifyPS315E'
+import { composeSpecs } from './composeSpecs'
+import { defaultSpec } from './defaultSpec'
+import deidentifyPS315E from './deidentifyPS315E'
 import getParser from './getParser'
-import { specVersion } from './config/specVersion'
 import { get as _get } from 'lodash'
 
-import type {
-  TMappingOptions,
-  TMapResults,
-  TCurationSpecification,
-} from './types'
+import type { TMappingOptions, TMapResults } from './types'
 import type { TDicomData, TNaturalData } from 'dcmjs'
 
 export default function collectMappings(
@@ -35,36 +32,7 @@ export default function collectMappings(
   )
   mapResults.sourceInstanceUID = naturalData.SOPInstanceUID
 
-  let finalSpec: Omit<TCurationSpecification, 'hostProps' | 'version'> = {
-    dicomPS315EOptions: defaultPs315Options,
-    inputPathPattern: '',
-    modifyDicomHeader: () => ({}),
-    outputFilePathComponents: (parser) => [
-      parser.protectUid(parser.getDicom('SeriesInstanceUID')),
-      parser.getFilePathComp(parser.FILENAME),
-    ],
-    errors: () => [],
-  }
-
-  const { modifyDicomHeader, errors, ...restSpec } =
-    mappingOptions.curationSpec()
-
-  if (restSpec.version !== specVersion) {
-    throw new Error(
-      `Only version ${specVersion} supported in curationSpecification`,
-    )
-  }
-
-  // curationSpecification was populated by eval, load it into mappingSpec
-  Object.assign(finalSpec, restSpec)
-
-  if (!mappingOptions.skipModifications) {
-    finalSpec.modifyDicomHeader = modifyDicomHeader
-  }
-
-  if (!mappingOptions.skipValidation) {
-    finalSpec.errors = errors
-  }
+  const finalSpec = composeSpecs(mappingOptions.curationSpec())
 
   // protect filename if we de-identify
   const finalFilePath =
