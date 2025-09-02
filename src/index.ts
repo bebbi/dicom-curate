@@ -87,7 +87,7 @@ function initializeFileListWorker() {
     'message',
     (event: MessageEvent<FileScanMsg>) => {
       switch (event.data.response) {
-        case 'file':
+        case 'file': {
           const { fileIndex, fileInfo } = event.data
           filesToProcess.push({
             fileIndex,
@@ -101,18 +101,22 @@ function initializeFileListWorker() {
           // }
           dispatchMappingJobs()
           break
-        case 'scanAnomalies':
+        }
+        case 'scanAnomalies': {
           // Handle scan anomalies separately - they don't go to processing
           const { fileInfo: anomalyFileInfo, anomalies } = event.data
           scanAnomalies.push({ fileInfo: anomalyFileInfo, anomalies })
           break
-        case 'done':
+        }
+        case 'done': {
           console.log('directoryScanFinished')
           directoryScanFinished = true
           break
-        default:
+        }
+        default: {
           // @ts-expect-error: response is string here, not never
           console.error(`Unknown response from worker ${event.data.response}`)
+        }
       }
       dispatchMappingJobs()
     },
