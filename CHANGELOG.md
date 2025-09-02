@@ -1,3 +1,9 @@
+## [0.6.1](https://github.com/bebbi/dicom-curate/compare/v0.6.0...v0.6.1) (2025-09-02)
+
+### Bug Fixes
+
+- add correct block scope for case statements ([cebdd9e](https://github.com/bebbi/dicom-curate/commit/cebdd9ef8c91c2b425187458ff36beb0630d7f12))
+
 # [0.6.0](https://github.com/bebbi/dicom-curate/compare/v0.5.1...v0.6.0) (2025-09-01)
 
 ### Features
