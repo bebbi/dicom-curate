@@ -1,3 +1,13 @@
+# [0.7.0](https://github.com/bebbi/dicom-curate/compare/v0.6.1...v0.7.0) (2025-09-02)
+
+### Bug Fixes
+
+- correct wrongly spelled DICOM names (e.g. 'PatientsWeight' is corrected to 'PatientWeight') ([fb4e6a4](https://github.com/bebbi/dicom-curate/commit/fb4e6a4ac0fd185b7cc921bd855295037da7ace7))
+
+### Features
+
+- simplify TCurationSpecification ([40602ec](https://github.com/bebbi/dicom-curate/commit/40602ecd5e2d4c53e26b16c08d66b6cb0acc83a9))
+
 ## [0.6.1](https://github.com/bebbi/dicom-curate/compare/v0.6.0...v0.6.1) (2025-09-02)
 
 ### Bug Fixes
