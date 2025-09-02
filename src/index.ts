@@ -1,6 +1,7 @@
 import { extractColumnMappings, TColumnMappings } from './csvMapping'
 import { clearCaches } from './clearCaches'
 import { curateOne } from './curateOne'
+import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
@@ -245,11 +246,12 @@ async function collectMappingOptions(
   const outputDirectory = organizeOptions.outputDirectory
 
   //
-  // then, get the mapping functions
+  // then, get the curation spec
   //
   const curationSpec = organizeOptions.curationSpec
 
-  const { dicomPS315EOptions: deIdOpts, additionalData } = curationSpec()
+  const { dicomPS315EOptions: deIdOpts, additionalData } =
+    composeSpecs(curationSpec())
 
   // Parse the column mappings if the spec requires them and they exist.
   // The need for mapping can come from additionalData or from the
@@ -339,7 +341,7 @@ async function curateMany(
       //
       if (organizeOptions.inputType === 'directory') {
         const fileListWorker = initializeFileListWorker()
-        const curationSpec = organizeOptions.curationSpec()
+        const curationSpec = composeSpecs(organizeOptions.curationSpec())
         const specExcludedFiletypes = curationSpec.excludedFiletypes
         fileListWorker.postMessage({
           request: 'scan',

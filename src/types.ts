@@ -1,5 +1,6 @@
 import { TColumnMappings, TMappedValues, Row } from './csvMapping'
-import { TNaturalData } from 'dcmjs'
+import type { TNaturalData } from 'dcmjs'
+import type { SpecPart } from './composeSpecs'
 
 export type Iso8601Duration = string
 
@@ -16,7 +17,7 @@ export type TPs315Options = {
 
 export type OrganizeOptions = {
   outputDirectory?: FileSystemDirectoryHandle
-  curationSpec: () => TCurationSpecification
+  curationSpec: () => TCurationSpecification | SpecPart[]
   table?: Row[]
   skipWrite?: boolean
   skipModifications?: boolean
@@ -29,7 +30,7 @@ export type OrganizeOptions = {
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
-  curationSpec: () => TCurationSpecification
+  curationSpec: () => TCurationSpecification | SpecPart[]
   skipWrite?: boolean
   skipModifications?: boolean
   skipValidation?: boolean
