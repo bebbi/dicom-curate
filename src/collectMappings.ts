@@ -116,9 +116,11 @@ export default function collectMappings(
     mapResults.listing = { info: cleanedInfo, collectByValue }
   }
 
-  mapResults.outputFilePath = finalSpec
-    .outputFilePathComponents(parser)
-    .join('/')
+  if (!mappingOptions.skipModifications) {
+    mapResults.outputFilePath = finalSpec
+      .outputFilePathComponents(parser)
+      .join('/')
+  }
 
   if (finalSpec.dicomPS315EOptions !== 'Off') {
     deidentifyPS315E({
