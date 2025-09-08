@@ -1,10 +1,6 @@
 import { curateOne } from './curateOne'
 import { deserializeMappingOptions } from './serializeMappingOptions'
-import type {
-  TFileInfo,
-  TMappingOptions,
-  TSerializedMappingOptions,
-} from './types'
+import type { TFileInfo, TSerializedMappingOptions } from './types'
 
 declare var self: Window & typeof globalThis
 
@@ -18,7 +14,7 @@ export type MappingRequest = {
 
 self.addEventListener('message', (event: MessageEvent<MappingRequest>) => {
   switch (event.data.request) {
-    case 'apply':
+    case 'apply': {
       const { serializedMappingOptions } = event.data
       const mappingOptions = deserializeMappingOptions(serializedMappingOptions)
 
@@ -40,6 +36,7 @@ self.addEventListener('message', (event: MessageEvent<MappingRequest>) => {
         throw new Error('ERROR')
       }
       break
+    }
     default:
       console.error(`Unknown request ${event.data.request}`)
   }
