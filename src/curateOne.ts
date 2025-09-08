@@ -39,15 +39,20 @@ export async function curateOne({
   try {
     // Allow processing DICOM files with DICOM violations (e.g., CS values > 16 chars)
     dicomData = dcmjs.data.DicomMessage.readFile(fileArrayBuffer, {
-      ignoreErrors: true
+      ignoreErrors: true,
     })
   } catch (error) {
-    console.warn(`[dicom-curate] Could not parse ${fileInfo.name} as DICOM data:`, error)
-    
+    console.warn(
+      `[dicom-curate] Could not parse ${fileInfo.name} as DICOM data:`,
+      error,
+    )
+
     // Create a more informative error result
     const mapResults = {
       anomalies: [`Could not parse ${fileInfo.name} as DICOM data`],
-      errors: [`File ${fileInfo.name} is not a valid DICOM file or is corrupted`],
+      errors: [
+        `File ${fileInfo.name} is not a valid DICOM file or is corrupted`,
+      ],
       sourceInstanceUID: `invalid_${fileInfo.name.replace(/[^a-zA-Z0-9]/g, '_')}`,
       outputFilePath: `${fileInfo.path}/${fileInfo.name}`,
       // Add metadata about the failed file
@@ -55,10 +60,10 @@ export async function curateOne({
         name: fileInfo.name,
         size: fileInfo.size,
         path: fileInfo.path,
-        parseError: error instanceof Error ? error.message : String(error)
-      }
+        parseError: error instanceof Error ? error.message : String(error),
+      },
     }
-    
+
     return mapResults
   }
 
@@ -81,7 +86,7 @@ export async function curateOne({
     // note that dcmjs creates a 128 preamble of all zeros, so any PHI in previous preamble is gone
     // Allow writing DICOM files with VR length violations
     const modifiedArrayBuffer = mappedDicomData.write({
-      allowInvalidVRLength: true
+      allowInvalidVRLength: true,
     })
 
     if (outputDirectory) {
