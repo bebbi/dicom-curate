@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/bebbi/dicom-curate/compare/v0.7.0...v0.7.1) (2025-09-09)
+
+### Bug Fixes
+
+- add missing conditional ([dd09a01](https://github.com/bebbi/dicom-curate/commit/dd09a01cb4cb76838a34324ec85b1473bd4df521))
+- resolve warning around missing case statement braces ([88b0910](https://github.com/bebbi/dicom-curate/commit/88b091082f188d45167db89948ea67ad4502dbc4))
+
 # [0.7.0](https://github.com/bebbi/dicom-curate/compare/v0.6.1...v0.7.0) (2025-09-02)
 
 ### Bug Fixes
