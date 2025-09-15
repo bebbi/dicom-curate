@@ -83,24 +83,28 @@ export default function deidentifyPS315E({
   // Helper function to get original DICOM element from nested path
   function getOriginalDicomElement(path: string, tagName: string): any {
     if (!originalDicomDict) return null
-    
+
     if (!path) {
       // Top-level element
       return originalDicomDict[tagName]
     }
-    
+
     // Parse nested path like "GeneralMatchingSequence[0]."
     const pathParts = path.split('.')
     let current = originalDicomDict
-    
+
     for (const part of pathParts) {
       if (!part) continue // Skip empty parts from trailing dots
-      
+
       const arrayMatch = part.match(/^(.+)\[(\d+)\]$/)
       if (arrayMatch) {
         const [, sequenceName, index] = arrayMatch
         const tagId = convertKeywordToTagId(sequenceName)
-        if (current[tagId] && current[tagId].Value && current[tagId].Value[parseInt(index)]) {
+        if (
+          current[tagId] &&
+          current[tagId].Value &&
+          current[tagId].Value[parseInt(index)]
+        ) {
           current = current[tagId].Value[parseInt(index)]
         } else {
           return null
@@ -114,7 +118,7 @@ export default function deidentifyPS315E({
         }
       }
     }
-    
+
     return current[tagName] || null
   }
 
@@ -404,15 +408,49 @@ export default function deidentifyPS315E({
           ]
         }
 
-        // Sequences can also be descriptors, so recurse into them outside the
-        // if/else conditions, as there is no need to recurse if the SQ has been
-        // marked for (full) replace or deletion before.
-        if (vr === 'SQ' && !mapResults.mappings[attrPath]) {
+        // Sequences can also be descriptors, so recurse into them.
+        // We need to recurse even if the sequence is marked for deletion,
+        // because individual items within the sequence might need to be retained
+        // based on retainPatientCharacteristicsOption.
+        if (vr === 'SQ') {
           let subDataIndex = 0
-          for (let subData of Object.values(data[name]) as TNaturalData[]) {
-            let subPath = `${path}${name}[${subDataIndex}].`
-            collectMappingsInData(subData, subPath)
-            subDataIndex += 1
+          const sequenceWasMarkedForDeletion = mapResults.mappings[attrPath]
+
+          // Check if we should preserve this sequence due to retention options
+          let shouldPreserveSequence = false
+          if (
+            sequenceWasMarkedForDeletion &&
+            retainPatientCharacteristicsOption &&
+            Array.isArray(retainPatientCharacteristicsOption)
+          ) {
+            // Check if there are any fields in the sequence items that are in the retention list
+            const hasRetainedFields = Object.values(
+              data[name] as TNaturalData[],
+            ).some((subData) => {
+              return Object.keys(subData).some((fieldName) => {
+                // Skip internal fields
+                if (fieldName.startsWith('_')) return false
+
+                // Check if this field is in the retainPatientCharacteristicsOption list
+                return retainPatientCharacteristicsOption.includes(fieldName)
+              })
+            })
+
+            if (hasRetainedFields) {
+              shouldPreserveSequence = true
+              // Remove the sequence-level deletion mapping to preserve the sequence structure
+              delete mapResults.mappings[attrPath]
+            }
+          }
+
+          // Only recurse into sequence items if we're preserving the sequence
+          // or if it wasn't marked for deletion in the first place
+          if (!sequenceWasMarkedForDeletion || shouldPreserveSequence) {
+            for (let subData of Object.values(data[name]) as TNaturalData[]) {
+              let subPath = `${path}${name}[${subDataIndex}].`
+              collectMappingsInData(subData, subPath)
+              subDataIndex += 1
+            }
           }
         }
       } else {
