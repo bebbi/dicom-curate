@@ -107,18 +107,22 @@ function mergePs315(chain: Ps315Chain): TPs315Options | 'Off' {
     }
 
     // both are objects: apply field rules
+    // Store arrays before spread overwrites them
+    const prevCleanDesc = acc.cleanDescriptorsExceptions ?? []
+    const prevRetainPatChars = acc.retainPatientCharacteristicsOption
+
     acc = { ...acc, ...cur }
 
     if (cur.cleanDescriptorsExceptions !== undefined) {
       acc.cleanDescriptorsExceptions = concatUnique(
-        acc.cleanDescriptorsExceptions ?? [],
+        prevCleanDesc,
         cur.cleanDescriptorsExceptions,
       )
     }
 
     if (cur.retainPatientCharacteristicsOption !== undefined) {
       acc.retainPatientCharacteristicsOption = mergeRetain(
-        acc.retainPatientCharacteristicsOption,
+        prevRetainPatChars,
         cur.retainPatientCharacteristicsOption,
       )
     }
