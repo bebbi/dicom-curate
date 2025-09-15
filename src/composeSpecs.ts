@@ -39,7 +39,9 @@ function mergeRetain(a: RetainOpt | undefined, b: RetainOpt): RetainOpt {
 }
 
 function isObj(v: unknown): v is HostProps {
-  return !!v && typeof v === 'object' && !Array.isArray(v)
+  return (
+    !!v && typeof v === 'object' && !Array.isArray(v) && !(v instanceof RegExp)
+  )
 }
 
 /*
