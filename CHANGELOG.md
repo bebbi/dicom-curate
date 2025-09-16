@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/bebbi/dicom-curate/compare/v0.8.0...v0.8.1) (2025-09-16)
+
+### Bug Fixes
+
+- fix sample composite spec hostProps context availability ([b537a34](https://github.com/bebbi/dicom-curate/commit/b537a34a3af6c70eb1d082192daa6ea6dcff01fb))
+
 # [0.8.0](https://github.com/bebbi/dicom-curate/compare/v0.7.1...v0.8.0) (2025-09-16)
 
 ### Bug Fixes
