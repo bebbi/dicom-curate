@@ -82,15 +82,14 @@ export function composedSpec(): SpecPart<THostProps, Ctx>[] {
         ctx: { centerSubjectId, timepointName, protocolNumber },
         spec: {
           version: '3.0',
-          // For Merit only using this for checking protocol number.
-          // We're discarding the other file path components.
+          // We might use a subset of the identifiers captured here.
           inputPathPattern:
             'protocolNumber/siteId/centerSubjectId/timepoint/procedure/scanStatus/zippedName',
         },
       }
     },
 
-    function telixStandard(ctxIn) {
+    function sharedDefs(ctxIn) {
       const centerSubjectIdPattern = /^[A-Z]{2}\d{2}-\d{3}$/
 
       return {
