@@ -6,7 +6,7 @@ export type Iso8601Duration = string
 
 export type TPs315Options = {
   cleanDescriptorsOption: boolean
-  cleanDescriptorsExceptions: string[]
+  cleanDescriptorsExceptions: false | string[]
   retainLongitudinalTemporalInformationOptions: 'Full' | 'Off' | 'Offset'
   retainPatientCharacteristicsOption: false | string[]
   retainDeviceIdentityOption: boolean

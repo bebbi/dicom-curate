@@ -83,24 +83,28 @@ export default function deidentifyPS315E({
   // Helper function to get original DICOM element from nested path
   function getOriginalDicomElement(path: string, tagName: string): any {
     if (!originalDicomDict) return null
-    
+
     if (!path) {
       // Top-level element
       return originalDicomDict[tagName]
     }
-    
+
     // Parse nested path like "GeneralMatchingSequence[0]."
     const pathParts = path.split('.')
     let current = originalDicomDict
-    
+
     for (const part of pathParts) {
       if (!part) continue // Skip empty parts from trailing dots
-      
+
       const arrayMatch = part.match(/^(.+)\[(\d+)\]$/)
       if (arrayMatch) {
         const [, sequenceName, index] = arrayMatch
         const tagId = convertKeywordToTagId(sequenceName)
-        if (current[tagId] && current[tagId].Value && current[tagId].Value[parseInt(index)]) {
+        if (
+          current[tagId] &&
+          current[tagId].Value &&
+          current[tagId].Value[parseInt(index)]
+        ) {
           current = current[tagId].Value[parseInt(index)]
         } else {
           return null
@@ -114,7 +118,7 @@ export default function deidentifyPS315E({
         }
       }
     }
-    
+
     return current[tagName] || null
   }
 
@@ -236,6 +240,7 @@ export default function deidentifyPS315E({
           // Either cleanDescOpt is off (we handle those separately) or
           // if it's on, it's not one of the exception tags
           (!cleanDescriptorsOption ||
+            cleanDescriptorsExceptions === false ||
             !cleanDescriptorsExceptions.includes(normalName)) &&
           // No condition for an exception applies
           !cleanPolicyMap[normalName].exceptCondition?.(data) &&
@@ -362,7 +367,8 @@ export default function deidentifyPS315E({
           // inside the string.
           cleanDescriptorsOption &&
           normalName.match(/Comment|Description/) &&
-          !cleanDescriptorsExceptions.includes(normalName) &&
+          (cleanDescriptorsExceptions === false ||
+            !cleanDescriptorsExceptions.includes(normalName)) &&
           data[name] !== ''
         ) {
           mapResults.mappings[attrPath] = [

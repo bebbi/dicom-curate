@@ -391,7 +391,7 @@ describe('curateDict basic functionality', () => {
       curationSpec: specWithOptions({
         dicomPS315EOptions: {
           cleanDescriptorsOption: true,
-          cleanDescriptorsExceptions: [],
+          cleanDescriptorsExceptions: false,
           retainLongitudinalTemporalInformationOptions: 'Off' as const,
           retainPatientCharacteristicsOption: [],
           retainDeviceIdentityOption: false,

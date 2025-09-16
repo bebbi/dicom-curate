@@ -114,7 +114,7 @@ function mergePs315(chain: Ps315Chain): TPs315Options | 'Off' {
     acc = { ...acc, ...cur }
 
     if (cur.cleanDescriptorsExceptions !== undefined) {
-      acc.cleanDescriptorsExceptions = concatUnique(
+      acc.cleanDescriptorsExceptions = mergeRetain(
         prevCleanDesc,
         cur.cleanDescriptorsExceptions,
       )
