@@ -1,3 +1,21 @@
+# [0.8.0](https://github.com/bebbi/dicom-curate/compare/v0.7.1...v0.8.0) (2025-09-16)
+
+### Bug Fixes
+
+- exclude RegExp objects from deep merging ([49729f7](https://github.com/bebbi/dicom-curate/commit/49729f7e4048491af6abea79a538893aea7025fa))
+- handle empty cleanDescriptorsExceptions arrays for backwards compatibility ([ac943cd](https://github.com/bebbi/dicom-curate/commit/ac943cdd2e0fb2282b9a339d202f1b26d1e0fcf3))
+- preserve composeSpecs arrays before spread operation ([412d9b3](https://github.com/bebbi/dicom-curate/commit/412d9b3bc43506e718b0e248101ceac0fd8743a4))
+
+### Features
+
+- add composite spec draft ([1fc5f16](https://github.com/bebbi/dicom-curate/commit/1fc5f1623e44318ed54f3f585daf9d33c477926c))
+- add explicit reset support to cleanDescriptorsExceptions ([d751048](https://github.com/bebbi/dicom-curate/commit/d751048ddbeb0fd030f87f0f94cc9c8e7f6774ff))
+- export composeSpecs and SpecPart type ([7fb5664](https://github.com/bebbi/dicom-curate/commit/7fb566423896c8c882d9067ded7c06c443be1241))
+
+### Reverts
+
+- Revert "fix: handle empty cleanDescriptorsExceptions arrays for backwards compatibility" ([dad53e2](https://github.com/bebbi/dicom-curate/commit/dad53e2d1f6b141f01d0c37d02ad0d7d7ec966c3))
+
 ## [0.7.1](https://github.com/bebbi/dicom-curate/compare/v0.7.0...v0.7.1) (2025-09-09)
 
 ### Bug Fixes
