@@ -114,16 +114,10 @@ function mergePs315(chain: Ps315Chain): TPs315Options | 'Off' {
     acc = { ...acc, ...cur }
 
     if (cur.cleanDescriptorsExceptions !== undefined) {
-      // If current spec explicitly sets an empty array, respect that (don't concatenate)
-      // Otherwise, concatenate with previous values
-      if (cur.cleanDescriptorsExceptions.length === 0) {
-        acc.cleanDescriptorsExceptions = []
-      } else {
-        acc.cleanDescriptorsExceptions = concatUnique(
-          prevCleanDesc,
-          cur.cleanDescriptorsExceptions,
-        )
-      }
+      acc.cleanDescriptorsExceptions = concatUnique(
+        prevCleanDesc,
+        cur.cleanDescriptorsExceptions,
+      )
     }
 
     if (cur.retainPatientCharacteristicsOption !== undefined) {
