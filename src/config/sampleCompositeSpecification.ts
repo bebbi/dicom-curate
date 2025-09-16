@@ -58,6 +58,8 @@ export function composedSpec(): SpecPart<THostProps, Ctx>[] {
           ],
           // In this study we are auto-creating scan names, not using provider scan names.
           scanName: ctxIn.fallbackScanName,
+          // Make hostProps available to subsequent SpecParts
+          hostProps,
         },
         spec: { version: '3.0', hostProps },
       }
