@@ -1,3 +1,9 @@
+## [0.8.2](https://github.com/bebbi/dicom-curate/compare/v0.8.1...v0.8.2) (2025-09-17)
+
+### Bug Fixes
+
+- add missing conditionals in collectMappings to safely call getMappings ([15bde4f](https://github.com/bebbi/dicom-curate/commit/15bde4f880edb064d34c71a1472f052b00b9f571))
+
 ## [0.8.1](https://github.com/bebbi/dicom-curate/compare/v0.8.0...v0.8.1) (2025-09-16)
 
 ### Bug Fixes
