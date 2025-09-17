@@ -1,6 +1,5 @@
 import * as dcmjs from 'dcmjs'
 import { composeSpecs } from './composeSpecs'
-import { defaultSpec } from './defaultSpec'
 import deidentifyPS315E from './deidentifyPS315E'
 import getParser from './getParser'
 import { get as _get } from 'lodash'
@@ -52,10 +51,12 @@ export default function collectMappings(
   )
 
   // List all validation errors
-  mapResults.errors = finalSpec
-    .errors(parser)
-    .filter(([, failure]) => failure)
-    .map(([message]) => message)
+  if (!mappingOptions.skipValidation) {
+    mapResults.errors = finalSpec
+      .errors(parser)
+      .filter(([, failure]) => failure)
+      .map(([message]) => message)
+  }
 
   // Return listing for the "two-pass add mapping" scenario
   if (finalSpec.additionalData?.type === 'listing') {
@@ -104,15 +105,17 @@ export default function collectMappings(
   // collect the tag mappings before assigning them into dicomData
   // - Note the mappingFunctions return a dictionary called 'dicomModifications' of functions to call
   //   for each tag they want to map
-  const dicomMap = finalSpec.modifyDicomHeader(parser)
-  for (let attrPath in dicomMap) {
-    // This overrides any default action if attrPath is the same
-    mapResults.mappings[attrPath] = [
-      _get(naturalData, attrPath),
-      'replace',
-      'mappingFunction',
-      dicomMap[attrPath],
-    ]
+  if (!mappingOptions.skipModifications) {
+    const dicomMap = finalSpec.modifyDicomHeader(parser)
+    for (let attrPath in dicomMap) {
+      // This overrides any default action if attrPath is the same
+      mapResults.mappings[attrPath] = [
+        _get(naturalData, attrPath),
+        'replace',
+        'mappingFunction',
+        dicomMap[attrPath],
+      ]
+    }
   }
 
   return [naturalData, mapResults]
