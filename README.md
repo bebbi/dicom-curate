@@ -219,6 +219,7 @@ dicom-curate
   'MediaStorageSOPClassUID', as well as setting the 'TransferSyntaxUID' to 'Explit little Endian', and 'MediaStorageSOPInstanceUID' to the correct SOP instance UID.
 - cleans sequences ('SQ') by recursively applying the de-identification rules to each Dataset in each Item of the Sequence.
 - uses an allow-list approach, by removing everything not defined in PS3.06 or handled in PS3.15E1.1.
+- applies a manual blacklist that overrides the allow-list for attributes that may contain identifying information despite not being in PS3.15E1.1. This blacklist is defined in "src/config/dicom/manualBlacklist.ts" and can be populated using the whitelist review scripts in the "scripts/" directory.
 - identifies and removes additional ID attributes beyond PS3.15E1.1 by parsing PS3.06 and finding all attributes ending on "ID(s)", but not UID(s) that are not defined in PS3.15E. This ID list is defined in "src/config/dicom/retainAdditionalIds.ts", and a few of them are manually annotated to be retained if the "retain device identifier option" is activated.
 - keeps the 'EncapsulatedDocument' attribute if modality is "DOC", unless overridden
 - keeps the 'VerifyingObserverSequence' if modality is SR, unless overridden
@@ -243,3 +244,41 @@ dicom-curate
   - 'retainSafePrivateOption': 'Quarantine' or 'Off'. If 'Quarantine', keeps all private tags but creates a quarantine log for manual review
   - 'retainInstitutionIdentityOption': true or false
 - does not currently clean structured content
+
+## Manual Blacklist for Enhanced Privacy Protection
+
+As the DICOM standard evolves, some attributes in the allow-list may contain identifying information that is not captured by PS3.15E1.1 rules. To address this, dicom-curate implements a manual blacklist system that provides an additional layer of privacy protection.
+
+### Whitelist Review Process
+
+The `scripts/` directory contains tools to systematically review the DICOM attribute whitelist:
+
+1. **`analyseWhitelist.js`** - Provides broad categorization of potentially problematic attributes
+2. **`focusedWhitelistReview.js`** - Creates prioritized review list and exports CSV for systematic analysis
+3. **`dicomAttributeChecker.js`** - Analyses specific attributes with DICOM dictionary information
+4. **`extractHighRiskAttributes.js`** - Extracts high-risk attributes from CSV analysis for blacklist implementation
+
+### Usage
+
+```bash
+# Get overview of potentially problematic attributes
+node scripts/analyseWhitelist.js
+
+# Create prioritized review list
+node scripts/focusedWhitelistReview.js
+
+# Analyse specific attributes
+node scripts/dicomAttributeChecker.js "AttributeName1" "AttributeName2"
+```
+
+See `scripts/README.md` for detailed usage instructions and review methodology.
+
+### Manual Blacklist Configuration
+
+Confirmed problematic attributes are added to `src/config/dicom/manualBlacklist.ts`. These attributes are removed during de-identification regardless of their presence in the whitelist, with priority order:
+
+1. **Manual Blacklist** (highest priority - always remove)
+2. **PS3.15E1.1 Rules** (standard de-identification rules)
+3. **Allow-list** (keep if in whitelist and not blacklisted)
+
+The blacklist should be reviewed periodically as the DICOM standard evolves.

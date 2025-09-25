@@ -4,6 +4,7 @@ import hashUid from './hashUid'
 import replaceUid from './replaceUid'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
+import { manualBlacklistSet } from './config/dicom/manualBlacklist'
 import { convertKeywordToTagId } from './config/dicom/tagConversion'
 import { offsetDateTime } from './offsetDateTime'
 import { retainAdditionalIds } from './config/dicom/retainAdditionalIds'
@@ -388,6 +389,22 @@ export default function deidentifyPS315E({
             data[name],
             'delete',
             'notInRtnAdditionalIds',
+            undefined,
+          ]
+        } else if (
+          manualBlacklistSet.has(normalName) &&
+          vr !== 'UI' && // Don't blacklist UIDs - they have special handling
+          // Don't blacklist if it's in cleanDescriptorsExceptions
+          !(
+            cleanDescriptorsExceptions &&
+            cleanDescriptorsExceptions.includes(normalName)
+          ) &&
+          data[name] !== ''
+        ) {
+          mapResults.mappings[attrPath] = [
+            data[name],
+            'delete',
+            'manualBlacklist',
             undefined,
           ]
         } else if (

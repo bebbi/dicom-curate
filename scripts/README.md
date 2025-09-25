@@ -123,6 +123,19 @@ node scripts/extractHighRiskAttributes.js
 - `whitelist_review_priority.csv` - Prioritised list for systematic review
 - Analysis output in terminal - Save important findings
 
+## 📋 Manual Blacklist Documentation
+
+The `src/config/dicom/manualBlacklist.ts` file includes comprehensive documentation of:
+
+- **Blacklisted attributes** - High-risk attributes that should be removed
+- **Excluded attributes** - Commented examples with reasons for exclusion:
+  - UIDs (special handling)
+  - Technical/equipment parameters
+  - Standardized coded values
+  - Pure numeric measurements
+  - Attributes handled by PS3.15E1.1
+- **Decision criteria** - Guidelines for inclusion/exclusion decisions
+
 ## Implementation
 
 ### Current Manual Blacklist Location
