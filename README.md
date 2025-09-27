@@ -277,8 +277,9 @@ See `scripts/README.md` for detailed usage instructions and review methodology.
 
 Confirmed problematic attributes are added to `src/config/dicom/manualBlacklist.ts`. These attributes are removed during de-identification regardless of their presence in the whitelist, with priority order:
 
-1. **Manual Blacklist** (highest priority - always remove)
-2. **PS3.15E1.1 Rules** (standard de-identification rules)
-3. **Allow-list** (keep if in whitelist and not blacklisted)
+1. **cleanDescriptorsExceptions** (highest priority - always preserved if specified)
+2. **Manual Blacklist** (always remove, except for exceptions above)
+3. **PS3.15E1.1 Rules** (standard de-identification rules including cleanDescriptorsOption)
+4. **Allow-list** (keep if in whitelist and not covered by above rules)
 
 The blacklist should be reviewed periodically as the DICOM standard evolves.
