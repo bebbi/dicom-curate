@@ -22,7 +22,8 @@ node scripts/analyseWhitelist.js
 
 **Output**:
 
-- Categorises all whitelist attributes by risk patterns
+- **Automatically filters out UID attributes** (VR='UI') since they have special handling
+- Categorises remaining whitelist attributes by risk patterns
 - Shows counts and examples for each category
 - Identifies obvious high-risk attributes
 - Provides summary statistics
@@ -41,6 +42,7 @@ node scripts/focusedWhitelistReview.js
 
 **Output**:
 
+- **Automatically filters out UID attributes** (VR='UI') since they have special handling
 - Priority-ranked list of risky attributes (CRITICAL, HIGH, MEDIUM)
 - Exports `whitelist_review_priority.csv` for systematic review
 - Shows top 20 highest priority attributes

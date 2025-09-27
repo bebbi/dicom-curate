@@ -393,7 +393,6 @@ export default function deidentifyPS315E({
           ]
         } else if (
           manualBlacklistSet.has(normalName) &&
-          vr !== 'UI' && // Don't blacklist UIDs - they have special handling
           // Don't blacklist if it's in cleanDescriptorsExceptions
           !(
             cleanDescriptorsExceptions &&

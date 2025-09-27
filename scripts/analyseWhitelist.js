@@ -13,6 +13,16 @@ import { dirname } from 'path'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+// Load dcmjs to get DICOM dictionary information
+let nameMap
+try {
+  const dcmjs = await import('dcmjs')
+  nameMap = dcmjs.data.DicomMetaDictionary.nameMap
+} catch {
+  console.warn('⚠️  dcmjs not available, VR filtering will be skipped')
+  nameMap = null
+}
+
 // Import the whitelist
 const whitelistPath = join(
   __dirname,
@@ -27,7 +37,22 @@ if (!attributeMatches) {
   process.exit(1)
 }
 
-const attributes = attributeMatches.map((match) => match.slice(1, -1)) // Remove quotes
+const allAttributes = attributeMatches.map((match) => match.slice(1, -1)) // Remove quotes
+
+// Filter out UIDs upfront (VR type 'UI')
+const attributes = allAttributes.filter((attr) => {
+  if (!nameMap || !nameMap[attr]) {
+    return true // Keep if we can't determine VR type
+  }
+  return nameMap[attr].vr !== 'UI' // Exclude UIDs
+})
+
+const filteredCount = allAttributes.length - attributes.length
+if (filteredCount > 0) {
+  console.log(
+    `🔄 Filtered out ${filteredCount} UID attributes (VR='UI') from analysis`,
+  )
+}
 
 console.log(`\n📊 DICOM Whitelist Analysis`)
 console.log(`Total attributes: ${attributes.length}`)

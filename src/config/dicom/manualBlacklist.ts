@@ -7,9 +7,11 @@
 //
 // PRIORITY SYSTEM:
 // 1. cleanDescriptorsExceptions (highest) - user-specified exceptions always preserved
-// 2. Manual Blacklist - these attributes are always removed (except for UIDs and exceptions)
+// 2. Manual Blacklist - these attributes are always removed (except exceptions)
 // 3. PS3.15E1.1 rules - standard de-identification rules
 // 4. Whitelist (lowest) - attributes kept by default
+//
+// NOTE: UIDs are filtered out during analysis phase and never reach this blacklist
 //
 // This list should be periodically reviewed as the DICOM standard evolves.
 // Use the scripts in /scripts/ to analyse the whitelist for new problematic attributes.
@@ -86,7 +88,7 @@ export const manualBlacklist: string[] = [
   // 'ImageIndex',
   // 'FrameNumber',
 
-  // === Standard Enumerated Values ===
+  // === Standard Enumerated Values & Boolean Flags ===
   // These contain predefined enumerated values, not free text
   // 'Modality',
   // 'PhotometricInterpretation',
@@ -94,6 +96,12 @@ export const manualBlacklist: string[] = [
   // 'SamplesPerPixel',
   // 'BitsAllocated',
   // 'BitsStored',
+  // 'PatientIdentityRemoved', (CS - YES/NO)
+  // 'PatientMotionCorrected', (CS - YES/NO)
+  // 'ShowPatientDemographicsFlag', (CS - YES/NO)
+  // 'ContextGroupExtensionFlag', (CS - Y/N)
+  // 'FilterByOperator', (CS - enumerated values)
+  // 'PatientEyeMovementCommanded', (CS - YES/NO)
 
   // === Network/Communication (Technical) ===
   // Technical network parameters, not patient identifying
@@ -121,9 +129,10 @@ export const manualBlacklist: string[] = [
   // 1. Are UIDs (handled by special UID processing logic)
   // 2. Contain only technical/equipment parameters (non-patient identifying)
   // 3. Are standardized coded values (structured, not free text)
-  // 4. Are pure numeric measurements without context
-  // 5. Are already handled by existing PS3.15E1.1 rules
-  // 6. Are sequence attributes with structured data only
+  // 4. Are boolean flags or enumerated values (CS VR with controlled vocabulary)
+  // 5. Are pure numeric measurements without context
+  // 6. Are already handled by existing PS3.15E1.1 rules
+  // 7. Are sequence attributes with structured data only
   //
   // When in doubt, err on the side of privacy - include in blacklist
   // ========================================================================
@@ -163,7 +172,6 @@ export const manualBlacklist: string[] = [
   'ConfigurationInformationDescription',
   'ContainerComponentDescription',
   'ContentDescription',
-  'ContextGroupExtensionFlag',
   'ContextGroupIdentificationSequence',
   'ContextIdentifier',
   'CoordinateSystemAxisDescription',
@@ -295,7 +303,6 @@ export const manualBlacklist: string[] = [
   'ClinicalFractionNumber',
   'ClinicalTrialTimePointTypeCodeSequence',
   'ConsentForClinicalTrialUseSequence',
-  'FilterByOperator',
   'OphthalmicPatientClinicalInformationLeftEyeSequence',
   'OphthalmicPatientClinicalInformationRightEyeSequence',
   'PatientClinicalTrialParticipationSequence',
@@ -327,10 +334,7 @@ export const manualBlacklist: string[] = [
   'PatientDeathDateInAlternativeCalendar',
   'PatientEquipmentRelationshipCodeSequence',
   'PatientEyeMovementCommandCodeSequence',
-  'PatientEyeMovementCommanded',
   'PatientGantryRelationshipCodeSequence',
-  'PatientIdentityRemoved',
-  'PatientMotionCorrected',
   'PatientNotProperlyFixatedQuantity',
   'PatientPhysiologicalStateCodeSequence',
   'PatientPhysiologicalStateSequence',
@@ -346,7 +350,6 @@ export const manualBlacklist: string[] = [
   'PatientTreatmentPreparationProcedureSequence',
   'ReconstructionTargetCenterPatient',
   'RefractiveParametersUsedOnPatientSequence',
-  'ShowPatientDemographicsFlag',
   'SourcePatientGroupIdentificationSequence',
   'SourceToPatientSurfaceDistance',
   'TypeOfPatientID',
