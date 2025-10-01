@@ -13,6 +13,7 @@ const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
 const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
   let cache = new Set()
   let lastGroupId: string = ''
+
   return {
     isUniqueInGroup(value: string | number, groupId: string) {
       if (groupId !== lastGroupId) {
@@ -29,6 +30,7 @@ const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
     },
     clearUniqueInGroupCache() {
       cache = new Set()
+      lastGroupId = ''
     },
   }
 })()

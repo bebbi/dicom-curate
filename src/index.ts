@@ -327,6 +327,16 @@ async function curateMany(
     }
 
     try {
+      // Clear caches at the start of each processing session
+      // This ensures clean state between passes in two-pass curation
+      clearCaches()
+
+      // Reset all global state to prevent interference between multiple curateMany() calls
+      // This is critical for two-pass curation where curateMany() is called twice
+      filesToProcess = []
+      directoryScanFinished = false
+      scanAnomalies = []
+
       // create the mapping workers
       initializeMappingWorkers()
 
