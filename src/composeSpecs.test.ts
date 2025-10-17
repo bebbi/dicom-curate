@@ -205,7 +205,12 @@ describe('composeSpecs equivalence tests', () => {
         retainSafePrivateOption: 'Quarantine' as const,
         retainInstitutionIdentityOption: true,
       },
-      modifyDicomHeader: () => ({ PatientID: 'base' }),
+      modifyDicomHeader: (parser: any) => ({
+        PatientID: 'base',
+        ClinicalTrialCoordinatingCenterName: 'Sample_CRO',
+        ClinicalTrialSeriesDescription: parser.getFilePathComp('series'),
+        PatientName: parser.getFilePathComp('patient'),
+      }),
       outputFilePathComponents: () => ['base', 'output'],
       errors: () => [['base error', false] as [string, boolean]],
     }
@@ -217,7 +222,9 @@ describe('composeSpecs equivalence tests', () => {
         cleanDescriptorsExceptions: ['StudyDescription'], // Should merge with base
         retainPatientCharacteristicsOption: ['PatientSex'] as string[], // Should merge with base
       },
-      modifyDicomHeader: () => ({ StudyDescription: 'extended' }),
+      modifyDicomHeader: () => ({ 
+        StudyDescription: 'extended',
+      }),
       errors: () => [['extended error', false] as [string, boolean]],
     }
 
@@ -339,5 +346,30 @@ describe('composeSpecs equivalence tests', () => {
     const composedSpec = composeSpecs([spec1, spec2])
 
     expect(composedSpec.dicomPS315EOptions).toBe('Off')
+  })
+
+  test('composeSpecs does not mutate global defaultSpec across multiple calls', () => {
+    // Regression test: ensures defaultSpec is not mutated when called repeatedly
+    const spec = {
+      version: '3.0',
+      modifyDicomHeader: () => ({ PatientName: 'Test' }),
+      errors: () => [['Test error', false] as [string, boolean]],
+    }
+
+    const result1 = composeSpecs(spec)
+    const result2 = composeSpecs(spec)
+    const result3 = composeSpecs(spec)
+
+    const mockParser = {} as any
+
+    // Each call should produce identical output
+    expect(result1.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
+    expect(result2.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
+    expect(result3.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
+
+    // Errors should not accumulate across calls
+    expect(result1.errors(mockParser)).toHaveLength(1)
+    expect(result2.errors(mockParser)).toHaveLength(1)
+    expect(result3.errors(mockParser)).toHaveLength(1)
   })
 })
