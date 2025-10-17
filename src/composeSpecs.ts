@@ -160,8 +160,16 @@ export function composeSpecs(
     ? specOrComposedSpec
     : [specOrComposedSpec]
 
-  // Always merge with default spec
-  let final = defaultSpec
+  // Create a fresh copy of defaultSpec to prevent mutation of the global object
+  let final: TCurationSpecification = {
+    ...defaultSpec,
+    modifyDicomHeader: defaultSpec.modifyDicomHeader,
+    outputFilePathComponents: defaultSpec.outputFilePathComponents,
+    errors: defaultSpec.errors,
+    hostProps: { ...defaultSpec.hostProps },
+    excludedFiletypes: defaultSpec.excludedFiletypes ? [...defaultSpec.excludedFiletypes] : [],
+    dicomPS315EOptions: defaultSpec.dicomPS315EOptions,
+  }
 
   if (specsIn.length === 0) {
     throw new Error('composeSpecs requires a non-empty spec array')

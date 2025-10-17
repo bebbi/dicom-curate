@@ -112,5 +112,7 @@ export default function curateDict(
     }
   }
 
+  // NOTE: structuredClone would be faster but can't handle functions in mapResults
+  // TODO: Investigate if we can avoid cloning entirely or use a shallow clone
   return { dicomData: mappedDicomData, mapResults: _cloneDeep(mapResults) }
 }
