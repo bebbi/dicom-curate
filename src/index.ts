@@ -4,6 +4,8 @@ import { curateOne } from './curateOne'
 import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
+import { collectUidsFromFile } from './collectUids'
+import * as dcmjs from 'dcmjs'
 
 import type {
   TMappingOptions,
@@ -49,6 +51,8 @@ let filesToProcess: {
   scanAnomalies: string[]
 }[] = []
 let directoryScanFinished = false
+let uidCollectionInProgress = false
+let uidCollectionComplete = false
 
 // Track scan anomalies separately since they don't go through the processing pipeline
 let scanAnomalies: { fileInfo: TFileInfo; anomalies: string[] }[] = []
@@ -78,6 +82,8 @@ function requiresDateOffset(
 function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
+  uidCollectionInProgress = false
+  uidCollectionComplete = false
   scanAnomalies = []
 
   const fileListWorker = new Worker(
@@ -113,6 +119,9 @@ function initializeFileListWorker() {
         case 'done': {
           console.log('directoryScanFinished')
           directoryScanFinished = true
+
+          // Once scan is done, collect UIDs before starting processing
+          collectUidsForDirectory()
           break
         }
         default: {
@@ -125,6 +134,48 @@ function initializeFileListWorker() {
   )
 
   return fileListWorker
+}
+
+/**
+ * Collect UIDs from all files after directory scan completes
+ */
+async function collectUidsForDirectory() {
+  if (uidCollectionInProgress || uidCollectionComplete) {
+    return
+  }
+
+  const mappingOpts = mappingWorkerOptions as TMappingOptions
+
+  // Check if UID collection is actually needed
+  if (!needsUidCollection(mappingOpts)) {
+    uidCollectionComplete = true
+    dispatchMappingJobs()
+    return
+  }
+
+  uidCollectionInProgress = true
+
+  try {
+    const uidMappings = await generateSharedUidMappings(
+      filesToProcess,
+      mappingOpts,
+    )
+
+    if (uidMappings) {
+      mappingWorkerOptions.uidMappings = uidMappings
+    }
+
+    uidCollectionComplete = true
+    console.log('UID collection complete, starting file processing')
+
+    dispatchMappingJobs()
+  } catch (error) {
+    console.error('Error collecting UIDs:', error)
+    uidCollectionComplete = true // Continue anyway
+    dispatchMappingJobs()
+  } finally {
+    uidCollectionInProgress = false
+  }
 }
 
 //
@@ -144,6 +195,9 @@ function initializeMappingWorkers() {
   mappingWorkerOptions = {}
   workersActive = 0
   mapResultsList = []
+  // Initialize UID collection flags
+  uidCollectionInProgress = false
+  uidCollectionComplete = false
 
   for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
     let mappingWorker = new Worker(
@@ -183,6 +237,15 @@ function initializeMappingWorkers() {
 }
 
 function dispatchMappingJobs() {
+  // Don't start processing if directory scan is finished but UID collection is still in progress
+  if (
+    directoryScanFinished &&
+    uidCollectionInProgress &&
+    !uidCollectionComplete
+  ) {
+    return // Wait for UID collection to complete
+  }
+
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const { fileInfo, fileIndex } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
@@ -198,11 +261,14 @@ function dispatchMappingJobs() {
     } satisfies MappingRequest)
     workersActive += 1
   }
-  if (
+  // Check if all work is complete
+  const allWorkComplete =
     workersActive === 0 &&
     directoryScanFinished &&
-    filesToProcess.length === 0
-  ) {
+    filesToProcess.length === 0 &&
+    (!uidCollectionInProgress || uidCollectionComplete)
+
+  if (allWorkComplete) {
     // End and remove all workers
     while (availableMappingWorkers.length) {
       availableMappingWorkers.pop()!.terminate()
@@ -312,6 +378,74 @@ function queueFilesForMapping(
 
 let progressCallback: ProgressCallback
 
+/**
+ * Checks if UID collection is needed based on curation spec
+ */
+function needsUidCollection(mappingOptions: TMappingOptions): boolean {
+  const curationSpec = composeSpecs(mappingOptions.curationSpec())
+
+  return !(
+    curationSpec.dicomPS315EOptions === 'Off' ||
+    curationSpec.dicomPS315EOptions.retainUIDsOption === 'Hashed' ||
+    curationSpec.dicomPS315EOptions.retainUIDsOption === 'On'
+  )
+}
+
+/**
+ * Collect all UIDs from files and generate a shared mapping
+ * This ensures consistent UID replacement across all workers
+ */
+async function generateSharedUidMappings(
+  files: { fileInfo: TFileInfo }[],
+  mappingOptions: TMappingOptions,
+): Promise<Record<string, string> | undefined> {
+  if (!needsUidCollection(mappingOptions)) {
+    return undefined
+  }
+
+  if (files.length === 0) {
+    return undefined
+  }
+
+  console.log('Collecting UIDs from all files for consistent mapping...')
+
+  // Collect all unique UIDs
+  const allUids = new Set<string>()
+
+  // Process files in batches to avoid overwhelming memory
+  const batchSize = 100
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, Math.min(i + batchSize, files.length))
+
+    const batchPromises = batch.map(async ({ fileInfo }) => {
+      const uids = await collectUidsFromFile(fileInfo, mappingOptions)
+      return uids
+    })
+
+    const batchResults = await Promise.all(batchPromises)
+    batchResults.flat().forEach((uid) => allUids.add(uid))
+
+    console.log(
+      `Collected UIDs from ${Math.min(i + batchSize, files.length)}/${files.length} files`,
+    )
+  }
+
+  if (allUids.size === 0) {
+    console.log('No UIDs found that need mapping')
+    return undefined
+  }
+
+  // Generate mappings for all unique UIDs
+  const uidMappings: Record<string, string> = {}
+  allUids.forEach((uid) => {
+    uidMappings[uid] = dcmjs.data.DicomMetaDictionary.uid()
+  })
+
+  console.log(`Generated ${Object.keys(uidMappings).length} UID mappings`)
+
+  return uidMappings
+}
+
 async function curateMany(
   organizeOptions: OrganizeOptions,
   onProgress?: ProgressCallback,
@@ -350,8 +484,29 @@ async function curateMany(
           directoryHandle: organizeOptions.inputDirectory,
           excludedFiletypes: specExcludedFiletypes,
         })
+
+        // For directory input, we need to wait for the scan to finish before collecting UIDs
+        // This is handled by waiting for filesToProcess to be populated
+        // We'll do UID collection in a deferred way after files are discovered
       } else if (organizeOptions.inputType === 'files') {
+        // For files input, queue all files first
         queueFilesForMapping(organizeOptions)
+
+        // Check if UID collection is needed
+        if (needsUidCollection(mappingWorkerOptions as TMappingOptions)) {
+          // Generate shared UID mappings before processing
+          const uidMappings = await generateSharedUidMappings(
+            filesToProcess,
+            mappingWorkerOptions as TMappingOptions,
+          )
+          if (uidMappings) {
+            mappingWorkerOptions.uidMappings = uidMappings
+          }
+        }
+
+        // Processing can start immediately for files input
+        uidCollectionComplete = true
+        directoryScanFinished = true
       } else {
         console.error('`inputType` should be "directory" or "files"')
       }

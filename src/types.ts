@@ -35,6 +35,7 @@ export type TMappingOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
+  uidMappings?: Record<string, string>
 }
 
 export type TSerializedMappingOptions = Omit<

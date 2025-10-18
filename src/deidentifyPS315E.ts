@@ -40,6 +40,83 @@ export function protectUid(uid: string, retainUIDsOption: string): string {
   return retainUIDsOption === 'Hashed' ? hashUid(uid) : replaceUid(uid)
 }
 
+/**
+ * Get list of UID keywords from PS3.15 elements
+ * This is shared logic used by both UID collection and de-identification
+ */
+function getInstanceUidKeywords(): string[] {
+  return rawPs315EElements
+    .filter((elm) => getVr(elm.keyword) === 'UI')
+    .map((elm) => elm.keyword)
+}
+
+/**
+ * Check if a UID should be replaced (not a PS3.06 class UID)
+ * A UID should be replaced if:
+ * 1. It's explicitly mentioned in PS3.15 elements as an instance UID
+ * 2. It's not a well-known class UID from the PS3.06 registry
+ */
+function shouldReplaceUid(
+  uidKeyword: string,
+  uidValue: string,
+  instanceUids: string[],
+): boolean {
+  return (
+    instanceUids.includes(uidKeyword) && !(uidValue in uidRegistryPS3_06_A1)
+  )
+}
+
+/**
+ * Collect UIDs that need to be replaced (not hashed)
+ * This is used in the first pass to gather all UIDs before generating mappings
+ */
+export function collectUidsToReplace({
+  naturalData,
+  retainUIDsOption,
+}: {
+  naturalData: TNaturalData
+  retainUIDsOption: 'On' | 'Off' | 'Hashed'
+}): string[] {
+  // Only collect UIDs when not using hashed mode (hashed is deterministic)
+  if (retainUIDsOption === 'Hashed' || retainUIDsOption === 'On') {
+    return []
+  }
+
+  const instanceUids = getInstanceUidKeywords()
+  const uidsToReplace: string[] = []
+
+  function collectUidsInData(data: TNaturalData) {
+    for (let name in data) {
+      if (/^_.*/.test(name)) {
+        continue // ignore tags marked internal with leading underscore
+      }
+
+      const normalName = removeRetiredPrefix(name)
+
+      if (name in nameMap) {
+        let vr = nameMap[name].vr
+
+        if (vr === 'UI' && data[name] !== '') {
+          const uid = data[name]
+
+          if (shouldReplaceUid(normalName, uid, instanceUids)) {
+            uidsToReplace.push(uid)
+          }
+        } else if (vr === 'SQ') {
+          // Recurse into sequences
+          for (let subData of Object.values(data[name]) as TNaturalData[]) {
+            collectUidsInData(subData)
+          }
+        }
+      }
+    }
+  }
+
+  collectUidsInData(naturalData)
+
+  return uidsToReplace
+}
+
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
 
 // Special conditions for some PS3.15 E1.1 elements.
@@ -149,14 +226,14 @@ export default function deidentifyPS315E({
   })
   const taggedps315EElSet = new Set(cleanPolicy.map((item) => item.keyword))
 
-  let instanceUids: string[] = []
+  // Get instance UIDs using shared helper function
+  const instanceUids = getInstanceUidKeywords()
 
   // We handle UIs separately
   cleanPolicy = cleanPolicy.filter((p) => {
     let vr = getVr(p.keyword)
 
     if (vr === 'UI') {
-      instanceUids.push(p.keyword)
       return false
     }
     if (p.rule === 'U*') {
@@ -339,12 +416,7 @@ export default function deidentifyPS315E({
           // class vs instance UIDs as we want to de-identify edge cases such as
           // Private Class UIDs as those would be considered identifiable.
           const uid = data[name]
-          if (
-            // UID explicitly mentioned in PS3.15.
-            instanceUids.indexOf(normalName) !== -1 &&
-            // UID is not a known class UID.
-            !(uid in uidRegistryPS3_06_A1)
-          ) {
+          if (shouldReplaceUid(normalName, uid, instanceUids)) {
             // UIDs that need to be mapped
             const mappedUID = protectUid(uid, retainUIDsOption)
 

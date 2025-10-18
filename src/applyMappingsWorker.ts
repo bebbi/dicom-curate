@@ -1,5 +1,6 @@
 import { curateOne } from './curateOne'
 import { deserializeMappingOptions } from './serializeMappingOptions'
+import { setSharedUidMappings } from './replaceUid'
 import type { TFileInfo, TSerializedMappingOptions } from './types'
 
 declare var self: Window & typeof globalThis
@@ -18,23 +19,26 @@ self.addEventListener('message', (event: MessageEvent<MappingRequest>) => {
       const { serializedMappingOptions } = event.data
       const mappingOptions = deserializeMappingOptions(serializedMappingOptions)
 
-      try {
-        curateOne({
-          fileInfo: event.data.fileInfo,
-          fileIndex: event.data.fileIndex,
-          outputDirectory: event.data.outputDirectory,
-          mappingOptions,
-        }).then((mapResults) => {
+      // Set shared UID mappings if provided
+      setSharedUidMappings(mappingOptions.uidMappings)
+
+      curateOne({
+        fileInfo: event.data.fileInfo,
+        fileIndex: event.data.fileIndex,
+        outputDirectory: event.data.outputDirectory,
+        mappingOptions,
+      })
+        .then((mapResults) => {
           // Send finished message for completion
           self.postMessage({
             response: 'finished',
             mapResults: mapResults,
           })
         })
-      } catch (error) {
-        self.postMessage({ response: 'error', error })
-        throw new Error('ERROR')
-      }
+        .catch((error) => {
+          console.error('Error processing file:', error)
+          self.postMessage({ response: 'error', error })
+        })
       break
     }
     default:
