@@ -167,10 +167,6 @@ export function composedSpec(): SpecPart<THostProps, Ctx>[] {
               ['Missing Modality', parser.missingDicom('Modality')],
               ['Missing SOP Class UID', parser.missingDicom('SOPClassUID')],
               [
-                'Duplicate File Name(s) in series',
-                !parser.isUniqueInGroup(filename, seriesUid),
-              ],
-              [
                 'Missing Series Instance UID',
                 parser.missingDicom('SeriesInstanceUID'),
               ],

@@ -222,7 +222,7 @@ describe('composeSpecs equivalence tests', () => {
         cleanDescriptorsExceptions: ['StudyDescription'], // Should merge with base
         retainPatientCharacteristicsOption: ['PatientSex'] as string[], // Should merge with base
       },
-      modifyDicomHeader: () => ({ 
+      modifyDicomHeader: () => ({
         StudyDescription: 'extended',
       }),
       errors: () => [['extended error', false] as [string, boolean]],
@@ -259,7 +259,6 @@ describe('composeSpecs equivalence tests', () => {
       getDicom: () => 'mock-dicom-value',
       getMapping: () => 'mock-mapping-value',
       missingDicom: () => false,
-      isUniqueInGroup: () => true,
     } as Partial<TParser> as TParser
     expect(composedSpec.modifyDicomHeader(mockParser)).toEqual({
       PatientID: 'base',
@@ -363,9 +362,15 @@ describe('composeSpecs equivalence tests', () => {
     const mockParser = {} as Partial<TParser> as TParser
 
     // Each call should produce identical output
-    expect(result1.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
-    expect(result2.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
-    expect(result3.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
+    expect(result1.modifyDicomHeader(mockParser)).toEqual({
+      PatientName: 'Test',
+    })
+    expect(result2.modifyDicomHeader(mockParser)).toEqual({
+      PatientName: 'Test',
+    })
+    expect(result3.modifyDicomHeader(mockParser)).toEqual({
+      PatientName: 'Test',
+    })
 
     // Errors should not accumulate across calls
     expect(result1.errors(mockParser)).toHaveLength(1)
