@@ -23,6 +23,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Type Check
+        run: pnpm tsc --noEmit
+
+      - name: Lint
+        run: pnpm lint
+
       - name: Test
         run: pnpm test
 
