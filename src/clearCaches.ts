@@ -1,6 +1,5 @@
-import { clearUniqueNumberCache, clearUniqueInGroupCache } from './getParser'
+import { clearUniqueNumberCache } from './getParser'
 
 export function clearCaches() {
   clearUniqueNumberCache()
-  clearUniqueInGroupCache()
 }

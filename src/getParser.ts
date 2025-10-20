@@ -10,30 +10,7 @@ export const FILENAME: symbol = Symbol('filename')
 
 const { getUniqueNumberInGroup, clearUniqueNumberCache } = UniqueNumbers(6)
 
-const { isUniqueInGroup, clearUniqueInGroupCache } = (function () {
-  let cache = new Set()
-  let lastGroupId: string = ''
-  return {
-    isUniqueInGroup(value: string | number, groupId: string) {
-      if (groupId !== lastGroupId) {
-        cache = new Set()
-        lastGroupId = groupId
-      }
-
-      if (cache.has(value)) {
-        return false
-      }
-
-      cache.add(value)
-      return true
-    },
-    clearUniqueInGroupCache() {
-      cache = new Set()
-    },
-  }
-})()
-
-export { clearUniqueNumberCache, clearUniqueInGroupCache }
+export { clearUniqueNumberCache }
 
 export default function getParser(
   inputPathPattern: string,
@@ -119,12 +96,6 @@ export default function getParser(
   }
 
   return {
-    // This function enables errors like:
-    // [
-    //   'Duplicate Instance Number(s)',
-    //   !parser.isUniqueInGroup(instanceNumber, seriesUid),
-    // ],
-    isUniqueInGroup,
     getUniqueNumberInGroup,
     getFrom,
     getFilePathComp,
