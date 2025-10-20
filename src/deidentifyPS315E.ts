@@ -1,7 +1,6 @@
 import * as dcmjs from 'dcmjs'
 import dummyValues from './config/dicom/dummyValues'
 import hashUid from './hashUid'
-import replaceUid from './replaceUid'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { ps315EElements as rawPs315EElements } from './config/dicom/ps315EElements'
 import { convertKeywordToTagId } from './config/dicom/tagConversion'
@@ -37,7 +36,7 @@ function removeRetiredPrefix(name: string) {
 }
 
 export function protectUid(uid: string, retainUIDsOption: string): string {
-  return retainUIDsOption === 'Hashed' ? hashUid(uid) : replaceUid(uid)
+  return hashUid(uid)
 }
 
 const elementNamesToAlwaysKeepSet = new Set(elementNamesToAlwaysKeep)
