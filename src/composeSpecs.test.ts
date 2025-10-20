@@ -3,7 +3,7 @@ import { sampleBatchCurationSpecification } from './config/sampleBatchCurationSp
 import { sample2PassCurationSpecification } from './config/sample2PassCurationSpecification'
 import { sample } from '../testdata/sample'
 import curateDict from './curateDict'
-import type { TMappingOptions, TCurationSpecification } from './types'
+import type { TMappingOptions, TCurationSpecification, TParser } from './types'
 import { clearCaches } from './clearCaches'
 
 // Helper function to create equivalent composite spec from batch spec
@@ -205,7 +205,7 @@ describe('composeSpecs equivalence tests', () => {
         retainSafePrivateOption: 'Quarantine' as const,
         retainInstitutionIdentityOption: true,
       },
-      modifyDicomHeader: (parser: any) => ({
+      modifyDicomHeader: (parser: TParser) => ({
         PatientID: 'base',
         ClinicalTrialCoordinatingCenterName: 'Sample_CRO',
         ClinicalTrialSeriesDescription: parser.getFilePathComp('series'),
@@ -260,7 +260,7 @@ describe('composeSpecs equivalence tests', () => {
       getMapping: () => 'mock-mapping-value',
       missingDicom: () => false,
       isUniqueInGroup: () => true,
-    } as any
+    } as Partial<TParser> as TParser
     expect(composedSpec.modifyDicomHeader(mockParser)).toEqual({
       PatientID: 'base',
       StudyDescription: 'extended', // Extended overrides
@@ -348,7 +348,7 @@ describe('composeSpecs equivalence tests', () => {
     expect(composedSpec.dicomPS315EOptions).toBe('Off')
   })
 
-  test('composeSpecs does not mutate global defaultSpec across multiple calls', () => {
+  it('composeSpecs does not mutate global defaultSpec across multiple calls', () => {
     // Regression test: ensures defaultSpec is not mutated when called repeatedly
     const spec = {
       version: '3.0',
@@ -360,7 +360,7 @@ describe('composeSpecs equivalence tests', () => {
     const result2 = composeSpecs(spec)
     const result3 = composeSpecs(spec)
 
-    const mockParser = {} as any
+    const mockParser = {} as Partial<TParser> as TParser
 
     // Each call should produce identical output
     expect(result1.modifyDicomHeader(mockParser)).toEqual({ PatientName: 'Test' })
