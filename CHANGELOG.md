@@ -1,3 +1,10 @@
+## [0.8.3](https://github.com/bebbi/dicom-curate/compare/v0.8.2...v0.8.3) (2025-10-20)
+
+### Bug Fixes
+
+- prevent global state mutation in composeSpecs causing stack overflow ([ae8f909](https://github.com/bebbi/dicom-curate/commit/ae8f909488daf248cafef7fe95f3250bd038217a))
+- resolve CD linting errors in composeSpecs tests ([819824d](https://github.com/bebbi/dicom-curate/commit/819824d341c8f0e200ff4a4b88017e332339a5d1))
+
 ## [0.8.2](https://github.com/bebbi/dicom-curate/compare/v0.8.1...v0.8.2) (2025-09-17)
 
 ### Bug Fixes
