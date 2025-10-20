@@ -229,7 +229,7 @@ dicom-curate
   - 'retainLongitudinalTemporalInformationOptions': this considers all temporal attributes (DA, TM, DT), as described as a possible approach in PS3.15E.
     Possible values are 'Full' (keep all temporal info intact), 'Off' (remove all temporal attributes or add defaults per PS3.15E), or 'Offset' (move all temporal attributes by a duration. An ISO-8601 compliant duration `dateOffset` parameter must be passed).
   - 'retainDeviceIdentityOption': true or false. If true, overrides `retainLongitudinalTemporalInformationOptions` for the respective attributes to keep.
-  - 'retainUIDsOption': 'On', 'Off', or 'Hashed'.
+  - 'retainUIDsOption': 'On', 'Hashed'.
     - If 'On', maintain all UIDs.
     - If 'Off', replaces instance UIDs with arbitrary new UIDs, maintaining referential integrity within a single run.
       - maximum protection
@@ -239,6 +239,7 @@ dicom-curate
       - maintains referential integrity even if de-identifying data in separate, or decentralized, batches
       - use if the risk of re-identifying by UID is not bigger than the risk of re-identifying by PixelData
       - do not use if you want to specifically protect UIDs from an auxiliary knowledge attack, e.g. an attacker that knows possible input UIDs
+    - For compatibility, the 'Off' option is now treated the same way as 'Hashed'.
     - There are more instance UIDs in part PS3.06 than described in PS3.15E for protection, therefore this option identifies the following uids for protection: 1. All instance UIDs per PS3.15E, 2. Any additional UIDs with a value not well-known in DICOM, per table PS3.06A (Registry of DICOM Unique Identifiers). This protects instance UIDs but also private class UIDs, which is intentional.
   - 'retainSafePrivateOption': 'Quarantine' or 'Off'. If 'Quarantine', keeps all private tags but creates a quarantine log for manual review
   - 'retainInstitutionIdentityOption': true or false
