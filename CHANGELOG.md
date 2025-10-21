@@ -1,3 +1,11 @@
+## [0.8.5](https://github.com/bebbi/dicom-curate/compare/v0.8.4...v0.8.5) (2025-10-21)
+
+### Bug Fixes
+
+- remove also the remaining caching ([6a9076b](https://github.com/bebbi/dicom-curate/commit/6a9076b6c671ead46dad86896f2c2df5e786eff0))
+- remove uid cache due to issues with multiple workers ([d1f1a2e](https://github.com/bebbi/dicom-curate/commit/d1f1a2e70fb4761b1b54657e4d6e2c9c07bbc596))
+- remove unique file name check/cache ([0e06103](https://github.com/bebbi/dicom-curate/commit/0e06103bf49b9e4b1af561dcfeaccc6fb103ffca))
+
 ## [0.8.4](https://github.com/bebbi/dicom-curate/compare/v0.8.3...v0.8.4) (2025-10-21)
 
 ### Bug Fixes
