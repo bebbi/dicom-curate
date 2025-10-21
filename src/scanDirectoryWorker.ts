@@ -17,16 +17,18 @@ const DEFAULT_EXCLUDED_FILETYPES = [
 
 export type FileScanMsg =
   | {
-      response: 'file'
-      fileIndex: number
-      fileInfo: TFileInfo
-    }
+    response: 'file'
+    fileIndex: number
+    fileInfo: TFileInfo
+    previousFileInfo?: { size?: number; mtime?: string; preMappedHash?: string }
+  }
   | {
-      response: 'scanAnomalies'
-      fileIndex: number
-      fileInfo: TFileInfo
-      anomalies: string[]
-    }
+    response: 'scanAnomalies'
+    fileIndex: number
+    fileInfo: TFileInfo
+    anomalies: string[]
+    previousFileInfo?: { size?: number; mtime?: string; preMappedHash?: string }
+  }
   | {
       response: 'done'
     }
@@ -48,6 +50,8 @@ export type FileScanRequest =
 
 let keepScanning = true
 let excludedFiletypes: string[] = []
+// optional map of previous file info keyed by "path/name"
+let previousIndex: Record<string, { size?: number; mtime?: string }> | undefined
 
 /**
  * Check if a file should be processed based on filtering rules
@@ -114,7 +118,13 @@ fixupNodeWorkerEnvironment().then(() => {
       case 'scan':
         const eventData = event.data as FileScanRequest
 
-        // Update excluded filetypes if provided
+        // Optional previous file info index passed in by caller
+      if (event.data.fileInfoIndex) {
+        previousIndex = event.data.fileInfoIndex
+      } else {
+        previousIndex = undefined
+      }
+      // Update excluded filetypes if provided
         if (event.data.excludedFiletypes) {
           excludedFiletypes = event.data.excludedFiletypes
         }
@@ -148,6 +158,9 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
     // First, collect sorted dir entries
     const entries = []
 
+    console.log("scanning...")
+    console.log(dir.name)
+
     for await (const entry of dir.values()) {
       entries.push(entry)
     }
@@ -164,31 +177,37 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
 
         if (await shouldProcessFile(file, fileAnomalies)) {
           // Send file to processing pipeline
-          globalThis.postMessage({
-            response: 'file',
-            fileIndex: fileIndex++,
-            fileInfo: {
-              path: prefix,
-              name: entry.name,
-              size: file.size,
-              kind: 'handle',
-              fileHandle: entry as FileSystemFileHandle,
-            },
-          } satisfies FileScanMsg)
+            const key = `${prefix}/${entry.name}`
+            const prev = previousIndex ? previousIndex[key] : undefined
+            globalThis.postMessage({
+              response: 'file',
+              fileIndex: fileIndex++,
+              fileInfo: {
+                path: prefix,
+                name: entry.name,
+                size: file.size,
+                kind: 'handle',
+                fileHandle: entry as FileSystemFileHandle,
+              },
+              previousFileInfo: prev,
+            } satisfies FileScanMsg)
         } else if (fileAnomalies.length > 0) {
           // Send scan anomalies as separate messsage so they are not sent to processing (curate)
-          globalThis.postMessage({
-            response: 'scanAnomalies',
-            fileIndex: fileIndex++,
-            fileInfo: {
-              path: prefix,
-              name: entry.name,
-              size: file.size,
-              kind: 'handle',
-              fileHandle: entry as FileSystemFileHandle,
-            },
-            anomalies: fileAnomalies,
-          } satisfies FileScanMsg)
+            const key = `${prefix}/${entry.name}`
+            const prev = previousIndex ? previousIndex[key] : undefined
+            globalThis.postMessage({
+              response: 'scanAnomalies',
+              fileIndex: fileIndex++,
+              fileInfo: {
+                path: prefix,
+                name: entry.name,
+                size: file.size,
+                kind: 'handle',
+                fileHandle: entry as FileSystemFileHandle,
+              },
+              anomalies: fileAnomalies,
+              previousFileInfo: prev,
+            } satisfies FileScanMsg)
         }
       } else if (entry.kind === 'directory' && keepScanning) {
         await traverse(
