@@ -1,3 +1,9 @@
+## [0.8.4](https://github.com/bebbi/dicom-curate/compare/v0.8.3...v0.8.4) (2025-10-21)
+
+### Bug Fixes
+
+- update release and ci pipelines to include typecheck and lint steps ([ab20cd6](https://github.com/bebbi/dicom-curate/commit/ab20cd61673727f554439d5f8b9e5867ff80d60a))
+
 ## [0.8.3](https://github.com/bebbi/dicom-curate/compare/v0.8.2...v0.8.3) (2025-10-20)
 
 ### Bug Fixes
