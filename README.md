@@ -66,6 +66,18 @@ const options: OrganizeOptions = {
 
 If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgressCallback` function instead.
 
+In the Node.js environment, there are no directory handles. Instead, you may pass directory paths:
+
+```ts
+const options: OrganizeOptions = {
+  inputType: 'path',
+  inputDirectory, // input folder directory path, e.g. "/home/user/files"
+  outputDirectory, // output folder directory path, e.g. "/home/user/outputs"
+  curationSpec, // DICOM curation specification
+  columnMapping, // csv file handle to add csv-based mapping
+}
+```
+
 You can also call `curateOne` directly and receive a promise with the mapped blob:
 
 ```ts

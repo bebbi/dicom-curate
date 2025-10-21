@@ -39,13 +39,30 @@ const buildOptions = {
   bundle: true,
   sourcemap: false, // Set to false to disable source maps
   target: 'es2020',
-  platform: 'browser',
-  external: [],
+  platform: 'node', // Use node platform to resolve npm packages
+  external: [
+    'fs', // Node.js built-in modules
+    'path',
+    'os',
+    'crypto',
+    'stream',
+    'util',
+    'buffer',
+  ],
   define: {
     'process.env.NODE_ENV': '"production"',
   },
   minify: false, // Keep readable for debugging
   metafile: true, // Generate build analysis
+  banner: {
+    js: `
+// Conditionally create require for Node.js environment
+// This will only work in Node.js and fail gracefully in browsers
+const require = typeof process !== 'undefined' && typeof process.versions?.node !== 'undefined'
+  ? (await import('module')).createRequire(import.meta.url)
+  : undefined;
+`,
+  },
 }
 
 // Build function

@@ -16,7 +16,7 @@ export type TPs315Options = {
 }
 
 export type OrganizeOptions = {
-  outputDirectory?: FileSystemDirectoryHandle
+  outputDirectory?: FileSystemDirectoryHandle | string
   curationSpec: () => TCurationSpecification | SpecPart[]
   table?: Row[]
   skipWrite?: boolean
@@ -26,6 +26,7 @@ export type OrganizeOptions = {
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
+  | { inputType: 'path'; inputDirectory: string }
 )
 
 export type TMappingOptions = {
@@ -47,6 +48,7 @@ export type TSerializedMappingOptions = Omit<
 export type TFileInfo = { path: string; name: string; size: number } & (
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
+  | { kind: 'path'; fullPath: string }
 )
 
 // Includes deep sequences
