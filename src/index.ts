@@ -4,6 +4,9 @@ import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
+console.log("Importing dicom-curate")
+
+
 import type {
   TMappingOptions,
   TMapResults,
@@ -47,6 +50,7 @@ let filesToProcess: {
   fileInfo: TFileInfo
   fileIndex: number
   scanAnomalies: string[]
+  previousFileInfo?: { size?: number; mtime?: string; preMappedHash?: string }
 }[] = []
 let directoryScanFinished = false
 
@@ -89,11 +93,12 @@ async function initializeFileListWorker() {
     (event: MessageEvent<FileScanMsg>) => {
       switch (event.data.response) {
         case 'file': {
-          const { fileIndex, fileInfo } = event.data
+          const { fileIndex, fileInfo, previousFileInfo } = event.data
           filesToProcess.push({
             fileIndex,
             fileInfo,
             scanAnomalies: [], // Files sent to processing have no scan anomalies
+            previousFileInfo,
           })
 
           // Could do some throttling:
@@ -183,7 +188,7 @@ async function initializeMappingWorkers() {
 
 function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
-    const { fileInfo, fileIndex } = filesToProcess.pop()!
+    const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
     const { outputDirectory, ...mappingOptions } =
       // Not partial anymore.
@@ -193,6 +198,7 @@ function dispatchMappingJobs() {
       fileInfo,
       fileIndex,
       outputDirectory,
+      previousFileInfo,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
     } satisfies MappingRequest)
     workersActive += 1
@@ -267,6 +273,7 @@ async function collectMappingOptions(
   const skipWrite = organizeOptions.skipWrite ?? false
   const skipModifications = organizeOptions.skipModifications ?? false
   const skipValidation = organizeOptions.skipValidation ?? false
+  const compareMode = (organizeOptions as any).compareMode
 
   const dateOffset = organizeOptions.dateOffset
 
@@ -284,6 +291,7 @@ async function collectMappingOptions(
     skipModifications,
     skipValidation,
     dateOffset,
+    compareMode,
   }
 }
 
@@ -356,12 +364,14 @@ async function curateMany(
             request: 'scan',
             directoryHandle: organizeOptions.inputDirectory,
             excludedFiletypes: specExcludedFiletypes,
+            fileInfoIndex: organizeOptions.fileInfoIndex,
           } satisfies FileScanRequest)
         } else {
           fileListWorker.postMessage({
             request: 'scan',
             path: organizeOptions.inputDirectory,
             excludedFiletypes: specExcludedFiletypes,
+            fileInfoIndex: organizeOptions.fileInfoIndex,
           } satisfies FileScanRequest)
         }
       } else if (organizeOptions.inputType === 'files') {

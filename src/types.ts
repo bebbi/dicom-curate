@@ -15,6 +15,8 @@ export type TPs315Options = {
   retainInstitutionIdentityOption: boolean
 }
 
+export type TFileInfoIndex = Record<string, { size?: number; mtime?: string; preMappedHash?: string; postMappedHash?: string }>
+
 export type OrganizeOptions = {
   outputDirectory?: FileSystemDirectoryHandle | string
   curationSpec: () => TCurationSpecification | SpecPart[]
@@ -23,6 +25,10 @@ export type OrganizeOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
+  // comparison mode hint: 'basic' uses size+mtime; 'deep' uses hash when available
+  compareMode?: 'basic' | 'deep'
+  // optional previous file info map keyed by "path/name"
+  fileInfoIndex?: TFileInfoIndex
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
@@ -36,6 +42,8 @@ export type TMappingOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
+  // compareMode controls whether to do a deep compare (hash-based) or basic (size+mtime only)
+  compareMode?: 'basic' | 'deep'
 }
 
 export type TSerializedMappingOptions = Omit<
@@ -45,7 +53,7 @@ export type TSerializedMappingOptions = Omit<
   curationSpecStr: string
 }
 
-export type TFileInfo = { path: string; name: string; size: number } & (
+export type TFileInfo = { path: string; name: string; size: number; mtime?: string; preMappedHash?: string; postMappedHash?: string } & (
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
   | { kind: 'path'; fullPath: string }
@@ -57,6 +65,23 @@ type TAttr = { [name: string]: string | TAttr[] }
 export type TMapResults = {
   sourceInstanceUID: string
   outputFilePath: string
+  // optional information about the source file (size, name, path, mtime)
+  fileInfo?: {
+    name: string
+    size: number
+    path: string
+    mtime?: string
+    // present when parsing failed
+    parseError?: string
+    preMappedHash?: string
+    postMappedHash?: string
+  }
+  // optional hashes for input/output state
+  // SHA-256 hex string of the file read from disk prior to mapping
+  // and of the file after mapping
+  // these will be present in fileInfo for traceability
+
+
   mappings: {
     // objectpath: deep object access string compatible with lodash get/set
     // TAttr[]: exclude individual { key: value } objects
@@ -72,6 +97,8 @@ export type TMapResults = {
     collectByValue: [...TMappingTwoPassCollect, string | number][]
   }
   mappedBlob?: Blob
+  // If true, mapping was skipped because the file appears unchanged from previous run
+  noMappingRequired?: boolean
 }
 
 export type TPs315EElement = {
