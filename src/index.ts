@@ -14,11 +14,12 @@ import type {
   TPs315Options,
 } from './types'
 
-import type { FileScanMsg } from './scanDirectoryWorker'
+import type { FileScanMsg, FileScanRequest } from './scanDirectoryWorker'
 import type { MappingRequest } from './applyMappingsWorker'
+import { createWorker } from './worker'
 
 type TMappingWorkerOptions = TMappingOptions & {
-  outputDirectory?: FileSystemDirectoryHandle
+  outputDirectory?: FileSystemDirectoryHandle | string
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void
@@ -74,11 +75,11 @@ function requiresDateOffset(
  *   response: 'done'
  */
 // TODO: implement a buffering stream to request fileHandles in batches
-function initializeFileListWorker() {
+async function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
 
-  const fileListWorker = new Worker(
+  const fileListWorker = await createWorker(
     new URL('./scanDirectoryWorker.js', import.meta.url),
     { type: 'module' },
   )
@@ -138,13 +139,13 @@ const availableMappingWorkers: Worker[] = []
 let workersActive = 0
 let mapResultsList: TMapResults[] = []
 
-function initializeMappingWorkers() {
+async function initializeMappingWorkers() {
   mappingWorkerOptions = {}
   workersActive = 0
   mapResultsList = []
 
   for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
-    let mappingWorker = new Worker(
+    let mappingWorker = await createWorker(
       new URL('./applyMappingsWorker.js', import.meta.url),
       { type: 'module' },
     )
@@ -329,7 +330,7 @@ async function curateMany(
       scanAnomalies = []
 
       // create the mapping workers
-      initializeMappingWorkers()
+      await initializeMappingWorkers()
 
       // Set global mappingWorkerOptions
       mappingWorkerOptions = (await collectMappingOptions(
@@ -342,15 +343,27 @@ async function curateMany(
       // If the request provides a list of File objects,
       // send them to the mapping workers directly.
       //
-      if (organizeOptions.inputType === 'directory') {
-        const fileListWorker = initializeFileListWorker()
+      if (
+        organizeOptions.inputType === 'directory' ||
+        organizeOptions.inputType === 'path'
+      ) {
+        const fileListWorker = await initializeFileListWorker()
         const curationSpec = composeSpecs(organizeOptions.curationSpec())
         const specExcludedFiletypes = curationSpec.excludedFiletypes
-        fileListWorker.postMessage({
-          request: 'scan',
-          directoryHandle: organizeOptions.inputDirectory,
-          excludedFiletypes: specExcludedFiletypes,
-        })
+
+        if (organizeOptions.inputType === 'directory') {
+          fileListWorker.postMessage({
+            request: 'scan',
+            directoryHandle: organizeOptions.inputDirectory,
+            excludedFiletypes: specExcludedFiletypes,
+          } satisfies FileScanRequest)
+        } else {
+          fileListWorker.postMessage({
+            request: 'scan',
+            path: organizeOptions.inputDirectory,
+            excludedFiletypes: specExcludedFiletypes,
+          } satisfies FileScanRequest)
+        }
       } else if (organizeOptions.inputType === 'files') {
         queueFilesForMapping(organizeOptions)
       } else {
