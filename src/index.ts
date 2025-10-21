@@ -1,5 +1,4 @@
 import { extractColumnMappings, TColumnMappings } from './csvMapping'
-import { clearCaches } from './clearCaches'
 import { curateOne } from './curateOne'
 import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
@@ -208,7 +207,6 @@ function dispatchMappingJobs() {
       availableMappingWorkers.pop()!.terminate()
     }
 
-    clearCaches()
     console.log(`Finished mapping ${mapResultsList.length} files`)
     console.log('job is finished')
 
@@ -362,4 +360,4 @@ async function curateMany(
   })
 }
 
-export { curateMany, curateOne, extractColumnMappings, clearCaches }
+export { curateMany, curateOne, extractColumnMappings }

@@ -4,7 +4,6 @@ import { sample2PassCurationSpecification } from './config/sample2PassCurationSp
 import { sample } from '../testdata/sample'
 import curateDict from './curateDict'
 import type { TMappingOptions, TCurationSpecification, TParser } from './types'
-import { clearCaches } from './clearCaches'
 
 // Helper function to create equivalent composite spec from batch spec
 function createEquivalentCompositeSpecFromBatch(): () => TCurationSpecification {
@@ -92,11 +91,6 @@ function testCurationEquivalence(
 }
 
 describe('composeSpecs equivalence tests', () => {
-  // Clear UID cache after each test
-  afterEach(() => {
-    clearCaches()
-  })
-
   const passingFilename =
     'Sample_Protocol_Number/Sample_CRO/AB12-123/Visit 1/PET-Abdomen/0/test.dcm'
 

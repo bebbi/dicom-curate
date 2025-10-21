@@ -69,7 +69,7 @@ If `outputDirectory` is omitted, output `Blob`s will be passed to the `onProgres
 You can also call `curateOne` directly and receive a promise with the mapped blob:
 
 ```ts
-import { curateOne, extractColumnMappings, clearCaches } from 'dicom-curate'
+import { curateOne, extractColumnMappings } from 'dicom-curate'
 
 // Data prep responsibility for optional table is with caller
 const columnMappings = extractColumnMappings([
@@ -81,9 +81,6 @@ curateOne({
   fileInfo, // path, name, size, kind, blob
   mappingOptions: { curationSpec, columnMappings },
 })
-
-// Cache clean-up responsibility, e.g. for consistent UID mapping in `retainUIDsOption: 'Off'` is with caller
-clearCaches()
 ```
 
 An example DICOM curation function:

@@ -94,7 +94,6 @@ export type TPs315EElement = {
 }
 
 export type TParser = {
-  getUniqueNumberInGroup: (groupingId: string) => string
   getFrom(source: string, identifier: string): string | number
   getFilePathComp: (component: string | number | symbol) => string
   getMapping: ((value: string) => string | number) | undefined

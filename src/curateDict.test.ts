@@ -3,7 +3,6 @@ import { sample } from '../testdata/sample'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import type { TMappingOptions, TCurationSpecification } from './types'
-import { clearCaches } from './clearCaches'
 import { elementNamesToAlwaysKeep } from './config/dicom/elementNamesToAlwaysKeep'
 import { allElements } from '../testdata/allElements'
 import { sampleBatchCurationSpecification } from './config/sampleBatchCurationSpecification'
@@ -28,11 +27,6 @@ const passingFilename =
   'Sample_Protocol_Number/Sample_CRO/AB12-123/Visit 1/PET-Abdomen/0/test.dcm'
 
 describe('curateDict basic functionality', () => {
-  // Clear UID cache after each test
-  afterEach(() => {
-    clearCaches()
-  })
-
   // Base test options
   const defaultTestOptions: TMappingOptions = {
     columnMappings: { rows: [], rowIndexByFieldValue: {} },
