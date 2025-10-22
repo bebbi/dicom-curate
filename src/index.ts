@@ -77,7 +77,6 @@ function requiresDateOffset(
 function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
-  scanAnomalies = []
 
   const fileListWorker = new Worker(
     new URL('./scanDirectoryWorker.js', import.meta.url),
@@ -325,6 +324,10 @@ async function curateMany(
     }
 
     try {
+      // Reset global state to prevent interference between multiple curateMany() calls
+      // This is critical for two-pass curation where curateMany() is called twice
+      scanAnomalies = []
+
       // create the mapping workers
       initializeMappingWorkers()
 
