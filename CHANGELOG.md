@@ -1,3 +1,9 @@
+# [0.9.0](https://github.com/bebbi/dicom-curate/compare/v0.8.5...v0.9.0) (2025-10-23)
+
+### Features
+
+- reset scanAnomalies for all input types ([baf945c](https://github.com/bebbi/dicom-curate/commit/baf945c79d19b7b46d6ac7c2bbdaa06ba1ae0246))
+
 ## [0.8.5](https://github.com/bebbi/dicom-curate/compare/v0.8.4...v0.8.5) (2025-10-21)
 
 ### Bug Fixes
