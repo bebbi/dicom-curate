@@ -1,4 +1,4 @@
-import type { TFileInfo } from './types'
+import type { TFileInfo, TFileInfoIndex } from './types'
 import { fixupNodeWorkerEnvironment } from './worker'
 
 // For editor linter to treat the file as an es module, avoiding the error on
@@ -38,11 +38,13 @@ export type FileScanRequest =
       request: 'scan'
       directoryHandle: FileSystemDirectoryHandle
       excludedFiletypes?: string[]
+      fileInfoIndex?: TFileInfoIndex
     }
   | {
       request: 'scan'
       path: string
       excludedFiletypes?: string[]
+      ileInfoIndex?: TFileInfoIndex
     }
   | {
       request: 'stop'

@@ -7,7 +7,7 @@ export type MappingRequest = {
   request: 'apply'
   fileInfo: TFileInfo
   fileIndex: number
-  outputDirectory?: FileSystemDirectoryHandle
+  outputTarget?: { url?: string; directory?: FileSystemDirectoryHandle | string }
   previousFileInfo?: { size?: number; mtime?: string; preMappedHash?: string }
   serializedMappingOptions: TSerializedMappingOptions
 }
@@ -27,7 +27,7 @@ fixupNodeWorkerEnvironment().then(() => {
             curateOne({
               fileInfo: event.data.fileInfo,
               fileIndex: event.data.fileIndex,
-              outputDirectory: event.data.outputDirectory,
+              outputTarget: event.data.outputTarget || {},
               mappingOptions,
               previousFileInfo: event.data.previousFileInfo,
             }).then((mapResults) => {

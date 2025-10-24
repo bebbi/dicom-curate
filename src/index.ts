@@ -22,7 +22,7 @@ import type { MappingRequest } from './applyMappingsWorker'
 import { createWorker } from './worker'
 
 type TMappingWorkerOptions = TMappingOptions & {
-  outputDirectory?: FileSystemDirectoryHandle | string
+  outputTarget?: { url?: string; directory?: FileSystemDirectoryHandle | string }
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void
@@ -190,14 +190,14 @@ function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
-    const { outputDirectory, ...mappingOptions } =
+    const { outputTarget, ...mappingOptions } =
       // Not partial anymore.
       mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
       request: 'apply',
       fileInfo,
       fileIndex,
-      outputDirectory,
+      outputTarget,
       previousFileInfo,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
     } satisfies MappingRequest)
@@ -249,7 +249,7 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const outputDirectory = organizeOptions.outputDirectory
+  const outputTarget = (organizeOptions as any).outputTarget
 
   //
   // then, get the curation spec
@@ -284,7 +284,7 @@ async function collectMappingOptions(
   }
 
   return {
-    outputDirectory,
+    outputTarget,
     columnMappings,
     curationSpec,
     skipWrite,
