@@ -15,6 +15,24 @@ export async function createWorker(
 ): Promise<Worker> {
   if (typeof Worker !== 'undefined') {
     // Browser environment
+    const urlString = scriptPath.toString()
+    const globalAny = globalThis as any
+
+    // Check if we have inlined workers (UMD build with rollup-plugin-web-worker-loader)
+    // These globals are set by index.umd.ts
+    if (
+      urlString.includes('scanDirectoryWorker') &&
+      globalAny.__INLINED_SCAN_WORKER__
+    ) {
+      return new globalAny.__INLINED_SCAN_WORKER__()
+    } else if (
+      urlString.includes('applyMappingsWorker') &&
+      globalAny.__INLINED_MAPPING_WORKER__
+    ) {
+      return new globalAny.__INLINED_MAPPING_WORKER__()
+    }
+
+    // Standard browser Worker creation for ESM builds
     return new Worker(scriptPath, options)
   } else {
     // Node.js environment

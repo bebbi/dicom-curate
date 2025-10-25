@@ -21,6 +21,9 @@ function findEntryPoints(dir, baseDir = '') {
       // Skip test files
       if (item.endsWith('.test.ts') || item.endsWith('.spec.ts')) continue
 
+      // Skip UMD-specific entry point (only for rollup)
+      if (item === 'index.umd.ts') continue
+
       // Add as entry point
       entries.push(`src/${relativePath}`)
     }
