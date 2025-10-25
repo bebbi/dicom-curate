@@ -6,7 +6,7 @@ import type { TFileInfo, TMappingOptions, TMapResults } from './types'
 export type TCurateOneArgs = {
   fileInfo: TFileInfo
   fileIndex?: number
-  outputDirectory: FileSystemDirectoryHandle | undefined
+  outputDirectory: FileSystemDirectoryHandle | string | undefined
   mappingOptions: TMappingOptions
 }
 
@@ -27,6 +27,16 @@ export async function curateOne({
   let file
   if (fileInfo.kind === 'blob') {
     file = fileInfo.blob
+  } else if (fileInfo.kind === 'path') {
+    // Node.js environment - use fs module to read file
+    const fs = await import('fs').then((mod) => mod.promises)
+    const fileBuffer = await fs.readFile(fileInfo.fullPath)
+
+    // Casting trick is here to overcome type mismatches between the web declaration of Blob
+    // and that of Node.js
+    file = new Blob([fileBuffer as unknown as ArrayBuffer], {
+      type: 'application/octet-stream',
+    })
   } else {
     file = await fileInfo.fileHandle.getFile()
   }
@@ -89,7 +99,11 @@ export async function curateOne({
       allowInvalidVRLength: true,
     })
 
-    if (outputDirectory) {
+    // Check if outputDirectory is a FileSystemDirectoryHandle (browser) or string (Node.js)
+    if (
+      typeof outputDirectory === 'object' &&
+      'getFileHandle' in outputDirectory
+    ) {
       const subDirectoryHandle = await createNestedDirectories(
         outputDirectory,
         dirPath,
@@ -104,6 +118,21 @@ export async function curateOne({
         await writable.write(modifiedArrayBuffer)
         await writable.close()
       }
+    } else if (typeof outputDirectory === 'string') {
+      // Node.js environment - use fs module to write file
+      const fs = await import('fs').then((mod) => mod.promises)
+      const path = await import('path')
+      const fullDirPath = path.resolve(outputDirectory, dirPath)
+
+      try {
+        await fs.mkdir(fullDirPath, { recursive: true })
+      } catch (error) {
+        console.error(`Cannot create directory for ${fullDirPath}:`, error)
+        return clonedMapResults
+      }
+
+      const fullFilePath = path.join(fullDirPath, fileName)
+      await fs.writeFile(fullFilePath, new DataView(modifiedArrayBuffer))
     } else {
       clonedMapResults.mappedBlob = new Blob([modifiedArrayBuffer], {
         type: 'application/octet-stream',
