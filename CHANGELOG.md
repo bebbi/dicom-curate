@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/bebbi/dicom-curate/compare/v0.9.0...v0.10.0) (2025-10-27)
+
+### Features
+
+- handle worker files in UMD build ([43bcf28](https://github.com/bebbi/dicom-curate/commit/43bcf2862eb9605d01101d6855a64b25c49ac073))
+- node.js environment support ([9c39240](https://github.com/bebbi/dicom-curate/commit/9c3924009b89fb7011832b93f5adb6269e4fe3c0))
+
 # [0.9.0](https://github.com/bebbi/dicom-curate/compare/v0.8.5...v0.9.0) (2025-10-23)
 
 ### Features
