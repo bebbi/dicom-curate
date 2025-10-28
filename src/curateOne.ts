@@ -139,32 +139,39 @@ export async function curateOne({
   let postMappedHash: string | undefined
 
   // 4) decide if we can skip mapping based on compareMode and pre-compute hash if needed
-  const compareMode = mappingOptions.compareMode || 'deep'
+  const compareMode = mappingOptions.compareMode || 'always' // if not specified, do the upload
   let canSkip = false
 
-  if (compareMode === 'deep') {
-    // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
-    const hashMethod = mappingOptions.hashMethod || 'crc64'
-    try {
-      if (hashMethod === 'sha256') {
-        preMappedHash = await sha256Hex(fileArrayBuffer)
-      } else if (hashMethod === 'crc64') {
-        preMappedHash = crc64Hex(fileArrayBuffer)
-      } else {
-        preMappedHash = crc32Hex(fileArrayBuffer)
+  if (compareMode === 'always') {
+    canSkip = false
+  } else if (compareMode === 'bucketMetadata') {
+    // TODO: implement bucket metadata comparison logic
+    // For now, we will not skip, which means files will always be processed.
+    canSkip = false
+  } else if (compareMode === 'localDeep') {
+    if (previousFileInfo) {
+      // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
+      const hashMethod = mappingOptions.hashMethod || 'crc64'
+      try {
+        if (hashMethod === 'sha256') {
+          preMappedHash = await sha256Hex(fileArrayBuffer)
+        } else if (hashMethod === 'crc64') {
+          preMappedHash = crc64Hex(fileArrayBuffer)
+        } else {
+          preMappedHash = crc32Hex(fileArrayBuffer)
+        }
+      } catch (e) {
+        console.warn(`Failed to compute preMappedHash for ${fileInfo.name}`, e)
+        preMappedHash = undefined
       }
-    } catch (e) {
-      console.warn(`Failed to compute preMappedHash for ${fileInfo.name}`, e)
-      preMappedHash = undefined
-    }
 
-    canSkip =
-      !!previousFileInfo &&
-      previousFileInfo.size === fileInfo.size &&
-      previousFileInfo.mtime === mtime &&
-      !!preMappedHash &&
-      previousFileInfo.preMappedHash === preMappedHash
-  } else {
+      canSkip =
+        previousFileInfo.size === fileInfo.size &&
+        previousFileInfo.mtime === mtime &&
+        !!preMappedHash &&
+        previousFileInfo.preMappedHash === preMappedHash
+    }
+  } else if (compareMode === 'localBasic') {
     // basic: only size+mtime
     canSkip = !!previousFileInfo && previousFileInfo.size === fileInfo.size && previousFileInfo.mtime === mtime
   }
@@ -282,7 +289,7 @@ export async function curateOne({
     // If upload URL provided, perform an HTTP PUT upload to the server
     if (outputTarget?.url) {
       // compute postMappedHash if deep compare so headers can include source/mapped hashes
-      if (compareMode === 'deep') {
+      if (compareMode === 'localDeep') {
         const hashMethod = mappingOptions.hashMethod || 'crc64'
         try {
           if (hashMethod === 'sha256') {
@@ -340,7 +347,7 @@ export async function curateOne({
       }
     }
 
-    if (compareMode === 'deep') {
+    if (compareMode === 'localDeep') {
       const hashMethod = mappingOptions.hashMethod || 'crc64'
       try {
         if (hashMethod === 'sha256') {
