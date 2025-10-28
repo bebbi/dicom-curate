@@ -25,8 +25,8 @@ export type OrganizeOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
-  // comparison mode hint: 'basic' uses size+mtime; 'deep' uses hash when available
-  compareMode?: 'basic' | 'deep'
+  // comparison mode hint: 'localBasic' uses size+mtime; 'localDeep' uses hash when available
+  compareMode?: 'localBasic' | 'localDeep' | 'bucketMetadata' | 'always'
   // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
   // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
   hashMethod?: 'crc64' | 'crc32' | 'sha256'
@@ -45,8 +45,8 @@ export type TMappingOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
-  // compareMode controls whether to do a deep compare (hash-based) or basic (size+mtime only)
-  compareMode?: 'basic' | 'deep'
+  // compareMode controls whether to do a deep compare (hash-based) or basic (size+mtime only) for local files
+  compareMode?: 'localBasic' | 'localDeep' | 'bucketMetadata' | 'always'
   // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
   // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
   hashMethod?: 'crc64' | 'crc32' | 'sha256'
