@@ -1,6 +1,7 @@
 import { writeFile, mkdir } from 'fs/promises'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
+import { additionalElementsToProtect } from './data/additionalElementsToProtect.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -98,6 +99,7 @@ async function main() {
       })
 
     const protectSet = new Set(ps315EElements.map((element) => element.tag))
+    const additionalKeywordsToProtectSet = new Set(additionalElementsToProtect)
 
     // Save the elements to anonymize to a JSON file
     await writeFile(
@@ -112,7 +114,11 @@ export const ps315EElements: TPs315EElement[] = ` +
 
     // Create a set of elements to preserve (using keywords)
     for (const element of allElements) {
-      if (!protectSet.has(element.tag) && element.keyword) {
+      if (
+        !protectSet.has(element.tag) &&
+        element.keyword &&
+        !additionalKeywordsToProtectSet.has(element.keyword)
+      ) {
         preserveSet.add(element.keyword)
       }
     }
