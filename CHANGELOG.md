@@ -1,3 +1,9 @@
+## [0.10.1](https://github.com/bebbi/dicom-curate/compare/v0.10.0...v0.10.1) (2025-10-30)
+
+### Bug Fixes
+
+- remove retainUidsOption Off completely from the README ([61bf82c](https://github.com/bebbi/dicom-curate/commit/61bf82c8dda94437c1f591e18a98f9e520624038)), closes [#161](https://github.com/bebbi/dicom-curate/issues/161)
+
 # [0.10.0](https://github.com/bebbi/dicom-curate/compare/v0.9.0...v0.10.0) (2025-10-27)
 
 ### Features
