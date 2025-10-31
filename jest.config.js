@@ -3,6 +3,11 @@ export default {
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  transformIgnorePatterns: ['node_modules/(?!(@noble/hashes)/)'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^lodash$': 'lodash-es',
+  },
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
