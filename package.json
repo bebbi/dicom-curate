@@ -47,8 +47,8 @@
     "build:esm": "node esbuild.config.js",
     "build:types": "tsc --emitDeclarationOnly --outDir dist/types",
     "watch": "node esbuild.config.js --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "format": "prettier --write .",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
@@ -58,11 +58,11 @@
     "validate": "pnpm build && pnpm test"
   },
   "dependencies": {
+    "@noble/hashes": "^2.0.1",
     "acorn": "^8.14.1",
     "acorn-globals": "^7.0.1",
     "dcmjs": "^0.38.3",
     "iso8601-duration": "^2.1.2",
-    "js-sha256": "^0.11.0",
     "lodash": "^4.17.21",
     "memize": "^2.1.0",
     "uuid": "^11.0.5"

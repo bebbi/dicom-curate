@@ -1,5 +1,5 @@
 // Polyfill TextEncoder/TextDecoder for Node.js test environment
-const { TextEncoder, TextDecoder } = require('util');
+import { TextEncoder, TextDecoder } from 'util'
 
-global.TextEncoder = global.TextEncoder || TextEncoder;
-global.TextDecoder = global.TextDecoder || TextDecoder;
+global.TextEncoder = global.TextEncoder || TextEncoder
+global.TextDecoder = global.TextDecoder || TextDecoder
