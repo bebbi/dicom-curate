@@ -12,8 +12,8 @@
  * @param uid A unique identifier string.
  * @returns A mapped UID string.
  */
-import { sha256 } from 'js-sha256'
 import { parse as uuidParse } from 'uuid'
+import { sha256 } from '@noble/hashes/sha2.js'
 
 // value defined here:
 // https://www.rfc-editor.org/rfc/rfc9562#name-uuid-version-5
@@ -50,8 +50,7 @@ export default function hashUid(uid: string): string {
   combined.set(uidBytes, namespaceArray.length)
 
   // Compute the SHA‑256 hash of the combined data.
-  const fullHashBuffer = sha256.arrayBuffer(combined)
-  const fullHash = new Uint8Array(fullHashBuffer) // 32 bytes
+  const fullHash = sha256(combined) // 32 bytes
 
   // Truncate to the first 19 bytes to "fill" the DICOM UID space to the max (<=64 chars)
   const hashBytes = fullHash.slice(0, 19)
