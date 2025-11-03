@@ -1,3 +1,13 @@
+# [0.11.0](https://github.com/bebbi/dicom-curate/compare/v0.10.1...v0.11.0) (2025-11-03)
+
+### Bug Fixes
+
+- fix 'pnpm test' with @noble/hashes ([2943fe4](https://github.com/bebbi/dicom-curate/commit/2943fe43203aa6cdf08982a529075ee64ccc3a34))
+
+### Features
+
+- enable use in Node.JS CJS applications ([38004bf](https://github.com/bebbi/dicom-curate/commit/38004bf4f7b4ed471a5f0902e4d91bf0e30cbbaf))
+
 ## [0.10.1](https://github.com/bebbi/dicom-curate/compare/v0.10.0...v0.10.1) (2025-10-30)
 
 ### Bug Fixes
