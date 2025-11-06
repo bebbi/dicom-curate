@@ -4,8 +4,7 @@ import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
-console.log("Importing dicom-curate")
-
+console.log('Importing dicom-curate')
 
 import type {
   TMappingOptions,
@@ -15,6 +14,8 @@ import type {
   TProgressMessage,
   TProgressMessageDone,
   TPs315Options,
+  THTTPOptions,
+  TFileInfoIndex,
 } from './types'
 
 import type { FileScanMsg, FileScanRequest } from './scanDirectoryWorker'
@@ -22,7 +23,10 @@ import type { MappingRequest } from './applyMappingsWorker'
 import { createWorker } from './worker'
 
 type TMappingWorkerOptions = TMappingOptions & {
-  outputTarget?: { url?: string; directory?: FileSystemDirectoryHandle | string }
+  outputTarget?: {
+    http?: THTTPOptions
+    directory?: FileSystemDirectoryHandle | string
+  }
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void
@@ -145,7 +149,7 @@ let workersActive = 0
 let mapResultsList: TMapResults[] | undefined
 let filesMapped = 0
 
-async function initializeMappingWorkers(skipCollectingMappings?: boolean) {
+async function initializeMappingWorkers(skipCollectingMappings?: boolean, fileInfoIndex?: TFileInfoIndex) {
   mappingWorkerOptions = {}
   workersActive = 0
   mapResultsList = skipCollectingMappings ? undefined : []
@@ -157,6 +161,19 @@ async function initializeMappingWorkers(skipCollectingMappings?: boolean) {
       { type: 'module' },
     )
     mappingWorker.onerror = console.error
+
+    if (fileInfoIndex !== undefined) {
+      const postMappedOnly = Object.fromEntries(
+        Object.entries(fileInfoIndex).filter(
+          ([key, value]) => !!value.postMappedHash,
+        ),
+      )
+
+      mappingWorker.postMessage({
+        request: 'fileInfoIndex',
+        fileInfoIndex: postMappedOnly,
+      })
+    }
 
     mappingWorker.addEventListener('message', (event) => {
       switch (event.data.response) {
@@ -255,7 +272,9 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const outputTarget = (organizeOptions as any).outputTarget
+  const outputTarget = organizeOptions.outputEndpoint
+    ? { http: organizeOptions.outputEndpoint }
+    : { directory: organizeOptions.outputDirectory }
 
   //
   // then, get the curation spec
@@ -279,7 +298,7 @@ async function collectMappingOptions(
   const skipWrite = organizeOptions.skipWrite ?? false
   const skipModifications = organizeOptions.skipModifications ?? false
   const skipValidation = organizeOptions.skipValidation ?? false
-  const compareMode = (organizeOptions as any).compareMode
+  const hashMethod = organizeOptions.hashMethod
 
   const dateOffset = organizeOptions.dateOffset
 
@@ -297,7 +316,7 @@ async function collectMappingOptions(
     skipModifications,
     skipValidation,
     dateOffset,
-    compareMode,
+    hashMethod,
   }
 }
 
@@ -344,7 +363,7 @@ async function curateMany(
       scanAnomalies = []
 
       // create the mapping workers
-      await initializeMappingWorkers(organizeOptions.skipCollectingMappings)
+      await initializeMappingWorkers(organizeOptions.skipCollectingMappings, organizeOptions.fileInfoIndex)
 
       // Set global mappingWorkerOptions
       mappingWorkerOptions = (await collectMappingOptions(
@@ -385,6 +404,7 @@ async function curateMany(
       } else {
         console.error('`inputType` should be "directory" or "files"')
       }
+
       dispatchMappingJobs()
     } catch (error) {
       reject(error)
