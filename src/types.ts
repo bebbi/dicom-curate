@@ -15,28 +15,50 @@ export type TPs315Options = {
   retainInstitutionIdentityOption: boolean
 }
 
-export type TFileInfoIndex = Record<string, { size?: number; mtime?: string; preMappedHash?: string; postMappedHash?: string }>
+export type TFileInfoIndex = Record<
+  // Original file path/name
+  // For postMappedHash, we also look up by output file path/name
+  string,
+  {
+    size?: number
+    mtime?: string
+    preMappedHash?: string
+    postMappedHash?: string
+  }
+>
 
 export type OrganizeOptions = {
   outputDirectory?: FileSystemDirectoryHandle | string
+  outputEndpoint?: THTTPOptions
   curationSpec: () => TCurationSpecification | SpecPart[]
   table?: Row[]
   skipWrite?: boolean
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
-  // comparison mode hint: 'localBasic' uses size+mtime; 'localDeep' uses hash when available
-  compareMode?: 'localBasic' | 'localDeep' | 'bucketMetadata' | 'always'
+  // 'basic' uses size+mtime; 'deep' uses hash when available
+  compareMode?: TCompareMode
   // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
   // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
   hashMethod?: 'crc64' | 'crc32' | 'sha256'
   // optional previous file info map keyed by "path/name"
+  // only relevant when compareMode is set and is not 'always'
   fileInfoIndex?: TFileInfoIndex
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
   | { inputType: 'path'; inputDirectory: string }
 )
+
+export type TCompareMode = 'basic' | 'deep' | 'always'
+export type THashMethod = 'crc64' | 'crc32' | 'sha256' | 'md5'
+
+export type THTTPOptions = {
+  // S3-compatible bucket URL
+  url: string
+  // Passed verbatim as Authorization header
+  token?: string
+}
 
 export type TMappingOptions = {
   columnMappings?: TColumnMappings
@@ -46,10 +68,10 @@ export type TMappingOptions = {
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
   // compareMode controls whether to do a deep compare (hash-based) or basic (size+mtime only) for local files
-  compareMode?: 'localBasic' | 'localDeep' | 'bucketMetadata' | 'always'
+  compareMode?: TCompareMode
   // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
   // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
-  hashMethod?: 'crc64' | 'crc32' | 'sha256'
+  hashMethod?: THashMethod
 }
 
 export type TSerializedMappingOptions = Omit<
@@ -59,7 +81,14 @@ export type TSerializedMappingOptions = Omit<
   curationSpecStr: string
 }
 
-export type TFileInfo = { path: string; name: string; size: number; mtime?: string; preMappedHash?: string; postMappedHash?: string } & (
+export type TFileInfo = {
+  path: string
+  name: string
+  size: number
+  mtime?: string
+  preMappedHash?: string
+  postMappedHash?: string
+} & (
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
   | { kind: 'path'; fullPath: string }
@@ -86,7 +115,6 @@ export type TMapResults = {
   // SHA-256 hex string of the file read from disk prior to mapping
   // and of the file after mapping
   // these will be present in fileInfo for traceability
-
 
   mappings: {
     // objectpath: deep object access string compatible with lodash get/set
