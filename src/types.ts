@@ -48,6 +48,7 @@ export type OrganizeOptions = {
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
   | { inputType: 'path'; inputDirectory: string }
+  | { inputType: 'http'; inputUrls: string[]; token?: string }
 )
 
 export type TCompareMode = 'basic' | 'deep' | 'always'
@@ -92,6 +93,7 @@ export type TFileInfo = {
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
   | { kind: 'path'; fullPath: string }
+  | { kind: 'http'; url: string; token?: string }
 )
 
 // Includes deep sequences

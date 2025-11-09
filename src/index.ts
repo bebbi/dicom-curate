@@ -337,6 +337,28 @@ function queueFilesForMapping(
   dispatchMappingJobs()
 }
 
+function queueUrlsForMapping(
+  organizeOptions: Extract<OrganizeOptions, { inputType: 'http' }>,
+) {
+  organizeOptions.inputUrls.forEach((inputUrl, fileIndex) => {
+    const fileInfo: TFileInfo = {
+      kind: 'http',
+      url: inputUrl,
+      token: organizeOptions.token,
+      size: -1,
+      name: inputUrl,
+      path: inputUrl,
+    }
+    filesToProcess.push({
+      fileInfo,
+      fileIndex,
+      scanAnomalies: [],
+    })
+  })
+
+  dispatchMappingJobs()
+}
+
 let progressCallback: ProgressCallback
 
 async function curateMany(
@@ -397,8 +419,10 @@ async function curateMany(
         }
       } else if (organizeOptions.inputType === 'files') {
         queueFilesForMapping(organizeOptions)
+      } else if (organizeOptions.inputType === 'http') {
+        queueUrlsForMapping(organizeOptions)
       } else {
-        console.error('`inputType` should be "directory" or "files"')
+        console.error('`inputType` does not match any supported type')
       }
 
       dispatchMappingJobs()
