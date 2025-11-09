@@ -46,6 +46,7 @@ export async function curateOne({
   }
 > {
   const startTime = performance.now()
+  let mtime: string | undefined
 
   // 1) Read the file (from handle or blob)
   let file
@@ -61,19 +62,37 @@ export async function curateOne({
     file = new Blob([fileBuffer as unknown as ArrayBuffer], {
       type: 'application/octet-stream',
     })
+  } else if (fileInfo.kind === 'http') {
+    const headers: Record<string, string> = {}
+    if (fileInfo.token) {
+      headers['Authorization'] = fileInfo.token
+    }
+    const resp = await fetch(fileInfo.url, { headers })
+    if (!resp.ok) {
+      throw new Error(
+        `Failed to fetch ${fileInfo.url}: ${resp.status} ${resp.statusText}`,
+      )
+    }
+    file = await resp.blob()
+
+    const lastModifiedHeader = resp.headers.get('last-modified') || undefined
+    if (lastModifiedHeader) {
+      mtime = new Date(lastModifiedHeader).toISOString()
+    }
   } else {
     file = await fileInfo.fileHandle.getFile()
   }
 
   // 2) extract mtime if available
-  let mtime: string | undefined
-  try {
-    const maybeFile = file as File
-    if (maybeFile && typeof (maybeFile as any).lastModified === 'number') {
-      mtime = new Date((maybeFile as any).lastModified).toISOString()
+  if (!mtime) {
+    try {
+      const maybeFile = file as File
+      if (maybeFile && typeof (maybeFile as any).lastModified === 'number') {
+        mtime = new Date((maybeFile as any).lastModified).toISOString()
+      }
+    } catch (e) {
+      // ignore
     }
-  } catch (e) {
-    // ignore
   }
 
   // 3) read bytes (needed for deep hash)
@@ -296,9 +315,11 @@ export async function curateOne({
           'X-File-Type':
             clonedMapResults.mappedBlob.type || 'application/octet-stream',
           'X-File-Size': String(modifiedArrayBuffer.byteLength),
+          'X-Source-File-Size': String(clonedMapResults.fileInfo?.size || ''),
           'X-Source-File-Modified-Time': mtime || '',
           'X-Source-File-Hash': preMappedHash || '',
         }
+
         if (outputTarget.http.token)
           headers.Authorization = outputTarget.http.token
 
