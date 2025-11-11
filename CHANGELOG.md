@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/bebbi/dicom-curate/compare/v0.11.0...v0.12.0) (2025-11-11)
+
+### Features
+
+- ensure patient birth/death date in alt calendar is also protected ([aa64bbe](https://github.com/bebbi/dicom-curate/commit/aa64bbead87323a097b9a64b3080f13eb608b47c))
+- manual review and extension of attributes to protect that are not in PS3.15E1.1 ([b47dc7e](https://github.com/bebbi/dicom-curate/commit/b47dc7ee40e9ff809a7100ba43996a90dd6b82b1))
+
 # [0.11.0](https://github.com/bebbi/dicom-curate/compare/v0.10.1...v0.11.0) (2025-11-03)
 
 ### Bug Fixes
