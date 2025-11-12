@@ -4,6 +4,8 @@ import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
+console.log('Importing dicom-curate')
+
 import type {
   TMappingOptions,
   TMapResults,
@@ -12,6 +14,9 @@ import type {
   TProgressMessage,
   TProgressMessageDone,
   TPs315Options,
+  THTTPOptions,
+  TFileInfoIndex,
+  THashMethod,
 } from './types'
 
 import type { FileScanMsg, FileScanRequest } from './scanDirectoryWorker'
@@ -19,7 +24,11 @@ import type { MappingRequest } from './applyMappingsWorker'
 import { createWorker } from './worker'
 
 type TMappingWorkerOptions = TMappingOptions & {
-  outputDirectory?: FileSystemDirectoryHandle | string
+  outputTarget?: {
+    http?: THTTPOptions
+    directory?: FileSystemDirectoryHandle | string
+  }
+  hashMethod?: THashMethod
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void
@@ -47,6 +56,7 @@ let filesToProcess: {
   fileInfo: TFileInfo
   fileIndex: number
   scanAnomalies: string[]
+  previousFileInfo?: { size?: number; mtime?: string; preMappedHash?: string }
 }[] = []
 let directoryScanFinished = false
 
@@ -89,11 +99,12 @@ async function initializeFileListWorker() {
     (event: MessageEvent<FileScanMsg>) => {
       switch (event.data.response) {
         case 'file': {
-          const { fileIndex, fileInfo } = event.data
+          const { fileIndex, fileInfo, previousFileInfo } = event.data
           filesToProcess.push({
             fileIndex,
             fileInfo,
             scanAnomalies: [], // Files sent to processing have no scan anomalies
+            previousFileInfo,
           })
 
           // Could do some throttling:
@@ -139,7 +150,7 @@ const availableMappingWorkers: Worker[] = []
 let workersActive = 0
 let mapResultsList: TMapResults[] = []
 
-async function initializeMappingWorkers() {
+async function initializeMappingWorkers(fileInfoIndex?: TFileInfoIndex) {
   mappingWorkerOptions = {}
   workersActive = 0
   mapResultsList = []
@@ -150,6 +161,19 @@ async function initializeMappingWorkers() {
       { type: 'module' },
     )
     mappingWorker.onerror = console.error
+
+    if (fileInfoIndex !== undefined) {
+      const postMappedOnly = Object.fromEntries(
+        Object.entries(fileInfoIndex).filter(
+          ([key, value]) => !!value.postMappedHash,
+        ),
+      )
+
+      mappingWorker.postMessage({
+        request: 'fileInfoIndex',
+        fileInfoIndex: postMappedOnly,
+      })
+    }
 
     mappingWorker.addEventListener('message', (event) => {
       switch (event.data.response) {
@@ -183,16 +207,18 @@ async function initializeMappingWorkers() {
 
 function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
-    const { fileInfo, fileIndex } = filesToProcess.pop()!
+    const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
-    const { outputDirectory, ...mappingOptions } =
+    const { outputTarget, hashMethod, ...mappingOptions } =
       // Not partial anymore.
       mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
       request: 'apply',
       fileInfo,
       fileIndex,
-      outputDirectory,
+      outputTarget,
+      previousFileInfo,
+      hashMethod,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
     } satisfies MappingRequest)
     workersActive += 1
@@ -243,7 +269,9 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const outputDirectory = organizeOptions.outputDirectory
+  const outputTarget = organizeOptions.outputEndpoint
+    ? { http: organizeOptions.outputEndpoint }
+    : { directory: organizeOptions.outputDirectory }
 
   //
   // then, get the curation spec
@@ -267,6 +295,7 @@ async function collectMappingOptions(
   const skipWrite = organizeOptions.skipWrite ?? false
   const skipModifications = organizeOptions.skipModifications ?? false
   const skipValidation = organizeOptions.skipValidation ?? false
+  const hashMethod = organizeOptions.hashMethod
 
   const dateOffset = organizeOptions.dateOffset
 
@@ -277,13 +306,14 @@ async function collectMappingOptions(
   }
 
   return {
-    outputDirectory,
+    outputTarget,
     columnMappings,
     curationSpec,
     skipWrite,
     skipModifications,
     skipValidation,
     dateOffset,
+    hashMethod,
   }
 }
 
@@ -305,6 +335,28 @@ function queueFilesForMapping(
     })
   })
   // Dispatch jobs once after all files are queued to prevent race conditions
+  dispatchMappingJobs()
+}
+
+function queueUrlsForMapping(
+  organizeOptions: Extract<OrganizeOptions, { inputType: 'http' }>,
+) {
+  organizeOptions.inputUrls.forEach((inputUrl, fileIndex) => {
+    const fileInfo: TFileInfo = {
+      kind: 'http',
+      url: inputUrl,
+      headers: organizeOptions.headers,
+      size: -1,
+      name: inputUrl,
+      path: inputUrl,
+    }
+    filesToProcess.push({
+      fileInfo,
+      fileIndex,
+      scanAnomalies: [],
+    })
+  })
+
   dispatchMappingJobs()
 }
 
@@ -330,7 +382,7 @@ async function curateMany(
       scanAnomalies = []
 
       // create the mapping workers
-      await initializeMappingWorkers()
+      await initializeMappingWorkers(organizeOptions.fileInfoIndex)
 
       // Set global mappingWorkerOptions
       mappingWorkerOptions = (await collectMappingOptions(
@@ -356,19 +408,24 @@ async function curateMany(
             request: 'scan',
             directoryHandle: organizeOptions.inputDirectory,
             excludedFiletypes: specExcludedFiletypes,
+            fileInfoIndex: organizeOptions.fileInfoIndex,
           } satisfies FileScanRequest)
         } else {
           fileListWorker.postMessage({
             request: 'scan',
             path: organizeOptions.inputDirectory,
             excludedFiletypes: specExcludedFiletypes,
+            fileInfoIndex: organizeOptions.fileInfoIndex,
           } satisfies FileScanRequest)
         }
       } else if (organizeOptions.inputType === 'files') {
         queueFilesForMapping(organizeOptions)
+      } else if (organizeOptions.inputType === 'http') {
+        queueUrlsForMapping(organizeOptions)
       } else {
-        console.error('`inputType` should be "directory" or "files"')
+        console.error('`inputType` does not match any supported type')
       }
+
       dispatchMappingJobs()
     } catch (error) {
       reject(error)

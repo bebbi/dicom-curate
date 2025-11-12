@@ -78,6 +78,73 @@ const options: OrganizeOptions = {
 }
 ```
 
+It is also possible to save curated files to an HTTP endpoint. Provide a base URL, optionally with additional
+HTTP headers, and files will be uploaded using a PUT request.
+
+```ts
+const options: OrganizeOptions = {
+  inputType: 'path',
+  inputDirectory, // input folder directory path, e.g. "/home/user/files"
+  outputEndpoint: {
+    url: 'http://example.com/base-url',
+    headers: {
+      Authorization: 'Bearer xxx',
+    },
+  },
+  curationSpec, // DICOM curation specification
+  columnMapping, // csv file handle to add csv-based mapping
+}
+```
+
+The same can be done on the input as well:
+
+```ts
+const options: OrganizeOptions = {
+  inputType: 'http',
+  inputUrls: ['http://example.com/file1.dcm', 'http://example.com/file2.dcm'],
+  headers: {
+    Authorization: 'Bearer xxx',
+  },
+  // other options
+}
+```
+
+This library can now automatically skip writing (or uploading) mapped files if the provided
+"previous" input file attributes match the record you pass in the `fileInfoIndex` property:
+
+```ts
+const options: OrganizeOptions = {
+  // other options are skipped
+  fileInfoIndex: {
+    // Last observed file size + mtime are provided for this file
+    // The file will be skipped if these attributes haven't changed
+    'input_file1.dcm': {
+      // File size when this input was last processed
+      size: 123456,
+      // Last modification time of the file when it was last processed
+      mtime: '2025-11-12T17:56:13.419Z',
+    },
+    // Last observed hash is provided for this input file.
+    // The hash algorithm used is determined by hashMethod.
+    // If the input file has the same hash as specified here, it will be skipped as unchanged.
+    'input_file2.dcm': {
+      preMappedHash: 'd8e8fca2dc0f896fd7cb4cb0031ba249',
+    },
+    // The postMappedHash is the hash of the processed file.
+    // It is possible to provide the postMappedHash either under the input file path
+    // or under the output file path.
+    // In either case, if only postMappedHash is provided for a file, the file has to be
+    // processed first and only then can it be determined as unchanged and not written or uploaded,
+    // so the optimization is not as great as when some of the above properties are provided.
+    'output_file3.dcm': {
+      // post-mapped hash
+      postMappedHash: '126a8a51b9d1bbd07fddc65819a542c3',
+    },
+  },
+  hashMethod: 'md5',
+}
+```
+
 You can also call `curateOne` directly and receive a promise with the mapped blob:
 
 ```ts
