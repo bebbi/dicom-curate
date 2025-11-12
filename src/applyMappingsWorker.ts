@@ -5,6 +5,7 @@ import type {
   TSerializedMappingOptions,
   THTTPOptions,
   TFileInfoIndex,
+  THashMethod,
 } from './types'
 import { fixupNodeWorkerEnvironment } from './worker'
 
@@ -22,6 +23,7 @@ export type MappingRequest =
         mtime?: string
         preMappedHash?: string
       }
+      hashMethod?: THashMethod
       serializedMappingOptions: TSerializedMappingOptions
     }
   | {
@@ -51,6 +53,7 @@ fixupNodeWorkerEnvironment().then(() => {
               fileInfo: event.data.fileInfo,
               fileIndex: event.data.fileIndex,
               outputTarget: event.data.outputTarget || {},
+              hashMethod: event.data.hashMethod,
               mappingOptions,
               previousSourceFileInfo: event.data.previousFileInfo,
               previousMappedFileInfo: (targetName) => {
