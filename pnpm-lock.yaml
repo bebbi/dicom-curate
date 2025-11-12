@@ -11,9 +11,6 @@ importers:
       '@noble/hashes':
         specifier: ^2.0.1
         version: 2.0.1
-      '@types/md5':
-        specifier: ^2.3.6
-        version: 2.3.6
       acorn:
         specifier: ^8.14.1
         version: 8.15.0
@@ -81,6 +78,9 @@ importers:
       '@types/lodash':
         specifier: ^4
         version: 4.17.20
+      '@types/md5':
+        specifier: ^2.3.6
+        version: 2.3.6
       '@types/wicg-file-system-access':
         specifier: ^2023.10.6
         version: 2023.10.6
