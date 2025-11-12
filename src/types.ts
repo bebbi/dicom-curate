@@ -41,27 +41,28 @@ export type OrganizeOptions = {
   // Only anomalies results will be returned by curateMany() and the final
   // 'done' progress message.
   skipCollectingMappings?: boolean
-  // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
+  // Hash algorithm to use when calculating & comparing original and mapped file hashes.
+  // Used in conjunction with fileInfoIndex.
+  // Defaults to 'crc64'.
   // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
   hashMethod?: 'crc64' | 'crc32' | 'sha256'
   // optional previous file info map keyed by "path/name"
-  // only relevant when compareMode is set and is not 'always'
+  // if set, used to determine if mapping can be skipped for files that appear unchanged
   fileInfoIndex?: TFileInfoIndex
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
   | { inputType: 'path'; inputDirectory: string }
-  | { inputType: 'http'; inputUrls: string[]; token?: string }
+  | { inputType: 'http'; inputUrls: string[]; headers?: Record<string, string> }
 )
 
-export type TCompareMode = 'basic' | 'deep' | 'always'
 export type THashMethod = 'crc64' | 'crc32' | 'sha256' | 'md5'
 
 export type THTTPOptions = {
-  // S3-compatible bucket URL
+  // Target URL for upload - target file path is appended to this base URL
   url: string
-  // Passed verbatim as Authorization header
-  token?: string
+  // Additional headers to include in HTTP requests
+  headers?: Record<string, string>
 }
 
 export type TMappingOptions = {
@@ -71,11 +72,6 @@ export type TMappingOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
-  // compareMode controls whether to do a deep compare (hash-based) or basic (size+mtime only) for local files
-  compareMode?: TCompareMode
-  // hash algorithm to use when compareMode is 'deep'. Defaults to 'crc64'.
-  // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
-  hashMethod?: THashMethod
 }
 
 export type TSerializedMappingOptions = Omit<
@@ -96,7 +92,7 @@ export type TFileInfo = {
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
   | { kind: 'path'; fullPath: string }
-  | { kind: 'http'; url: string; token?: string }
+  | { kind: 'http'; url: string; headers?: Record<string, string> }
 )
 
 // Includes deep sequences

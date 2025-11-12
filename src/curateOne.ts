@@ -3,6 +3,7 @@ import createNestedDirectories from './createNestedDirectories'
 import curateDict from './curateDict'
 import type {
   TFileInfo,
+  THashMethod,
   THTTPOptions,
   TMappingOptions,
   TMapResults,
@@ -17,14 +18,21 @@ export type TCurateOneArgs = {
     directory?: FileSystemDirectoryHandle | string
   }
   mappingOptions: TMappingOptions
+  // hash algorithm to use when previousSourceFileInfo is provided. Defaults to 'crc64'.
+  // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
+  hashMethod?: THashMethod
+  // If provided, curateOne() will skip processing the file if the passed values
+  // match the current properties of the input file.
   previousSourceFileInfo?: {
     size?: number
     mtime?: string
     preMappedHash?: string
   }
   // The caller may not know the name of the mapped file in advance
-  // so this function can be used to lookup previous mapped file info by mapped name
+  // so this callback can be used to provide previous mapped file info by mapped name
   // once it is known.
+  // If this callback is provided and it returns a postMappedHash that matches
+  // what curateOne generated, then the output file is not written again.
   previousMappedFileInfo?: (mappedFileName: string) =>
     | {
         postMappedHash?: string
@@ -37,6 +45,7 @@ export async function curateOne({
   fileIndex = 0,
   outputTarget,
   mappingOptions,
+  hashMethod,
   previousSourceFileInfo,
   previousMappedFileInfo,
 }: TCurateOneArgs): Promise<
@@ -64,8 +73,8 @@ export async function curateOne({
     })
   } else if (fileInfo.kind === 'http') {
     const headers: Record<string, string> = {}
-    if (fileInfo.token) {
-      headers['Authorization'] = fileInfo.token
+    if (fileInfo.headers) {
+      Object.assign(headers, fileInfo.headers)
     }
     const resp = await fetch(fileInfo.url, { headers })
     if (!resp.ok) {
@@ -102,44 +111,34 @@ export async function curateOne({
   let postMappedHash: string | undefined
   const postMappedHashHeader = 'x-source-file-hash'
 
-  // 4) decide if we can skip mapping based on compareMode and pre-compute hash if needed
-  const compareMode = mappingOptions.compareMode || 'always' // if not specified, do the upload
+  // 4) decide if we can skip mapping based on previousSourceFileInfo
   let canSkip = false
 
-  switch (compareMode) {
-    case 'deep':
-      if (previousSourceFileInfo?.preMappedHash !== undefined) {
-        // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
-        const hashMethod = mappingOptions.hashMethod || 'crc64'
-        try {
-          preMappedHash = await hash(fileArrayBuffer, hashMethod)
-        } catch (e) {
-          console.warn(
-            `Failed to compute preMappedHash for ${fileInfo.name}`,
-            e,
-          )
-          preMappedHash = undefined
-        }
+  if (previousSourceFileInfo?.preMappedHash !== undefined) {
+    // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
+    const hashMethodToUse = hashMethod || 'crc64'
+    try {
+      preMappedHash = await hash(fileArrayBuffer, hashMethodToUse)
+    } catch (e) {
+      console.warn(`Failed to compute preMappedHash for ${fileInfo.name}`, e)
+      preMappedHash = undefined
+    }
 
-        if (preMappedHash !== undefined) {
-          canSkip = previousSourceFileInfo.preMappedHash === preMappedHash
-          break
-        }
-      }
-    // fallthrough to basic
-    case 'basic':
-      // basic: only size+mtime
-      if (
-        previousSourceFileInfo?.size !== undefined &&
-        previousSourceFileInfo?.mtime !== undefined
-      ) {
-        canSkip =
-          previousSourceFileInfo.size === fileInfo.size &&
-          previousSourceFileInfo.mtime === mtime
-      }
-      break
-    default:
-      canSkip = false
+    if (preMappedHash !== undefined) {
+      canSkip = previousSourceFileInfo.preMappedHash === preMappedHash
+    }
+  }
+
+  if (!canSkip) {
+    // basic: only size+mtime
+    if (
+      previousSourceFileInfo?.size !== undefined &&
+      previousSourceFileInfo?.mtime !== undefined
+    ) {
+      canSkip =
+        previousSourceFileInfo.size === fileInfo.size &&
+        previousSourceFileInfo.mtime === mtime
+    }
   }
 
   const noMapResult = () => {
@@ -230,24 +229,17 @@ export async function curateOne({
     })
 
     // Always calculate post-mapped hash even if deep compare is not requested
-    postMappedHash = await hash(
-      modifiedArrayBuffer,
-      mappingOptions.hashMethod || 'crc64',
-    )
+    postMappedHash = await hash(modifiedArrayBuffer, hashMethod || 'crc64')
 
-    if (compareMode === 'deep') {
-      const previousPostMappedHash = previousMappedFileInfo
-        ? previousMappedFileInfo(clonedMapResults.outputFilePath)
-            ?.postMappedHash
-        : undefined
+    const previousPostMappedHash = previousMappedFileInfo
+      ? previousMappedFileInfo(clonedMapResults.outputFilePath)?.postMappedHash
+      : undefined
 
-      // console.log(`Previous postMappedHash: ${previousPostMappedHash}, new postMappedHash: ${postMappedHash} for method ${mappingOptions.hashMethod || 'crc64'}`)
-      if (
-        previousPostMappedHash !== undefined &&
-        previousPostMappedHash === postMappedHash
-      ) {
-        return noMapResult()
-      }
+    if (
+      previousPostMappedHash !== undefined &&
+      previousPostMappedHash === postMappedHash
+    ) {
+      return noMapResult()
     }
 
     // Check if outputTarget.directory is a FileSystemDirectoryHandle (browser) or string (Node.js)
@@ -320,8 +312,9 @@ export async function curateOne({
           'X-Source-File-Hash': preMappedHash || '',
         }
 
-        if (outputTarget.http.token)
-          headers.Authorization = outputTarget.http.token
+        if (outputTarget.http.headers) {
+          Object.assign(headers, outputTarget.http.headers)
+        }
 
         if (postMappedHashHeader && postMappedHash)
           headers[postMappedHashHeader] = postMappedHash
