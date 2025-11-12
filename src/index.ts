@@ -16,6 +16,7 @@ import type {
   TPs315Options,
   THTTPOptions,
   TFileInfoIndex,
+  THashMethod,
 } from './types'
 
 import type { FileScanMsg, FileScanRequest } from './scanDirectoryWorker'
@@ -27,6 +28,7 @@ type TMappingWorkerOptions = TMappingOptions & {
     http?: THTTPOptions
     directory?: FileSystemDirectoryHandle | string
   }
+  hashMethod?: THashMethod
 }
 
 export type ProgressCallback = (message: TProgressMessage) => void
@@ -207,7 +209,7 @@ function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
-    const { outputTarget, ...mappingOptions } =
+    const { outputTarget, hashMethod, ...mappingOptions } =
       // Not partial anymore.
       mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
@@ -216,6 +218,7 @@ function dispatchMappingJobs() {
       fileIndex,
       outputTarget,
       previousFileInfo,
+      hashMethod,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
     } satisfies MappingRequest)
     workersActive += 1
@@ -292,7 +295,6 @@ async function collectMappingOptions(
   const skipWrite = organizeOptions.skipWrite ?? false
   const skipModifications = organizeOptions.skipModifications ?? false
   const skipValidation = organizeOptions.skipValidation ?? false
-  const compareMode = organizeOptions.compareMode
   const hashMethod = organizeOptions.hashMethod
 
   const dateOffset = organizeOptions.dateOffset
@@ -311,7 +313,6 @@ async function collectMappingOptions(
     skipModifications,
     skipValidation,
     dateOffset,
-    compareMode,
     hashMethod,
   }
 }
@@ -344,7 +345,7 @@ function queueUrlsForMapping(
     const fileInfo: TFileInfo = {
       kind: 'http',
       url: inputUrl,
-      token: organizeOptions.token,
+      headers: organizeOptions.headers,
       size: -1,
       name: inputUrl,
       path: inputUrl,
