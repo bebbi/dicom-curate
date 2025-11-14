@@ -137,12 +137,14 @@ async function initializeFileListWorker() {
 let mappingWorkerOptions: Partial<TMappingWorkerOptions> = {} // TODO: only send to worker once
 const availableMappingWorkers: Worker[] = []
 let workersActive = 0
-let mapResultsList: TMapResults[] = []
+let mapResultsList: TMapResults[] | undefined
+let filesMapped = 0
 
-async function initializeMappingWorkers() {
+async function initializeMappingWorkers(skipCollectingMappings?: boolean) {
   mappingWorkerOptions = {}
   workersActive = 0
-  mapResultsList = []
+  mapResultsList = skipCollectingMappings ? undefined : []
+  filesMapped = 0
 
   for (let workerIndex = 0; workerIndex < mappingWorkerCount; workerIndex++) {
     let mappingWorker = await createWorker(
@@ -155,21 +157,23 @@ async function initializeMappingWorkers() {
       switch (event.data.response) {
         case 'finished':
           availableMappingWorkers.push(mappingWorker)
-          mapResultsList.push(event.data.mapResults)
+
+          // Insert null if skipping mapping collection
+          mapResultsList?.push(event.data.mapResults)
+          filesMapped += 1
           workersActive -= 1
 
           // Report progress
           progressCallback({
             response: 'progress',
             mapResults: event.data.mapResults,
-            processedFiles: mapResultsList.length,
-            totalFiles:
-              filesToProcess.length + mapResultsList.length + workersActive,
+            processedFiles: filesMapped,
+            totalFiles: filesToProcess.length + filesMapped + workersActive,
           })
 
           dispatchMappingJobs()
-          if (mapResultsList.length % 100 === 0) {
-            console.log(`Finished mapping ${mapResultsList.length} files`)
+          if (filesMapped % 100 === 0) {
+            console.log(`Finished mapping ${filesMapped} files`)
           }
           break
         default:
@@ -207,8 +211,10 @@ function dispatchMappingJobs() {
       availableMappingWorkers.pop()!.terminate()
     }
 
-    console.log(`Finished mapping ${mapResultsList.length} files`)
+    console.log(`Finished mapping ${filesMapped} files`)
     console.log('job is finished')
+
+    if (!mapResultsList) mapResultsList = []
 
     // Create individual mapResults entries for each scan anomaly
     // Only do this during actual processing (not first pass)
@@ -224,15 +230,15 @@ function dispatchMappingJobs() {
         }
 
         // Add each scan anomaly result to the final results
-        mapResultsList.push(scanAnomalyResult)
+        mapResultsList!.push(scanAnomalyResult)
       })
     }
 
     progressCallback({
       response: 'done',
       mapResultsList: mapResultsList,
-      processedFiles: mapResultsList.length,
-      totalFiles: mapResultsList.length,
+      processedFiles: filesMapped,
+      totalFiles: filesMapped,
     })
   }
 }
@@ -330,7 +336,7 @@ async function curateMany(
       scanAnomalies = []
 
       // create the mapping workers
-      await initializeMappingWorkers()
+      await initializeMappingWorkers(organizeOptions.skipCollectingMappings)
 
       // Set global mappingWorkerOptions
       mappingWorkerOptions = (await collectMappingOptions(

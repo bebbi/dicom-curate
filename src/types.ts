@@ -23,6 +23,11 @@ export type OrganizeOptions = {
   skipModifications?: boolean
   skipValidation?: boolean
   dateOffset?: Iso8601Duration
+  // If true, the TMapResults values will not be accumulated and
+  // will be only returned one by one in progress messages.
+  // Only anomalies results will be returned by curateMany() and the final
+  // 'done' progress message.
+  skipCollectingMappings?: boolean
 } & (
   | { inputType: 'directory'; inputDirectory: FileSystemDirectoryHandle }
   | { inputType: 'files'; inputFiles: File[] }
