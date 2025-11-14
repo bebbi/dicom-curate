@@ -52,7 +52,7 @@
     "format": "prettier --write .",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "prepare": "husky install",
+    "prepare": "husky install && pnpm build",
     "generate:sampleSpec": "tsx scripts/generateSampleSpec.ts",
     "generate:unitTestSample": "tsx scripts/generateSampleDicomData.ts",
     "validate": "pnpm build && pnpm test"
