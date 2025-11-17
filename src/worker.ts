@@ -33,6 +33,9 @@ export async function createWorker(
     }
 
     // Standard browser Worker creation for ESM builds
+    if (scriptPath instanceof URL && scriptPath.href.startsWith('data:')) {
+      scriptPath = dataURLToBlobURL(scriptPath.href)
+    }
     return new Worker(scriptPath, options)
   } else {
     // Node.js environment
@@ -48,6 +51,23 @@ export async function createWorker(
 
     return worker as Worker
   }
+}
+
+function dataURLToBlobURL(dataURL: string): string {
+  const [header, base64] = dataURL.split(',')
+  const mimeMatch = header.match(/data:(.*?);base64/)
+  const mime = mimeMatch ? mimeMatch[1] : 'text/javascript'
+
+  const binary = atob(base64)
+  const len = binary.length
+  const bytes = new Uint8Array(len)
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  const blob = new Blob([bytes], { type: mime })
+  return URL.createObjectURL(blob)
 }
 
 // Maps over the differences between browser and Node.js worker environments

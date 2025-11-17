@@ -160,7 +160,7 @@ async function initializeMappingWorkers(fileInfoIndex?: TFileInfoIndex) {
       new URL('./applyMappingsWorker.js', import.meta.url),
       { type: 'module' },
     )
-    mappingWorker.onerror = console.error
+    mappingWorker.onerror = (err) => console.error('Worker error:', err)
 
     if (fileInfoIndex !== undefined) {
       const postMappedOnly = Object.fromEntries(

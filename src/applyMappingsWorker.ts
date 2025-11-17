@@ -33,6 +33,8 @@ export type MappingRequest =
 
 let postMappedFileInfo: TFileInfoIndex | undefined
 
+console.log('applyMappingsWorker: starting worker setup')
+
 fixupNodeWorkerEnvironment().then(() => {
   globalThis.addEventListener(
     'message',
@@ -71,9 +73,11 @@ fixupNodeWorkerEnvironment().then(() => {
               })
               .catch((error) => {
                 // also catch promise rejections
+                console.error('Error in curateOne:', error)
                 globalThis.postMessage({ response: 'error', error })
               })
           } catch (error) {
+            console.error('Error in curateOne:', error)
             globalThis.postMessage({ response: 'error', error })
             // no need to throw here, it would terminate the worker
           }
