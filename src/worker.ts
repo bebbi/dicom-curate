@@ -32,6 +32,14 @@ export async function createWorker(
       return new globalAny.__INLINED_MAPPING_WORKER__()
     }
 
+    // Some packers inline even very large worker scripts as data URLs.
+    // Our applyMappingsWorker can get quite large (over 3 MB) and Chrome then refuses
+    // to create a worker from it (with an error containing no description).
+    // So we convert data URLs to Blob URLs here.
+    if (scriptPath instanceof URL && scriptPath.href.startsWith('data:')) {
+      scriptPath = dataURLToBlobURL(scriptPath.href)
+    }
+
     // Standard browser Worker creation for ESM builds
     return new Worker(scriptPath, options)
   } else {
@@ -48,6 +56,23 @@ export async function createWorker(
 
     return worker as Worker
   }
+}
+
+function dataURLToBlobURL(dataURL: string): string {
+  const [header, base64] = dataURL.split(',')
+  const mimeMatch = header.match(/data:(.*?);base64/)
+  const mime = mimeMatch ? mimeMatch[1] : 'text/javascript'
+
+  const binary = atob(base64)
+  const len = binary.length
+  const bytes = new Uint8Array(len)
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  const blob = new Blob([bytes], { type: mime })
+  return URL.createObjectURL(blob)
 }
 
 // Maps over the differences between browser and Node.js worker environments
