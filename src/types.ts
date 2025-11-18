@@ -53,11 +53,16 @@ export type OrganizeOptions = {
 
 export type THashMethod = 'crc64' | 'crc32' | 'sha256' | 'md5'
 
+// Function that provides HTTP headers
+// Useful when headers contain authorization tokens that may expire
+// and curateMany() is long-running
+export type THTTPHeaderProvider = () => Record<string, string>
+
 export type THTTPOptions = {
   // Target URL for upload - target file path is appended to this base URL
   url: string
   // Additional headers to include in HTTP requests
-  headers?: Record<string, string>
+  headers?: Record<string, string> | THTTPHeaderProvider
 }
 
 export type TMappingOptions = {
@@ -87,7 +92,11 @@ export type TFileInfo = {
   | { kind: 'handle'; fileHandle: FileSystemFileHandle }
   | { kind: 'blob'; blob: Blob }
   | { kind: 'path'; fullPath: string }
-  | { kind: 'http'; url: string; headers?: Record<string, string> }
+  | {
+      kind: 'http'
+      url: string
+      headers?: Record<string, string> | THTTPHeaderProvider
+    }
 )
 
 // Includes deep sequences
