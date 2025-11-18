@@ -209,6 +209,37 @@ async function initializeMappingWorkers(skipCollectingMappings?: boolean, fileIn
   }
 }
 
+// If the TFileInfo represents an HTTP resource with dynamic headers,
+// resolve the headers by calling the provider function.
+function getHttpInputHeaders(fileInfo: TFileInfo): TFileInfo {
+  if (fileInfo.kind === 'http' && typeof fileInfo.headers === 'function') {
+    const clonedFileInfo: TFileInfo = { ...fileInfo }
+    clonedFileInfo.headers = fileInfo.headers()
+    return clonedFileInfo
+  }
+
+  return fileInfo
+}
+
+// If the outputTarget includes HTTP with dynamic headers,
+// resolve the headers by calling the provider function.
+function getHttpOutputHeaders(
+  outputTarget: TMappingWorkerOptions['outputTarget'],
+): TMappingWorkerOptions['outputTarget'] {
+  if (outputTarget?.http && typeof outputTarget.http.headers === 'function') {
+    const clonedOutputTarget: TMappingWorkerOptions['outputTarget'] = {
+      ...outputTarget,
+    }
+    clonedOutputTarget.http = {
+      ...outputTarget.http,
+      headers: outputTarget.http.headers(),
+    }
+    return clonedOutputTarget
+  }
+
+  return outputTarget
+}
+
 function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
@@ -218,9 +249,9 @@ function dispatchMappingJobs() {
       mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
       request: 'apply',
-      fileInfo,
+      fileInfo: getHttpInputHeaders(fileInfo),
       fileIndex,
-      outputTarget,
+      outputTarget: getHttpOutputHeaders(outputTarget),
       previousFileInfo,
       hashMethod,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
