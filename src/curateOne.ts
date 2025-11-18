@@ -115,13 +115,11 @@ export async function curateOne({
   let canSkip = false
 
   if (previousSourceFileInfo?.preMappedHash !== undefined) {
-    // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
-    const hashMethodToUse = hashMethod || 'crc64'
     try {
-      preMappedHash = await hash(fileArrayBuffer, hashMethodToUse)
+      // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
+      preMappedHash = await hash(fileArrayBuffer, hashMethod || 'crc64')
     } catch (e) {
       console.warn(`Failed to compute preMappedHash for ${fileInfo.name}`, e)
-      preMappedHash = undefined
     }
 
     if (preMappedHash !== undefined) {
@@ -215,6 +213,16 @@ export async function curateOne({
   // explicitly set to true when mapping was performed so consumers can rely on
   // the flag being present in both cases.
   clonedMapResults.mappingRequired = true
+
+  // If we didn't compute preMappedHash yet, do it now
+  if (!preMappedHash) {
+    try {
+      // choose hashing algorithm: default to crc64 (nvme-style) for compatibility
+      preMappedHash = await hash(fileArrayBuffer, hashMethod || 'crc64')
+    } catch (e) {
+      console.warn(`Failed to compute preMappedHash for ${fileInfo.name}`, e)
+    }
+  }
 
   // 7) write output if requested
   if (!mappingOptions.skipWrite) {
