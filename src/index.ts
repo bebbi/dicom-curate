@@ -64,6 +64,8 @@ function requiresDateOffset(
   )
 }
 
+let fileListWorker: Worker | undefined
+
 /*
  * Directory scanner web worker management
  *
@@ -79,10 +81,12 @@ async function initializeFileListWorker() {
   filesToProcess = []
   directoryScanFinished = false
 
-  const fileListWorker = await createWorker(
+  fileListWorker = await createWorker(
     new URL('./scanDirectoryWorker.js', import.meta.url),
     { type: 'module' },
   )
+
+  fileListWorker.postMessage({ request: 'token', tokens: 30000 }) // initial tokens
 
   fileListWorker.addEventListener(
     'message',
@@ -112,6 +116,8 @@ async function initializeFileListWorker() {
         case 'done': {
           console.log('directoryScanFinished')
           directoryScanFinished = true
+          fileListWorker?.terminate()
+          fileListWorker = undefined
           break
         }
         default: {
@@ -195,6 +201,7 @@ function dispatchMappingJobs() {
       outputDirectory,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),
     } satisfies MappingRequest)
+    fileListWorker?.postMessage({ request: 'token', tokens: 1 })
     workersActive += 1
   }
   if (

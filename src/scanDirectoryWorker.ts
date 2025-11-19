@@ -137,6 +137,10 @@ fixupNodeWorkerEnvironment().then(() => {
       case 'stop':
         keepScanning = false
         break
+      case 'token':
+        const tokensToAdd = (event.data as any).tokens as number
+        tokensAvailable += tokensToAdd
+        break
       default:
         console.error(`Unknown request ${event.data.request}`)
     }
@@ -163,6 +167,8 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
         const fileAnomalies: string[] = []
 
         if (await shouldProcessFile(file, fileAnomalies)) {
+          await acquireToken()
+
           // Send file to processing pipeline
           globalThis.postMessage({
             response: 'file',
@@ -202,6 +208,16 @@ async function scanDirectory(dir: FileSystemDirectoryHandle) {
   await traverse(dir, dir.name)
   globalThis.postMessage({ response: 'done' } satisfies FileScanMsg)
   globalThis.close()
+}
+
+let tokensAvailable = 0
+
+async function acquireToken() {
+  while (tokensAvailable <= 0) {
+    // Wait for tokens to be available
+    await new Promise((resolve) => setTimeout(resolve, 10))
+  }
+  tokensAvailable--
 }
 
 // This function is identical to scanDirectory but works with real filesystem
