@@ -136,7 +136,10 @@ const options: OrganizeOptions = {
     // In either case, if only postMappedHash is provided for a file, the file has to be
     // processed first and only then can it be determined as unchanged and not written or uploaded,
     // so the optimization is not as great as when some of the above properties are provided.
-    'output_file3.dcm': {
+    //
+    // To avoid collisions with input file names, key representing output (post-mapped) file names
+    // need to be prefixed with OUTPUT_FILE_PREFIX.
+    [OUTPUT_FILE_PREFIX + 'output_file3.dcm']: {
       // post-mapped hash
       postMappedHash: '126a8a51b9d1bbd07fddc65819a542c3',
     },

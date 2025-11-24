@@ -151,7 +151,10 @@ let workersActive = 0
 let mapResultsList: TMapResults[] | undefined
 let filesMapped = 0
 
-async function initializeMappingWorkers(skipCollectingMappings?: boolean, fileInfoIndex?: TFileInfoIndex) {
+async function initializeMappingWorkers(
+  skipCollectingMappings?: boolean,
+  fileInfoIndex?: TFileInfoIndex,
+) {
   mappingWorkerOptions = {}
   workersActive = 0
   mapResultsList = skipCollectingMappings ? undefined : []
@@ -419,7 +422,10 @@ async function curateMany(
       scanAnomalies = []
 
       // create the mapping workers
-      await initializeMappingWorkers(organizeOptions.skipCollectingMappings, organizeOptions.fileInfoIndex)
+      await initializeMappingWorkers(
+        organizeOptions.skipCollectingMappings,
+        organizeOptions.fileInfoIndex,
+      )
 
       // Set global mappingWorkerOptions
       mappingWorkerOptions = (await collectMappingOptions(
@@ -469,5 +475,8 @@ async function curateMany(
     }
   })
 }
+
+// This is needed here for OUTPUT_FILE_PREFIX to also be exported by the package
+export * from './types'
 
 export { curateMany, curateOne, extractColumnMappings }

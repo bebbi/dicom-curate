@@ -250,3 +250,6 @@ export type TProgressMessageDone = TProgressMessageBase & {
 }
 
 export type TProgressMessage = TProgressMessageProgress | TProgressMessageDone
+
+// Kept here, because it is also imported from the worker
+export const OUTPUT_FILE_PREFIX = 'output#'
