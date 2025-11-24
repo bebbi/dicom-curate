@@ -1,11 +1,12 @@
 import { curateOne } from './curateOne'
 import { deserializeMappingOptions } from './serializeMappingOptions'
-import type {
-  TFileInfo,
-  TSerializedMappingOptions,
-  THTTPOptions,
-  TFileInfoIndex,
-  THashMethod,
+import {
+  type TFileInfo,
+  type TSerializedMappingOptions,
+  type THTTPOptions,
+  type TFileInfoIndex,
+  type THashMethod,
+  OUTPUT_FILE_PREFIX,
 } from './types'
 import { fixupNodeWorkerEnvironment } from './worker'
 
@@ -57,7 +58,8 @@ fixupNodeWorkerEnvironment().then(() => {
               mappingOptions,
               previousSourceFileInfo: event.data.previousFileInfo,
               previousMappedFileInfo: (targetName) => {
-                const hash = postMappedFileInfo?.[targetName]
+                const hash =
+                  postMappedFileInfo?.[OUTPUT_FILE_PREFIX + targetName]
                 // console.log(`Lookup postMappedHash for ${targetName}: ${hash?.postMappedHash}`)
                 return hash
               },
