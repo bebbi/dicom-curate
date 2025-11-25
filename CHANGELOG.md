@@ -1,3 +1,15 @@
+# [0.14.0](https://github.com/bebbi/dicom-curate/compare/v0.13.0...v0.14.0) (2025-11-25)
+
+### Features
+
+- add the option to request HTTP headers dynamically before use ([bdc4af7](https://github.com/bebbi/dicom-curate/commit/bdc4af7e53481069149a27152227b7ad9da365ee))
+- do calculate preMappedHash even if we didn't get one to compare it against ([921a4be](https://github.com/bebbi/dicom-curate/commit/921a4beb040552ea7ad65298430cb019c412869a))
+- extend README, clean up code and support adding any HTTP header ([b68fb87](https://github.com/bebbi/dicom-curate/commit/b68fb87ac429ae6be487e24913391d38667fea1f))
+- have the output filenames prefixed with OUTPUT_FILE_PREFIX in provided file info ([2c831a7](https://github.com/bebbi/dicom-curate/commit/2c831a76dbbb8a705b894f5a234cff312397e9fb))
+- implement a first pass at rsync mode with upload to url ([2abcc50](https://github.com/bebbi/dicom-curate/commit/2abcc503dbe343cde59eac13760f39ee233952a6))
+- support http input for curation ([da757b7](https://github.com/bebbi/dicom-curate/commit/da757b774f1133ea1df53b3044d15d94edda621b))
+- support only having postMappedHash+using target file name in previous file info ([6d3db60](https://github.com/bebbi/dicom-curate/commit/6d3db604bb2d9306365fb9707e1e348324866cf1))
+
 # [0.13.0](https://github.com/bebbi/dicom-curate/compare/v0.12.0...v0.13.0) (2025-11-20)
 
 ### Features
