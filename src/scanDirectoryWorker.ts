@@ -125,7 +125,7 @@ async function shouldProcessFile(
 fixupNodeWorkerEnvironment().then(() => {
   globalThis.addEventListener('message', (event) => {
     switch (event.data.request) {
-      case 'scan':
+      case 'scan': {
         const eventData = event.data as FileScanRequest
 
         // Optional previous file info index passed in by caller
@@ -148,9 +148,11 @@ fixupNodeWorkerEnvironment().then(() => {
           console.error('No valid directory information provided for scanning.')
         }
         break
-      case 'stop':
+      }
+      case 'stop': {
         keepScanning = false
         break
+      }
       default:
         console.error(`Unknown request ${event.data.request}`)
     }
