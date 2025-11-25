@@ -4,8 +4,6 @@ import { composeSpecs } from './composeSpecs'
 import { serializeMappingOptions } from './serializeMappingOptions'
 import { iso8601 } from './offsetDateTime'
 
-console.log('Importing dicom-curate')
-
 import type {
   TMappingOptions,
   TMapResults,

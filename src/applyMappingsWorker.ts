@@ -60,7 +60,6 @@ fixupNodeWorkerEnvironment().then(() => {
               previousMappedFileInfo: (targetName) => {
                 const hash =
                   postMappedFileInfo?.[OUTPUT_FILE_PREFIX + targetName]
-                // console.log(`Lookup postMappedHash for ${targetName}: ${hash?.postMappedHash}`)
                 return hash
               },
             })
