@@ -3,4 +3,5 @@ export const metaheaderTagsToKeep = [
   'ImplementationClassUID',
   'ImplementationVersionName',
   'MediaStorageSOPClassUID',
+  'TransferSyntaxUID',
 ]
