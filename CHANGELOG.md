@@ -1,3 +1,9 @@
+## [0.14.1](https://github.com/bebbi/dicom-curate/compare/v0.14.0...v0.14.1) (2025-11-26)
+
+### Bug Fixes
+
+- mantain transferSyntaxUID to avoid corrupted images ([32bfcb6](https://github.com/bebbi/dicom-curate/commit/32bfcb613716ba2d2d90e1b724e351c09cb70d95))
+
 # [0.14.0](https://github.com/bebbi/dicom-curate/compare/v0.13.0...v0.14.0) (2025-11-25)
 
 ### Features
