@@ -17,9 +17,13 @@ export default function mapMetaheader(
       delete naturalMetadata[tag]
     }
   }
-  // add the UID and transfer syntax explicitly
+  // Update the instance UID
   naturalMetadata.MediaStorageSOPInstanceUID = newInstanceUid
-  naturalMetadata.TransferSynxtaxUID = EXPLICIT_LITTLE_ENDIAN // dcmjs always writes this
+  // TransferSyntaxUID is preserved from the original metaheader (included in metaheaderTagsToKeep)
+  // If missing, set a default
+  if (!naturalMetadata.TransferSyntaxUID) {
+    naturalMetadata.TransferSyntaxUID = EXPLICIT_LITTLE_ENDIAN
+  }
   const mappedMetaheader =
     dcmjs.data.DicomMetaDictionary.denaturalizeDataset(naturalMetadata)
   return mappedMetaheader
