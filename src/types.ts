@@ -29,7 +29,7 @@ export type TFileInfoIndex = Record<
 
 export type OrganizeOptions = {
   outputDirectory?: FileSystemDirectoryHandle | string
-  outputEndpoint?: THTTPOptions
+  outputEndpoint?: THTTPOptions | TS3BucketOptions
   curationSpec: () => TCurationSpecification | SpecPart[]
   table?: Row[]
   skipWrite?: boolean
@@ -58,6 +58,7 @@ export type OrganizeOptions = {
       inputUrls: string[]
       headers?: Record<string, string> | THTTPHeaderProvider
     }
+  | { inputType: 's3'; inputS3Bucket: TS3BucketOptions }
 )
 
 export type THashMethod = 'crc64' | 'crc32' | 'sha256' | 'md5'
@@ -72,6 +73,24 @@ export type THTTPOptions = {
   url: string
   // Additional headers to include in HTTP requests
   headers?: Record<string, string> | THTTPHeaderProvider
+}
+
+export type TS3BucketOptions = {
+  bucketName: string
+  region?: string
+  // Optional prefix to prepend to all uploaded object keys
+  prefix?: string
+  // Optional additional metadata to include with each uploaded object
+  metadata?: Record<string, string>
+  // Optional AWS credentials - if not provided, will use default SDK credentials resolution
+  credentials?: {
+    accessKeyId: string
+    secretAccessKey: string
+  }
+  // Optional S3 endpoint, commonly used for S3-compatible storage services
+  endpoint?: string
+  // If true, will use path-style addressing for S3 objects
+  forcePathStyle?: boolean
 }
 
 export type TMappingOptions = {
@@ -106,6 +125,7 @@ export type TFileInfo = {
       url: string
       headers?: Record<string, string> | THTTPHeaderProvider
     }
+  | { kind: 's3'; bucketOptions: TS3BucketOptions; objectKey: string }
 )
 
 // Includes deep sequences

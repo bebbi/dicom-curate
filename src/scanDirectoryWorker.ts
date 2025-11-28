@@ -1,4 +1,5 @@
-import type { TFileInfo, TFileInfoIndex } from './types'
+import { loadS3Client } from './s3Client'
+import type { TFileInfo, TFileInfoIndex, TS3BucketOptions } from './types'
 import { fixupNodeWorkerEnvironment } from './worker'
 
 // For editor linter to treat the file as an es module, avoiding the error on
@@ -52,7 +53,13 @@ export type FileScanRequest =
       request: 'scan'
       path: string
       excludedFiletypes?: string[]
-      ileInfoIndex?: TFileInfoIndex
+      fileInfoIndex?: TFileInfoIndex
+    }
+  | {
+      request: 'scan'
+      excludedFiletypes?: string[]
+      bucketOptions: TS3BucketOptions
+      fileInfoIndex?: TFileInfoIndex
     }
   | {
       request: 'stop'
@@ -122,6 +129,42 @@ async function shouldProcessFile(
   }
 }
 
+async function shouldProcessFileItem(
+  s3Item: any,
+  fileAnomalies: string[],
+): Promise<boolean> {
+  try {
+    // Check if the file is in the list of excluded files
+    if (
+      excludedFiletypes.some(
+        (excluded) => s3Item.Key.toLowerCase() === excluded.toLowerCase(),
+      )
+    ) {
+      fileAnomalies.push(`Skipped excluded file: ${s3Item.Key}`)
+      return false
+    }
+
+    // Check filesize - (valid) DICOM files are at least 132 bytes (128-byte preamble + 4-byte signature)
+    if (s3Item.Size < 132) {
+      fileAnomalies.push(
+        `Skipped very small file: ${s3Item.Key} (${s3Item.Size} bytes)`,
+      )
+      return false
+    }
+
+    // Note: We cannot check for DICOM signature without downloading the object,
+    // so we skip that check here and let the parser decide later.
+
+    return true
+  } catch (error) {
+    fileAnomalies.push(
+      `Unable to determine file validity - processing anyway: ${s3Item.Key} - ${error}`,
+    )
+    // If vetting process fails, let the parser decide
+    return true
+  }
+}
+
 fixupNodeWorkerEnvironment().then(() => {
   globalThis.addEventListener('message', (event) => {
     switch (event.data.request) {
@@ -144,6 +187,8 @@ fixupNodeWorkerEnvironment().then(() => {
           scanDirectoryNode(eventData.path)
         } else if ('directoryHandle' in eventData) {
           scanDirectory(eventData.directoryHandle)
+        } else if ('bucketOptions' in eventData) {
+          scanS3Bucket(eventData.bucketOptions)
         } else {
           console.error('No valid directory information provided for scanning.')
         }
@@ -158,6 +203,83 @@ fixupNodeWorkerEnvironment().then(() => {
     }
   })
 })
+
+async function scanS3Bucket(bucketOptions: TS3BucketOptions) {
+  const s3 = await loadS3Client()
+
+  const client = new s3.S3Client({
+    region: bucketOptions.region,
+    credentials: bucketOptions.credentials,
+    endpoint: bucketOptions.endpoint,
+    forcePathStyle: bucketOptions.forcePathStyle,
+  })
+
+  // Page through the S3 bucket listing using ContinuationToken
+  let continuationToken: string | undefined = undefined
+  let fileIndex = 0
+
+  do {
+    const listCommand = new s3.ListObjectsV2Command({
+      Bucket: bucketOptions.bucketName,
+      Prefix: bucketOptions.prefix,
+      ContinuationToken: continuationToken,
+    })
+
+    const data = await client.send(listCommand)
+
+    if (data.Contents) {
+      for (const item of data.Contents) {
+        const fileAnomalies: string[] = []
+
+        if (
+          item.Key &&
+          item.Size !== undefined &&
+          (await shouldProcessFileItem(item, fileAnomalies))
+        ) {
+          const prev = previousIndex ? previousIndex[item.Key] : undefined
+
+          globalThis.postMessage({
+            response: 'file',
+            fileIndex: fileIndex++,
+            fileInfo: {
+              size: item.Size,
+              name: item.Key,
+              path: item.Key,
+              objectKey: item.Key,
+              bucketOptions,
+              kind: 's3',
+            },
+            previousFileInfo: prev,
+          } satisfies FileScanMsg)
+
+          fileIndex += 1
+        } else if (fileAnomalies.length > 0) {
+          const prev = previousIndex ? previousIndex[item.Key!] : undefined
+          globalThis.postMessage({
+            response: 'scanAnomalies',
+            fileIndex: fileIndex++,
+            fileInfo: {
+              size: item.Size!,
+              name: item.Key!,
+              path: item.Key!,
+              objectKey: item.Key!,
+              bucketOptions,
+              kind: 's3',
+            },
+            anomalies: fileAnomalies,
+            previousFileInfo: prev,
+          } satisfies FileScanMsg)
+        }
+      }
+    }
+
+    // Prepare for next page
+    continuationToken = data.NextContinuationToken as string | undefined
+  } while (continuationToken)
+
+  globalThis.postMessage({ response: 'done' } satisfies FileScanMsg)
+  globalThis.close()
+}
 
 async function scanDirectory(dir: FileSystemDirectoryHandle) {
   async function traverse(dir: FileSystemDirectoryHandle, prefix: string) {

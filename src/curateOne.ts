@@ -7,14 +7,17 @@ import type {
   THTTPOptions,
   TMappingOptions,
   TMapResults,
+  TS3BucketOptions,
 } from './types'
 import { hash } from './hash'
+import { loadS3Client } from './s3Client'
 
 export type TCurateOneArgs = {
   fileInfo: TFileInfo
   fileIndex?: number
   outputTarget: {
     http?: THTTPOptions
+    s3?: TS3BucketOptions
     directory?: FileSystemDirectoryHandle | string
   }
   mappingOptions: TMappingOptions
@@ -87,6 +90,70 @@ export async function curateOne({
     const lastModifiedHeader = resp.headers.get('last-modified') || undefined
     if (lastModifiedHeader) {
       mtime = new Date(lastModifiedHeader).toISOString()
+    }
+  } else if (fileInfo.kind === 's3') {
+    // Dynamically import AWS SDK S3 client
+    const s3 = await loadS3Client()
+
+    const client = new s3.S3Client({
+      region: fileInfo.bucketOptions.region,
+      credentials: fileInfo.bucketOptions.credentials,
+      endpoint: fileInfo.bucketOptions.endpoint,
+      forcePathStyle: fileInfo.bucketOptions.forcePathStyle,
+    })
+    const fetchResponse = await client.send(
+      new s3.GetObjectCommand({
+        Bucket: fileInfo.bucketOptions.bucketName,
+        Key: fileInfo.objectKey,
+      }),
+    )
+
+    if (!fetchResponse.Body) {
+      throw new Error(
+        `Failed to fetch s3://${fileInfo.bucketOptions.bucketName}/${fileInfo.objectKey}: No data returned`,
+      )
+    }
+
+    // Convert the response Body (a stream) into a Blob
+    // The data type of Body is rather complex.
+    const streamToBlob = async (stream: AsyncIterable<any>): Promise<Blob> => {
+      const chunks: Uint8Array[] = []
+
+      for await (const chunk of stream as AsyncIterable<any>) {
+        let u8: Uint8Array
+
+        if (typeof chunk === 'string') {
+          u8 = new TextEncoder().encode(chunk)
+        } else if (chunk instanceof ArrayBuffer) {
+          u8 = new Uint8Array(chunk)
+        } else if (ArrayBuffer.isView(chunk)) {
+          const view = chunk as ArrayBufferView
+          u8 = new Uint8Array(
+            view.buffer,
+            (view as any).byteOffset ?? 0,
+            view.byteLength,
+          )
+        } else {
+          // Fallback - attempt to convert to Uint8Array
+          try {
+            u8 = new Uint8Array(chunk)
+          } catch (e) {
+            // If conversion fails, skip this chunk
+            continue
+          }
+        }
+
+        chunks.push(u8)
+      }
+
+      return new Blob(chunks as any, { type: 'application/octet-stream' })
+    }
+
+    file = await streamToBlob(fetchResponse.Body as any)
+
+    const lastModified = fetchResponse.LastModified
+    if (lastModified) {
+      mtime = new Date(lastModified).toISOString()
     }
   } else {
     file = await fileInfo.fileHandle.getFile()
@@ -353,6 +420,51 @@ export async function curateOne({
         clonedMapResults.errors = clonedMapResults.errors || []
         clonedMapResults.errors.push(
           `Upload error: ${e instanceof Error ? e.message : String(e)}`,
+        )
+      }
+    } else if (outputTarget?.s3) {
+      // Dynamically import AWS SDK S3 client
+      const s3 = await loadS3Client()
+
+      const client = new s3.S3Client({
+        region: outputTarget.s3.region,
+        credentials: outputTarget.s3.credentials,
+        endpoint: outputTarget.s3.endpoint,
+        forcePathStyle: outputTarget.s3.forcePathStyle,
+      })
+
+      try {
+        const key = outputTarget.s3.prefix + clonedMapResults.outputFilePath
+
+        await client.send(
+          new s3.PutObjectCommand({
+            Bucket: outputTarget.s3.bucketName,
+            Key: key,
+            Body: await clonedMapResults.mappedBlob.arrayBuffer(),
+            ContentType:
+              clonedMapResults.mappedBlob.type || 'application/octet-stream',
+            Metadata: {
+              'source-file-size': String(clonedMapResults.fileInfo?.size || ''),
+              'source-file-modified-time': mtime || '',
+              'source-file-hash': preMappedHash || '',
+              ...(postMappedHash
+                ? { 'source-file-post-mapped-hash': postMappedHash }
+                : {}),
+            },
+          }),
+        )
+
+        const uploadUrl = `s3://${outputTarget.s3.bucketName}/${key}`
+        // attach upload info
+        clonedMapResults.outputUpload = {
+          url: uploadUrl,
+          status: 200,
+        }
+      } catch (e) {
+        console.error('S3 Upload error', e)
+        clonedMapResults.errors = clonedMapResults.errors || []
+        clonedMapResults.errors.push(
+          `S3 Upload error: ${e instanceof Error ? e.message : String(e)}`,
         )
       }
     }
