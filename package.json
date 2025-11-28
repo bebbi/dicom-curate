@@ -58,6 +58,7 @@
     "validate": "pnpm build && pnpm test"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.940.0",
     "@noble/hashes": "^2.0.1",
     "acorn": "^8.14.1",
     "acorn-globals": "^7.0.1",

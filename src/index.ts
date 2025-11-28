@@ -15,16 +15,19 @@ import type {
   THTTPOptions,
   TFileInfoIndex,
   THashMethod,
+  TS3BucketOptions,
 } from './types'
 
 import type { FileScanMsg, FileScanRequest } from './scanDirectoryWorker'
 import type { MappingRequest } from './applyMappingsWorker'
 import { createWorker } from './worker'
+import { loadS3Client } from './s3Client'
 
 type TMappingWorkerOptions = TMappingOptions & {
   outputTarget?: {
     http?: THTTPOptions
     directory?: FileSystemDirectoryHandle | string
+    s3?: TS3BucketOptions
   }
   hashMethod?: THashMethod
 }
@@ -201,6 +204,12 @@ async function initializeMappingWorkers(
             console.log(`Finished mapping ${filesMapped} files`)
           }
           break
+        case 'error':
+          console.error('Error in mapping worker:', event.data.error)
+          availableMappingWorkers.push(mappingWorker)
+          workersActive -= 1
+          filesMapped += 1
+          break
         default:
           console.error(`Unknown response from worker ${event.data.response}`)
       }
@@ -307,9 +316,17 @@ async function collectMappingOptions(
   //
   // first, get the folder mappings and set output directory
   //
-  const outputTarget = organizeOptions.outputEndpoint
-    ? { http: organizeOptions.outputEndpoint }
-    : { directory: organizeOptions.outputDirectory }
+
+  let outputTarget: TMappingWorkerOptions['outputTarget'] = {}
+  if (organizeOptions.outputEndpoint) {
+    if ('bucketName' in organizeOptions.outputEndpoint) {
+      outputTarget.s3 = organizeOptions.outputEndpoint
+    } else {
+      outputTarget.http = organizeOptions.outputEndpoint
+    }
+  } else if (organizeOptions.outputDirectory) {
+    outputTarget.directory = organizeOptions.outputDirectory
+  }
 
   //
   // then, get the curation spec
@@ -396,6 +413,7 @@ function queueUrlsForMapping(
   })
 
   dispatchMappingJobs()
+  directoryScanFinished = true
 }
 
 let progressCallback: ProgressCallback
@@ -438,7 +456,8 @@ async function curateMany(
       //
       if (
         organizeOptions.inputType === 'directory' ||
-        organizeOptions.inputType === 'path'
+        organizeOptions.inputType === 'path' ||
+        organizeOptions.inputType === 's3'
       ) {
         const fileListWorker = await initializeFileListWorker()
         const curationSpec = composeSpecs(organizeOptions.curationSpec())
@@ -448,6 +467,13 @@ async function curateMany(
           fileListWorker.postMessage({
             request: 'scan',
             directoryHandle: organizeOptions.inputDirectory,
+            excludedFiletypes: specExcludedFiletypes,
+            fileInfoIndex: organizeOptions.fileInfoIndex,
+          } satisfies FileScanRequest)
+        } else if (organizeOptions.inputType === 's3') {
+          fileListWorker.postMessage({
+            request: 'scan',
+            bucketOptions: organizeOptions.inputS3Bucket,
             excludedFiletypes: specExcludedFiletypes,
             fileInfoIndex: organizeOptions.fileInfoIndex,
           } satisfies FileScanRequest)

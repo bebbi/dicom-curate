@@ -109,6 +109,10 @@ const options: OrganizeOptions = {
 }
 ```
 
+It is also possible to use S3-compatible buckets as input or output locations.
+Consult `OrganizeOptions` for further details. Please note that this feature is only
+available if you have the `@aws-sdk/client-s3` package installed.
+
 This library can now automatically skip writing (or uploading) mapped files if the provided
 "previous" input file attributes match the record you pass in the `fileInfoIndex` property:
 
