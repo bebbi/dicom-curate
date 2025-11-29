@@ -1,3 +1,9 @@
+# [0.15.0](https://github.com/bebbi/dicom-curate/compare/v0.14.1...v0.15.0) (2025-11-29)
+
+### Features
+
+- add support for S3 bucket input and output ([1cb82a7](https://github.com/bebbi/dicom-curate/commit/1cb82a70208ca6ae4171c998110681352b0b0308))
+
 ## [0.14.1](https://github.com/bebbi/dicom-curate/compare/v0.14.0...v0.14.1) (2025-11-26)
 
 ### Bug Fixes
