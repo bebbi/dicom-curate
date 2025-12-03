@@ -44,8 +44,7 @@ export type OrganizeOptions = {
   // Hash algorithm to use when calculating & comparing original and mapped file hashes.
   // Used in conjunction with fileInfoIndex.
   // Defaults to 'crc64'.
-  // Supported values: 'crc64' (NVMe-style / js-crc 64-bit), 'crc32', or 'sha256'.
-  hashMethod?: 'crc64' | 'crc32' | 'sha256'
+  hashMethod?: THashMethod
   // optional previous file info map keyed by "path/name"
   // if set, used to determine if mapping can be skipped for files that appear unchanged
   fileInfoIndex?: TFileInfoIndex
