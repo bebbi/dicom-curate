@@ -1,3 +1,9 @@
+# [0.16.0](https://github.com/bebbi/dicom-curate/compare/v0.15.1...v0.16.0) (2025-12-04)
+
+### Features
+
+- allow THTTPHeaderProvider to be async ([1391081](https://github.com/bebbi/dicom-curate/commit/1391081b54ff3f5e2306baa9051430b7f7c10195))
+
 ## [0.15.1](https://github.com/bebbi/dicom-curate/compare/v0.15.0...v0.15.1) (2025-12-04)
 
 ### Bug Fixes
