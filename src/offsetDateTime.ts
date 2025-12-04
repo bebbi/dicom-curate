@@ -1,4 +1,4 @@
-import { parse, toSeconds, pattern } from 'iso8601-duration'
+import { parse, pattern } from 'iso8601-duration'
 
 export const iso8601 = pattern
 
@@ -201,12 +201,16 @@ function getDurationFractionMicroseconds(iso8601Duration: string): number {
  *   1. Converts the original DICOM string into a canonical DT string ("YYYYMMDDHHMMSS.FFFFFF").
  *   2. Splits that canonical string into its integer base (14-digit) and 6-digit fractional part.
  *   3. Checks if the duration is negative (by looking for a leading "-") and, if so, removes the minus and records the sign.
- *   4. Parses the ISO8601 duration using the package for the integer seconds (and larger units)
- *      and extracts the fractional part (in microseconds) manually.
- *   5. Uses Math.trunc to split the (possibly negative) total seconds into integer and fractional parts.
- *   6. Performs microsecond arithmetic to add the fractions, carrying whole seconds as needed.
- *   7. Uses JavaScript Date arithmetic for the integer seconds.
+ *   4. Parses the ISO8601 duration using the package for the calendar units (years, months, days)
+ *      and time units (hours, minutes, seconds) separately.
+ *   5. Uses JavaScript Date methods for calendar arithmetic (years, months, days).
+ *   6. Uses Date methods for time arithmetic (hours, minutes, seconds).
+ *   7. Performs microsecond arithmetic to add the fractional seconds, carrying whole seconds as needed.
  *   8. Reassembles a new canonical DT string and converts it back to the original DICOM format.
+ *
+ * Note: This function uses JavaScript's Date arithmetic, which means it exhibits standard overflow behavior.
+ * For example: Jan 31 + 1 month = March 3 (Feb 31 doesn't exist, so it overflows).
+ * Similarly: Feb 29, 2024 + 1 year = March 1, 2025 (2025 is not a leap year).
  *
  * @param dicomValue - The original DICOM date/time string.
  * @param iso8601Duration - An ISO8601 duration string (e.g., "PT1.111111S", "-P5D", "-PT1.111111S", etc.).
@@ -218,7 +222,7 @@ export function offsetDateTime(
 ): string {
   // Step 0: Trim leading/trailing spaces from the DICOM value
   const trimmedDicomValue = dicomValue.trim()
-  
+
   // Step 0.5: Detect and handle a leading minus sign.
   let sign = 1
   let durationStr = iso8601Duration
@@ -237,9 +241,7 @@ export function offsetDateTime(
 
   // Step 3: Parse the ISO8601 duration (without the sign).
   const durationParsed = parse(durationStr)
-  const positiveDurationSec = toSeconds(durationParsed) // positive value
-  const totalDurationSec = sign * positiveDurationSec // apply the sign
-  const integerDurationSec = Math.trunc(totalDurationSec) // using trunc so that, e.g., -1.111111 becomes -1
+
   // Step 4: Extract the fractional part (microseconds) from the duration string and apply the sign.
   let durationFractionMicro = getDurationFractionMicroseconds(durationStr)
   durationFractionMicro = sign * durationFractionMicro
@@ -258,8 +260,37 @@ export function offsetDateTime(
   const second = parseInt(base.slice(12, 14), 10)
   const date = new Date(year, month, day, hour, minute, second)
 
-  // Step 7: Add the integer seconds plus any carry from the fractional addition.
-  date.setSeconds(date.getSeconds() + integerDurationSec + carry)
+  // Step 7: Apply calendar arithmetic using Date methods to handle variable-length months/years correctly.
+  // Apply years, months, and weeks first (calendar units)
+  if (durationParsed.years) {
+    date.setFullYear(date.getFullYear() + sign * durationParsed.years)
+  }
+  if (durationParsed.months) {
+    date.setMonth(date.getMonth() + sign * durationParsed.months)
+  }
+  if (durationParsed.weeks) {
+    date.setDate(date.getDate() + sign * durationParsed.weeks * 7)
+  }
+  if (durationParsed.days) {
+    date.setDate(date.getDate() + sign * durationParsed.days)
+  }
+
+  // Apply time units (hours, minutes, seconds)
+  if (durationParsed.hours) {
+    date.setHours(date.getHours() + sign * durationParsed.hours)
+  }
+  if (durationParsed.minutes) {
+    date.setMinutes(date.getMinutes() + sign * durationParsed.minutes)
+  }
+  if (durationParsed.seconds) {
+    // Use only the integer part of seconds since fractional part is handled separately
+    date.setSeconds(
+      date.getSeconds() + sign * Math.trunc(durationParsed.seconds),
+    )
+  }
+
+  // Apply any carry from fractional seconds
+  date.setSeconds(date.getSeconds() + carry)
 
   // Step 8: Reassemble a new canonical DT string.
   const pad = (n: number, width: number = 2) =>
