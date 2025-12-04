@@ -1,3 +1,10 @@
+## [0.15.1](https://github.com/bebbi/dicom-curate/compare/v0.15.0...v0.15.1) (2025-12-04)
+
+### Bug Fixes
+
+- replace iso8601-duration toSeconds date arithmetic with native js date calcs ([ce1ad51](https://github.com/bebbi/dicom-curate/commit/ce1ad517687ebf82c731f5cc451b72d2ef75216e))
+- use THashMethod type in OrganizeOptions ([b951054](https://github.com/bebbi/dicom-curate/commit/b951054d6540dacb1af931c618a5961b8386b738))
+
 # [0.15.0](https://github.com/bebbi/dicom-curate/compare/v0.14.1...v0.15.0) (2025-11-29)
 
 ### Features
