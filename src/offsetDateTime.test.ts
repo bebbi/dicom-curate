@@ -131,4 +131,51 @@ describe('Offset DICOM value by ISO8601 duration', () => {
   it('offsets TM/hours only, no effect', () => {
     expect(offsetDateTime('12', 'P7M')).toEqual('12')
   })
+
+  // Additional edge case tests for calendar arithmetic
+  it('handles end-of-month overflow (Jan 31 + 1 month)', () => {
+    // Jan 31 + 1 month = Feb 31 (doesn't exist) → overflows to March 3
+    // This is standard JavaScript Date behavior
+    expect(offsetDateTime('20230131', 'P1M')).toEqual('20230303')
+  })
+
+  it('handles leap year correctly', () => {
+    // Feb 28, 2024 (leap year) + 1 day = Feb 29
+    expect(offsetDateTime('20240228', 'P1D')).toEqual('20240229')
+    // Feb 29, 2024 + 1 year → Feb 29, 2025 (doesn't exist) → overflows to March 1
+    // This is standard JavaScript Date overflow behavior
+    expect(offsetDateTime('20240229', 'P1Y')).toEqual('20250301')
+  })
+
+  it('handles weeks', () => {
+    expect(offsetDateTime('20230415', 'P2W')).toEqual('20230429')
+  })
+
+  it('handles complex duration with years, months, days', () => {
+    // Test the example from the bug report
+    expect(offsetDateTime('20250101123000.000000', 'P1Y2M3DT4H5M6S')).toEqual(
+      '20260304163506.000000',
+    )
+  })
+
+  it('handles negative duration with large fractional carry', () => {
+    // 0.1 seconds - 0.9 seconds = -0.8 seconds (should borrow 1 second)
+    expect(offsetDateTime('20230101120000.100000', '-PT0.900000S')).toEqual(
+      '20230101115959.200000',
+    )
+  })
+
+  it('handles positive fractional carry', () => {
+    // 0.9 seconds + 0.9 seconds = 1.8 seconds (should carry 1 second)
+    expect(offsetDateTime('20230101120000.900000', 'PT0.900000S')).toEqual(
+      '20230101120001.800000',
+    )
+  })
+
+  it('handles whitespace in DICOM value', () => {
+    expect(offsetDateTime(' 20230415 ', 'P7D')).toEqual('20230422')
+    expect(offsetDateTime('  99990101123456.123456  ', 'PT1S')).toEqual(
+      '99990101123457.123456',
+    )
+  })
 })
