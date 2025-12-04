@@ -221,10 +221,10 @@ async function initializeMappingWorkers(
 
 // If the TFileInfo represents an HTTP resource with dynamic headers,
 // resolve the headers by calling the provider function.
-function getHttpInputHeaders(fileInfo: TFileInfo): TFileInfo {
+async function getHttpInputHeaders(fileInfo: TFileInfo): Promise<TFileInfo> {
   if (fileInfo.kind === 'http' && typeof fileInfo.headers === 'function') {
     const clonedFileInfo: TFileInfo = { ...fileInfo }
-    clonedFileInfo.headers = fileInfo.headers()
+    clonedFileInfo.headers = await fileInfo.headers()
     return clonedFileInfo
   }
 
@@ -233,16 +233,16 @@ function getHttpInputHeaders(fileInfo: TFileInfo): TFileInfo {
 
 // If the outputTarget includes HTTP with dynamic headers,
 // resolve the headers by calling the provider function.
-function getHttpOutputHeaders(
+async function getHttpOutputHeaders(
   outputTarget: TMappingWorkerOptions['outputTarget'],
-): TMappingWorkerOptions['outputTarget'] {
+): Promise<TMappingWorkerOptions['outputTarget']> {
   if (outputTarget?.http && typeof outputTarget.http.headers === 'function') {
     const clonedOutputTarget: TMappingWorkerOptions['outputTarget'] = {
       ...outputTarget,
     }
     clonedOutputTarget.http = {
       ...outputTarget.http,
-      headers: outputTarget.http.headers(),
+      headers: await outputTarget.http.headers(),
     }
     return clonedOutputTarget
   }
@@ -250,7 +250,7 @@ function getHttpOutputHeaders(
   return outputTarget
 }
 
-function dispatchMappingJobs() {
+async function dispatchMappingJobs() {
   while (filesToProcess.length > 0 && availableMappingWorkers.length > 0) {
     const { fileInfo, fileIndex, previousFileInfo } = filesToProcess.pop()!
     const mappingWorker = availableMappingWorkers.pop()!
@@ -259,9 +259,9 @@ function dispatchMappingJobs() {
       mappingWorkerOptions as TMappingWorkerOptions
     mappingWorker.postMessage({
       request: 'apply',
-      fileInfo: getHttpInputHeaders(fileInfo),
+      fileInfo: await getHttpInputHeaders(fileInfo),
       fileIndex,
-      outputTarget: getHttpOutputHeaders(outputTarget),
+      outputTarget: await getHttpOutputHeaders(outputTarget),
       previousFileInfo,
       hashMethod,
       serializedMappingOptions: serializeMappingOptions(mappingOptions),

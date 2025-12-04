@@ -65,7 +65,9 @@ export type THashMethod = 'crc64' | 'crc32' | 'sha256' | 'md5'
 // Function that provides HTTP headers
 // Useful when headers contain authorization tokens that may expire
 // and curateMany() is long-running
-export type THTTPHeaderProvider = () => Record<string, string>
+export type THTTPHeaderProvider = () =>
+  | Promise<Record<string, string>>
+  | Record<string, string>
 
 export type THTTPOptions = {
   // Target URL for upload - target file path is appended to this base URL
