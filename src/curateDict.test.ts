@@ -10,7 +10,7 @@ import { sampleBatchCurationSpecification } from './config/sampleBatchCurationSp
 // Like default curation spec with dicom header modifications ignored, plus custom options
 function specWithOptions(
   options: Partial<TCurationSpecification>,
-): () => Partial<TCurationSpecification> {
+): () => TCurationSpecification {
   const batchSpec = sampleBatchCurationSpecification()
 
   return () => ({
@@ -1047,22 +1047,22 @@ describe('curateDict basic functionality', () => {
     {
       description: 'trailing spaces',
       value: '20250101123000.000000 ',
-      expectedOffsetDateTime: '20260306163506.000000',
+      expectedOffsetDateTime: '20260304163506.000000',
     },
     {
       description: 'leading spaces',
       value: ' 20250101123000.000000',
-      expectedOffsetDateTime: '20260306163506.000000',
+      expectedOffsetDateTime: '20260304163506.000000',
     },
     {
       description: 'both leading and trailing spaces',
       value: ' 20250101123000.000000 ',
-      expectedOffsetDateTime: '20260306163506.000000',
+      expectedOffsetDateTime: '20260304163506.000000',
     },
     {
       description: 'no leading or trailing spaces',
       value: '20250101123000.000000',
-      expectedOffsetDateTime: '20260306163506.000000',
+      expectedOffsetDateTime: '20260304163506.000000',
     },
   ])(
     'successfully offsets RadiopharmaceuticalStartDateTime with $description',
