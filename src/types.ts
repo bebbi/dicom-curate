@@ -134,7 +134,8 @@ type TAttr = { [name: string]: string | TAttr[] }
 
 export type TMapResults = {
   sourceInstanceUID: string
-  outputFilePath: string
+  // may be omitted if no file has been written
+  outputFilePath?: string
   // optional information about the source file (size, name, path, mtime)
   fileInfo?: {
     name: string
