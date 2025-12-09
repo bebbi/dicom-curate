@@ -1,3 +1,9 @@
+## [0.16.1](https://github.com/bebbi/dicom-curate/compare/v0.16.0...v0.16.1) (2025-12-09)
+
+### Bug Fixes
+
+- provide correct outputFilePath for skipped files ([14aa187](https://github.com/bebbi/dicom-curate/commit/14aa1872a41ba085a5bbf95346975d3196bacfc7))
+
 # [0.16.0](https://github.com/bebbi/dicom-curate/compare/v0.15.1...v0.16.0) (2025-12-04)
 
 ### Features
