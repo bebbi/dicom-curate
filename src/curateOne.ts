@@ -206,10 +206,9 @@ export async function curateOne({
     }
   }
 
-  const noMapResult = () => {
+  const noMapResult = (outputFilePath?: string) => {
     const retval: TMapResults = {
       sourceInstanceUID: `unchanged_${fileInfo.name.replace(/[^a-zA-Z0-9]/g, '_')}`,
-      outputFilePath: `${fileInfo.path}/${fileInfo.name}`,
       mappings: {},
       anomalies: [],
       errors: [],
@@ -224,6 +223,7 @@ export async function curateOne({
       },
       // include curationTime even when skipped to measure hashing/check time
       curationTime: performance.now() - startTime,
+      outputFilePath,
     }
     return retval
   }
@@ -251,7 +251,6 @@ export async function curateOne({
         `File ${fileInfo.name} is not a valid DICOM file or is corrupted`,
       ],
       sourceInstanceUID: `invalid_${fileInfo.name.replace(/[^a-zA-Z0-9]/g, '_')}`,
-      outputFilePath: `${fileInfo.path}/${fileInfo.name}`,
       fileInfo: {
         name: fileInfo.name,
         size: fileInfo.size,
@@ -293,11 +292,11 @@ export async function curateOne({
 
   // 7) write output if requested
   if (!mappingOptions.skipWrite) {
-    const dirPath = clonedMapResults.outputFilePath
-      .split('/')
+    const dirPath = clonedMapResults
+      .outputFilePath!.split('/')
       .slice(0, -1)
       .join('/')
-    const fileName = clonedMapResults.outputFilePath.split('/').slice(-1)[0]
+    const fileName = clonedMapResults.outputFilePath!.split('/').slice(-1)[0]
 
     const modifiedArrayBuffer = mappedDicomData.write({
       allowInvalidVRLength: true,
@@ -307,14 +306,14 @@ export async function curateOne({
     postMappedHash = await hash(modifiedArrayBuffer, hashMethod || 'crc64')
 
     const previousPostMappedHash = previousMappedFileInfo
-      ? previousMappedFileInfo(clonedMapResults.outputFilePath)?.postMappedHash
+      ? previousMappedFileInfo(clonedMapResults.outputFilePath!)?.postMappedHash
       : undefined
 
     if (
       previousPostMappedHash !== undefined &&
       previousPostMappedHash === postMappedHash
     ) {
-      return noMapResult()
+      return noMapResult(clonedMapResults.outputFilePath)
     }
 
     // Check if outputTarget.directory is a FileSystemDirectoryHandle (browser) or string (Node.js)
@@ -366,8 +365,8 @@ export async function curateOne({
     if (outputTarget?.http) {
       try {
         // Encode each part of the path, but not the slashes
-        const key = clonedMapResults.outputFilePath
-          .split('/')
+        const key = clonedMapResults
+          .outputFilePath!.split('/')
           .map(encodeURIComponent)
           .join('/')
 
@@ -434,7 +433,7 @@ export async function curateOne({
       })
 
       try {
-        const key = outputTarget.s3.prefix + clonedMapResults.outputFilePath
+        const key = outputTarget.s3.prefix + clonedMapResults.outputFilePath!
 
         await client.send(
           new s3.PutObjectCommand({
